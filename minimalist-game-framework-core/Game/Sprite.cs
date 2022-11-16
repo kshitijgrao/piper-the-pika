@@ -4,33 +4,43 @@ using System.Text;
 
 class Sprite {
 
-    private Vector2 loc;
-    private Texture[] textures;
-    private Vector2[] hitboxes;
-    private int state;
+    private protected Vector2 loc;
+    private Texture textures;
+    private protected Vector2[] hitboxes;
+    private protected int state;
+    private float[] hitboxCoord;
     
     
-    public Sprite(Vector2 loc, Texture[] sprites, Vector2[] hitboxes)
+    public Sprite(Vector2 loc, Texture sprites, Vector2[] hitboxes)
     {
         this.loc = loc;
         textures = sprites;
         this.hitboxes = hitboxes;
         state = 0;
+        hitboxCoord = new float[hitboxes.Length];
+        hitboxCoord[0] = 0;
+        for(int i = 0; i < hitboxes.Length - 1; i++)
+        {
+            hitboxCoord[i + 1] = hitboxCoord[i] + hitboxes[i].X;
+        }
     }
 
-    public Sprite(float x, float y, Texture[] sprites, Vector2[] hitboxes)
+    public Sprite(float x, float y, Texture sprites, Vector2[] hitboxes) : this(new Vector2(x, y), sprites, hitboxes)
     {
-        loc.X = x;
-        loc.Y = y;
-        textures = sprites;
-        this.hitboxes = hitboxes;
-        state = 0;
+        
+    }
+
+
+
+    private Bounds2 getTextureSource()
+    {
+        return new Bounds2(hitboxCoord[state], 0, hitboxes[state].X, hitboxes[state].Y);
     }
 
 
     public void draw()
     {
-        Engine.DrawTexture(textures[state], loc - hitboxes[state] / 2, size: hitboxes[state]);
+        Engine.DrawTexture(textures, loc - hitboxes[state] / 2, source: getTextureSource());
     }
 
     public void setState(int index)
@@ -40,7 +50,7 @@ class Sprite {
 
     public void changeState()
     {
-        state = (state + 1) % textures.Length;
+        state = (state + 1) % hitboxes.Length;
     }
 }
 
