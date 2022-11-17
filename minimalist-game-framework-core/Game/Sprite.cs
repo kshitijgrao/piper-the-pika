@@ -13,7 +13,7 @@ class Sprite {
     
     public Sprite(Vector2 loc, Texture sprites, Vector2[] hitboxes)
     {
-        this.loc = loc;
+        this.loc = loc;x
         textures = sprites;
         this.hitboxes = hitboxes;
         state = 0;
@@ -28,6 +28,12 @@ class Sprite {
     public Sprite(float x, float y, Texture sprites, Vector2[] hitboxes) : this(new Vector2(x, y), sprites, hitboxes)
     {
         
+    }
+
+
+    public detectTouching(Sprite other)
+    {
+
     }
 
 
