@@ -4,7 +4,7 @@ using System.Text;
 
 class Sprite {
 
-    private protected Vector2 loc;
+    public Vector2 loc;
     private Texture textures;
     private protected Vector2[] hitboxes;
     private protected int state;
@@ -37,7 +37,7 @@ class Sprite {
         return new Bounds2(hitboxCoord[state], 0, hitboxes[state].X, hitboxes[state].Y);
     }
 
-
+    
     public void draw()
     {
         Engine.DrawTexture(textures, loc - hitboxes[state] / 2, source: getTextureSource());
