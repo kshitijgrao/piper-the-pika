@@ -6,6 +6,11 @@ namespace Game.Game
 		public Scoreboard()
 		{
 		}
+
+		public void updateScoreboard()
+		{
+
+		}
 	}
 }
 
