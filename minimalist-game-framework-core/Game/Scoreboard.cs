@@ -3,40 +3,51 @@
 	public class Scoreboard
 	{
 	int score;
-	int time;
+	float time;
 	int flowers;
     int extraLives;
+	Texture pikaPlaceholder = Engine.LoadTexture("pikaPlaceholder.png");
 
-    public Scoreboard()
-	{
-		score = 0;
-		time = 0;
-		flowers = 0;
-		extraLives = 1;
-	}
+		public Scoreboard()
+		{
+			score = 0;
+			time = 0;
+			flowers = 0;
+			extraLives = 1;
+		}
 
-	public void updateScoreboard()
-	{
-		Engine.DrawString("SCORE: " + score, new Vector2(0, 0), Color.Yellow, Engine.LoadFont("Arial.ttf", 40));
-		Engine.DrawString("TIME: " + time, new Vector2(0, 40), Color.Yellow, Engine.LoadFont("Arial.ttf", 40));
-		Engine.DrawString("RINGS: " + flowers, new Vector2(0, 80), Color.Yellow, Engine.LoadFont("Arial.ttf", 40));
+		public void updateScoreboard()
+		{
+			time += Engine.TimeDelta; 
+			Engine.DrawString("SCORE", new Vector2(0, 0), Color.Yellow, Engine.LoadFont("Arial.ttf", 10));
+			Engine.DrawString("" + score, new Vector2(40, 0), Color.White, Engine.LoadFont("Arial.ttf", 10));
 
-	}
 
-	public void updateScore()
-	{
+			Engine.DrawString("TIME", new Vector2(0, 15), Color.Yellow, Engine.LoadFont("Arial.ttf", 10));
+	        Engine.DrawString(""+(int)time, new Vector2(28, 15), Color.White, Engine.LoadFont("Arial.ttf", 10));
 
-	}
 
-	public void updateTime()
-	{
+			Engine.DrawString("RINGS", new Vector2(0, 30), Color.Yellow, Engine.LoadFont("Arial.ttf", 10));
+			Engine.DrawString("" + flowers, new Vector2(35, 30), Color.White, Engine.LoadFont("Arial.ttf", 10));
 
-	}
 
-	public void updateFlowers()
-	{
+			Engine.DrawString("PIPER", new Vector2(26, 195), Color.Yellow, Engine.LoadFont("Arial.ttf", 10));
+			Engine.DrawString("x      " + extraLives, new Vector2(26, 204), Color.White, Engine.LoadFont("Arial.ttf", 10));
+			Engine.DrawTexture(pikaPlaceholder, new Vector2(6, 197), size: new Vector2(19, 17));
 
-	}
+	
+		}
+
+		public void addScore()
+		{
+
+		}
+
+
+		public void addFlowers(int x) 
+		{
+			flowers += x;
+		}
 
 	
 }
