@@ -24,8 +24,8 @@ class Game
     {
 
         //scoreboard elements
-        Engine.DrawString("SCORE: " + score, new Vector2(0,0), Color.Yellow, Engine.LoadFont("Raleway.ttf", 40));
-        Engine.DrawString("TIME: " + time, new Vector2(0, 40), Color.Yellow, Engine.LoadFont("Raleway.ttf", 40));
-        Engine.DrawString("RINGS: " + rings, new Vector2(0, 80), Color.Yellow, Engine.LoadFont("Raleway.ttf", 40));
+        //Engine.DrawString("SCORE: " + score, new Vector2(0,0), Color.Yellow, Engine.LoadFont("Raleway.ttf", 40));
+        //Engine.DrawString("TIME: " + time, new Vector2(0, 40), Color.Yellow, Engine.LoadFont("Raleway.ttf", 40));
+        //Engine.DrawString("RINGS: " + rings, new Vector2(0, 80), Color.Yellow, Engine.LoadFont("Raleway.ttf", 40));
     }
 }
