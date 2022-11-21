@@ -6,8 +6,8 @@ struct Bounds2
     public Vector2 Position;
     public Vector2 Size;
 
-    private Vector2 Min => Position;
-    private Vector2 Max => Position + Size;
+    public Vector2 Min => Position;
+    public Vector2 Max => Position + Size;
 
     /// <summary>
     /// Creates a new 2D bounds rectangle.
