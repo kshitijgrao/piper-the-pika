@@ -31,9 +31,10 @@
 			Engine.DrawString("" + flowers, new Vector2(35, 30), Color.White, Engine.LoadFont("Arial.ttf", 10));
 
 
+			Engine.DrawTexture(pikaPlaceholder, new Vector2(6, 197), size: new Vector2(19, 17));
 			Engine.DrawString("PIPER", new Vector2(26, 195), Color.Yellow, Engine.LoadFont("Arial.ttf", 10));
 			Engine.DrawString("x      " + extraLives, new Vector2(26, 204), Color.White, Engine.LoadFont("Arial.ttf", 10));
-			Engine.DrawTexture(pikaPlaceholder, new Vector2(6, 197), size: new Vector2(19, 17));
+		
 
 	
 		}
