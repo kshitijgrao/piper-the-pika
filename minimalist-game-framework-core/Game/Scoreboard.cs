@@ -39,15 +39,12 @@
 	
 		}
 
-		public void addScore()
-		{
-
-		}
 
 
 		public void addFlowers(int x) 
 		{
 			flowers += x;
+			score += x * 10;
 		}
 
 	
