@@ -4,9 +4,9 @@ using System.Text;
 
 class PhysicsSprite : Sprite
 {
-
-    private Vector2 vel;
-    private Vector2 acc;
+    public float mass;
+    public Vector2 vel;
+    public Vector2 acc;
 
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2[] hitboxes) : base(loc,sprites,hitboxes)
     {
@@ -38,10 +38,15 @@ class PhysicsSprite : Sprite
         Engine.DrawLine(loc, loc + acc, Color.Blue);
     }
 
-    public void updateState()
+    public override void updateState()
     {
         loc = loc + vel * Engine.TimeDelta;
         vel += acc * Engine.TimeDelta;
+    }
+
+    public void collide(Sprite other)
+    {
+
     }
 
 }

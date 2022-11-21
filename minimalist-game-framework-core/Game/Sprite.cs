@@ -13,7 +13,7 @@ class Sprite {
     
     public Sprite(Vector2 loc, Texture sprites, Vector2[] hitboxes)
     {
-        this.loc = loc;x
+        this.loc = loc;
         textures = sprites;
         this.hitboxes = hitboxes;
         state = 0;
@@ -31,7 +31,7 @@ class Sprite {
     }
 
 
-    public detectTouching(Sprite other)
+    public virtual void collide(Sprite other)
     {
 
     }
@@ -54,9 +54,15 @@ class Sprite {
         state = index;
     }
 
-    public void changeState()
+    public virtual void updateState()
     {
         state = (state + 1) % hitboxes.Length;
     }
+
+    public Bounds2 getHitbox()
+    {
+        return new Bounds2(loc - hitboxes[state] / 2, hitboxes[state]);
+    }
+
 }
 
