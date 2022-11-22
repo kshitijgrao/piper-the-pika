@@ -28,7 +28,13 @@ static partial class Engine
         // Hide the console window as quickly as possible
         // ======================================================================================
 
-        ShowWindow(GetConsoleWindow(), 0);
+        try
+        {
+            ShowWindow(GetConsoleWindow(), 0);
+        } catch(System.DllNotFoundException) {
+
+        }
+        
 
         // ======================================================================================
         // Copy assets and libraries into the working directory
