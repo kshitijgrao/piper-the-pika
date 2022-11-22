@@ -5,16 +5,16 @@ using System.Text;
 class Sprite {
 
     public Vector2 loc;
-    private Texture textures;
+    private Texture spritemap;
     private protected Vector2[] hitboxes;
     private protected int state;
     private float[] hitboxCoord;
     
     
-    public Sprite(Vector2 loc, Texture sprites, Vector2[] hitboxes)
+    public Sprite(Vector2 loc, Texture spritemap, Vector2[] hitboxes)
     {
         this.loc = loc;
-        textures = sprites;
+        this.spritemap = spritemap;
         this.hitboxes = hitboxes;
         state = 0;
         hitboxCoord = new float[hitboxes.Length];
@@ -44,9 +44,9 @@ class Sprite {
     }
 
     
-    public void draw()
+    public void draw(Bounds2 bounds)
     {
-        Engine.DrawTexture(textures, loc - hitboxes[state] / 2, source: getTextureSource());
+        Engine.DrawTexture(spritemap, loc - hitboxes[state] / 2, source: getTextureSource());
     }
 
     public void setState(int index)
