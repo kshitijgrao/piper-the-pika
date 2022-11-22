@@ -25,9 +25,15 @@ class Sprite {
         }
     }
 
+
     public Sprite(float x, float y, Texture sprites, Vector2[] hitboxes) : this(new Vector2(x, y), sprites, hitboxes)
     {
         
+    }
+
+    public Sprite(Vector2 loc, String location, Vector2[] hitboxes) : this(loc, Engine.LoadTexture(location), hitboxes)
+    {
+
     }
 
 
