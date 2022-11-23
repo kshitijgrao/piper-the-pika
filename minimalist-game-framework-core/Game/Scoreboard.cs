@@ -5,7 +5,8 @@
 	int score;
 	float time;
 	int flowers;
-    int extraLives;
+    int lives;
+	int oneUps;
 	Texture pikaPlaceholder = Engine.LoadTexture("pikaPlaceholder.png");
 	Font arial = Engine.LoadFont("Arial.ttf", 10);
 
@@ -14,26 +15,35 @@
 			score = 0;
 			time = 0;
 			flowers = 0;
-			extraLives = 3;
+			lives = 3;
+			oneUps = 0;
+			
 		}
 		
 		public void updateScoreboard()
 		{
 			//check for game over
-			if (extraLives == 0)
+			if (lives == 0)
 			{
 				gameOver();
 			}
+
+			//check for oneUps
+			if (oneUps < (score / 50000))
+			{
+				oneUps++;
+				lives++;
+			}
+
+			//update time
 			time += Engine.TimeDelta;
 
 			//topLeft scoreboard elements
-
-
 			Engine.DrawString("SCORE", new Vector2(0, 0), Color.Yellow, arial);
 			Engine.DrawString("" + score, new Vector2(40, 0), Color.White, arial);
 			Engine.DrawString("TIME", new Vector2(0, 15), Color.Yellow, arial);
 	        Engine.DrawString(""+(int)time, new Vector2(28, 15), Color.White, arial);
-			Engine.DrawString("RINGS", new Vector2(0, 30), Color.Yellow, arial);
+			Engine.DrawString("FLOWERS", new Vector2(0, 30), Color.Yellow, arial);
 			Engine.DrawString("" + flowers, new Vector2(35, 30), Color.White, arial);
 
 
@@ -41,7 +51,7 @@
 			//bottom left scoreboard elements
 			Engine.DrawTexture(pikaPlaceholder, new Vector2(6, 197), size: new Vector2(19, 17));
 			Engine.DrawString("PIPER", new Vector2(26, 195), Color.Yellow, arial);
-			Engine.DrawString("x      " + extraLives, new Vector2(26, 204), Color.White, arial);
+			Engine.DrawString("x      " + lives, new Vector2(26, 204), Color.White, arial);
 		}
 
 
@@ -63,13 +73,25 @@
 		//input 1 if an extra life is gained
 		public void modifyLives(int x)
 		{
-			extraLives += x;
+			lives += x;
 		}
 
+		//time bonus after level
+		public void timeBonus(int seconds)
+	{
+		if ((int)time < 29)
+		{
+
+		}
+	}
+
+		//death sequence
 		public void gameOver()
 		{
 			
-		}	
+		}
+
+
 }
 
 
