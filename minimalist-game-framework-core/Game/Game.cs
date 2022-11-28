@@ -8,18 +8,17 @@ class Game
     Scoreboard sb;
     Rendering map;
 
-
     public Game()
     {
-        
+        // map rendering
+        map = new Rendering("sonic map 1.png", "pikaPlaceholder.png");
         //scoreboard
         sb = new Scoreboard();
-        map = new Rendering("sonic map 1.png");
     }
 
     public void Update()
     {
-        sb.updateScoreboard();
         map.scrollingWindow();
+        sb.updateScoreboard();
     }
 }
