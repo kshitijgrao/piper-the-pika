@@ -11,6 +11,6 @@ internal static class Animator
 {
     public static void draw(Sprite s)
     {
-
+        
     }
 }

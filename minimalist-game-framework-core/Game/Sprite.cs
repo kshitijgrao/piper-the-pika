@@ -30,28 +30,39 @@ class Sprite {
         
     }
 
-
     public virtual void collide(Sprite other)
     {
 
     }
-
-
 
     private Bounds2 getTextureSource()
     {
         return new Bounds2(hitboxCoord[state], 0, hitboxes[state].X, hitboxes[state].Y);
     }
 
+    public void move(Vector2 v)
+    {
+        loc += v;
+    }
     
-    public void draw(Bounds2 bounds)
+    public void draw()
     {
         Engine.DrawTexture(spritemap, loc - hitboxes[state] / 2, source: getTextureSource());
     }
 
-    public void setState(int index)
+    public void draw(Bounds2 bounds, Vector2 pos)
     {
-        state = index;
+        Engine.DrawTexture(spritemap, pos, source: bounds);
+    }
+
+    public void setState(int state)
+    {
+        this.state = state;
+    }
+
+    public int getState()
+    {
+        return state;
     }
 
     public virtual void updateState()
