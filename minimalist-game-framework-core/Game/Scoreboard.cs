@@ -42,9 +42,16 @@
 			Engine.DrawString("SCORE", new Vector2(0, 0), Color.Yellow, arial);
 			Engine.DrawString("" + score, new Vector2(40, 0), Color.White, arial);
 			Engine.DrawString("TIME", new Vector2(0, 15), Color.Yellow, arial);
-	        Engine.DrawString(""+(int)time, new Vector2(28, 15), Color.White, arial);
+			String timeDisplay = (int)time / 60 + ":";
+			if (time % 60 < 10)
+			{
+				timeDisplay += 0;
+			}	
+			timeDisplay += (int)time % 60;
+
+	        Engine.DrawString(timeDisplay, new Vector2(28, 15), Color.White, arial);
 			Engine.DrawString("FLOWERS", new Vector2(0, 30), Color.Yellow, arial);
-			Engine.DrawString("" + flowers, new Vector2(35, 30), Color.White, arial);
+			Engine.DrawString("" + flowers, new Vector2(55, 30), Color.White, arial);
 
 
 
