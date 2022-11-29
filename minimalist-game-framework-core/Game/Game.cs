@@ -6,20 +6,15 @@ class Game
 {
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
-    Texture piperTexture = Engine.LoadTexture("pika-with-dots");
-
-    // animation constants
-    static readonly float Framerate = 30;
-    static readonly float WalkSpeed = 50;
+    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-no-dots.png");
 
     // sprites
     Sprite piper;
     float piperFrameIndex;
-    bool piperFaceLeft = false;
     ArrayList sprites = new ArrayList();
 
     Scoreboard sb;
-    float speed = 5;
+    float speed = 2;
 
     public Game()
     {
@@ -27,42 +22,15 @@ class Game
         sb = new Scoreboard();
 
         // create piper sprite
-        Vector2[] piperHB = new Vector2[1];
-        piperHB[0] = new Vector2(24, 24);
-        piper = new Sprite(Resolution / 2, piperTexture, piperHB);
+        piper = new Sprite(Resolution / 2, piperTexture);
+        piperFrameIndex = 0;
         sprites.Add(piper);
     }
 
     public void Update()
     {
-        // player input
-        if (Engine.GetKeyHeld(Key.A))
-        {
-            piper.setState(1);
-            piperFaceLeft = true;
-            piper.move(new Vector2(-speed, 0));
-        }
-        else if (Engine.GetKeyHeld(Key.D))
-        {
-            piper.setState(1);
-            piperFaceLeft = false;
-            piper.move(new Vector2(speed, 0));
-        }
-        else
-        {
-            piper.setState(0);
-        }
-
-        piperFrameIndex = (piperFrameIndex + Engine.TimeDelta * Framerate) % 4.0f;
-        Vector2 piperFrame = new Vector2((int)piperFrameIndex * 24, piper.getState() * 24);
-        Bounds2 piperFrameBounds = new Bounds2(piperFrame, piperFrame + new Vector2(24, 24));
-        
-        // animate each sprite onscreen
-        //foreach (Sprite s in sprites)
-        //{
-            //Animator.draw(s);
-        //}
-
+        Engine.DrawRectSolid(new Bounds2(new Vector2(0, 0), Resolution), Color.White);
+        piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
         sb.updateScoreboard();
     }
 }
