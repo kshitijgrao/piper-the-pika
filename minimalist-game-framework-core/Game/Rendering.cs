@@ -2,24 +2,21 @@
 using System.Collections.Generic;
 using System.Text;
 
-public class Rendering
+class Rendering
 {
     Texture map; //1944 x 1172
     Vector2 pos;
     Texture charTexture;
     Sprite character;
     Vector2 center;
-    Vector2 hitbox;
 
-    public Rendering(String texture, String charSprite)
+    public Rendering(String texture, String charSprite, Vector2[] hitbox)
     {
         pos = new Vector2(0, 0);
         map = Engine.LoadTexture(texture);
         center = new Vector2(Game.Resolution.X / 2, Game.Resolution.Y / 2);
         charTexture = Engine.LoadTexture(charSprite);
-        hitbox = new Vector2(charTexture.Width, charTexture.Height);
-        
-        character = new Sprite(center, charTexture, new Vector2[]{hitbox});
+        character = new Sprite(center, charTexture, hitbox);
     }
 
     public void scrollingWindow()

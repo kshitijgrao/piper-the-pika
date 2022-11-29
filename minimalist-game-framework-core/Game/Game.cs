@@ -11,7 +11,7 @@ class Game
     public Game()
     {
         // map rendering
-        map = new Rendering("sonic map 1.png", "pikaPlaceholder.png");
+        map = new Rendering("sonic map 1.png", "pikaPlaceholder.png", new Vector2[] {new Vector2(15, 13)} );
         //scoreboard
         sb = new Scoreboard();
     }
