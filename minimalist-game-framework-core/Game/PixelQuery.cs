@@ -10,6 +10,14 @@ unsafe class Map {
 
     public int[,] pixels;
     SDL.SDL_Surface* pixelMap;
+    private int w;
+    private int h;
+
+    //TODO: come up with color key for waht the different types of blocks represent
+    public static readonly int AIR_CODE = 0;
+
+
+    private static readonly int SLOPE_MAX_COUNT = 15;
 
 
     public Map(String loc)
@@ -21,8 +29,8 @@ unsafe class Map {
 
         int pitch = (*pixelMap).pitch;
 
-        int w = (*pixelMap).w;
-        int h = (*pixelMap).h;
+        w = (*pixelMap).w;
+        h = (*pixelMap).h;
 
         pixels = new int[w,h];
         
@@ -45,5 +53,69 @@ unsafe class Map {
     {
         return pixels[(int) coord.X,(int) coord.Y];
     }
+
+    //getting slope angle
+    // TODO: remember to account for cases where the ground is above or below and just general edge cases like vert
+    public double getSlopeAngle(Vector2 coord)
+    {
+        if(getPixelType(coord) == AIR_CODE)
+        {
+            return 0;
+        }
+
+        Vector2 leftShift = new Vector2(-2, 0);
+        Vector2 rightShift = new Vector2(2, 0);
+
+        if (coord.X >= 2)
+        {
+            
+            int currType = getPixelType(coord + leftShift);
+            for(int i = 0; i < 2 * SLOPE_MAX_COUNT; i++)
+            {
+                leftShift.Y = (i + 2) / 2 * (1 - 2 * (i % 2));
+                if (getPixelType(leftShift + coord) != currType)
+                {
+                    break;
+                }
+            }
+        }
+        else
+        {
+            leftShift.Y = -1234;
+            leftShift.X = 0;
+        }
+
+        if(coord.X < w - 2)
+        {
+            int currType = getPixelType(coord + rightShift);
+            for (int i = 0; i < 2 * SLOPE_MAX_COUNT; i++)
+            {
+                rightShift.Y = (i + 2) / 2 * (1 - 2 * (i % 2));
+                if (getPixelType(rightShift + coord) != currType)
+                {
+                    break;
+                }
+            }
+        }
+        else
+        {
+            rightShift.Y = 1234;
+            rightShift.X = 0;
+        }
+
+        if(rightShift.Y - leftShift.Y > SLOPE_MAX_COUNT * 2)
+        {
+            if(getPixelType(coord - new Vector2(1,0)) == AIR_CODE)
+            {
+                return Math.PI / 2;
+            }
+            return 3 * Math.PI / 2;
+        }
+
+        return Math.Atan((double) (rightShift.Y - leftShift.Y) / (rightShift.X - leftShift.X));
+
+
+    }
+
 }
 
