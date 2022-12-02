@@ -29,7 +29,6 @@ class Game
 
     public void Update()
     {
-        Engine.DrawRectSolid(new Bounds2(new Vector2(0, 0), Resolution), Color.White);
         piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
         sb.updateScoreboard();
     }

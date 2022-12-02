@@ -19,11 +19,19 @@ internal static class Animator
         {
             piper.setState(1);
             piper.move(new Vector2(-speed, 0));
+            if (!piper.isLeft())
+            {
+                piper.turn();
+            }
         }
         else if (Engine.GetKeyHeld(Key.D))
         {
             piper.setState(1);
             piper.move(new Vector2(speed, 0));
+            if (piper.isLeft())
+            {
+                piper.turn();
+            }
         }
         else
         {

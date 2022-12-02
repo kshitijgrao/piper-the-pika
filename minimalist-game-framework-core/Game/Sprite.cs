@@ -66,6 +66,11 @@ class Sprite {
     {
         spriteFaceLeft = !spriteFaceLeft;
     }
+
+    public Boolean isLeft()
+    {
+        return spriteFaceLeft;
+    }
     
     public void draw()
     {
