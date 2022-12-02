@@ -16,6 +16,8 @@ class Game
     Scoreboard sb;
     float speed = 2;
 
+
+
     public Game()
     {
         //scoreboard
