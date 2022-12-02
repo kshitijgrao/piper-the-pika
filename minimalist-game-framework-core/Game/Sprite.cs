@@ -64,5 +64,11 @@ class Sprite {
         return new Bounds2(loc - hitboxes[state] / 2, hitboxes[state]);
     }
 
+
+    public Vector2 getBotPoint()
+    {
+        return loc + hitboxes[state] / 2;
+    }
+
 }
 

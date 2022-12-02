@@ -9,13 +9,14 @@ using System.Reflection;
 unsafe class Map {
 
     public int[,] pixels;
+    private List<int>[] transitions;
     SDL.SDL_Surface* pixelMap;
     private int w;
     private int h;
 
     //TODO: come up with color key for waht the different types of blocks represent
     public static readonly int AIR_CODE = 0;
-
+    public static readonly int GROUND_CODE = 1;
 
     private static readonly int SLOPE_MAX_COUNT = 15;
 
@@ -33,6 +34,7 @@ unsafe class Map {
         h = (*pixelMap).h;
 
         pixels = new int[w,h];
+        transitions = new List<int>[w];
         
         int bpp = 3;
         byte* pixelsImg = (byte*)pixelMap->pixels;
@@ -42,6 +44,13 @@ unsafe class Map {
             for(int y = 0; y < pixels.GetLength(1); y++)
             {
                 pixels[x, y] = *(pixelsImg + pitch * y + bpp * x);
+                if(y > 0 && pixels[x,y] != pixels[x, y - 1])
+                {
+                    if (pixels[x, y - 1] == GROUND_CODE)
+                        transitions[x].Add(y);
+                    else
+                        transitions[x].Add(y-1);
+                }
             }
         }
 
@@ -116,6 +125,25 @@ unsafe class Map {
 
 
     }
+
+    public int getSurfaceY(Vector2 pos)
+    {
+        List<int> currTransitions = transitions[(int) pos.X];
+        int testY = currTransitions[0];
+        int i = 0;
+        while (testY > pos.Y && i < currTransitions.Count - 1)
+        {
+            if (i % 2 == 0)
+                testY = (currTransitions[i + 1] + currTransitions[i]) / 2;
+            else
+                testY = currTransitions[i + 1];
+            i++;
+        }
+
+        return currTransitions[i];
+
+    }
+
 
 }
 
