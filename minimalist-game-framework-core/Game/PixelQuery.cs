@@ -35,6 +35,10 @@ unsafe class Map {
 
         pixels = new int[w,h];
         transitions = new List<int>[w];
+        for(int i = 0; i < w; i++)
+        {
+            transitions[i] = new List<int>();
+        }
         
         int bpp = 3;
         byte* pixelsImg = (byte*)pixelMap->pixels;
