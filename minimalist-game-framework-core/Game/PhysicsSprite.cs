@@ -44,7 +44,7 @@ class PhysicsSprite : Sprite
         vel += acc * Engine.TimeDelta;
     }
 
-    public void collide(Sprite other)
+    public override void collide(Sprite other)
     {
 
     }

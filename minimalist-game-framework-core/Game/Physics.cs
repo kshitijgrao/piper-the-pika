@@ -64,6 +64,28 @@ class Physics
 
     }
 
+
+    public static void detectGround(PhysicsSprite obj)
+    {
+        Vector2 pos = obj.getBotPoint();
+
+        if(Game.map.getPixelType(pos) == Map.GROUND_CODE)
+        {
+
+
+        }
+
+
+
+    }
+
+    public static void keepOnSurface(PhysicsSprite obj)
+    {
+
+    }
+
+
+
     //update physics for things that are within the window
     public static void updatePhysics(Sprite[] sprites)
     {
