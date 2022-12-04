@@ -35,7 +35,7 @@ class Physics
         bool secondPhysics = obj2 is PhysicsSprite;
 
         //check for tunneling
-        Vector2 relvel = obj1.vel - (obj2 is PhysicsSprite ? ((PhysicsSprite) obj2).vel : Vector2.Zero);
+        Vector2 relvel = obj1.vel - (secondPhysics ? ((PhysicsSprite) obj2).vel : Vector2.Zero);
         b2.Position -= b1.Size / 2;
         b2.Size += b1.Size;
 
