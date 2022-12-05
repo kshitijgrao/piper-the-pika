@@ -8,6 +8,8 @@ class Game
     public static readonly Vector2 Resolution = new Vector2(320, 224);
     public static Map map;
 
+    public static readonly string RIGHT = "right";
+    public static readonly string LEFT = "left";
 
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-no-dots.png");
 

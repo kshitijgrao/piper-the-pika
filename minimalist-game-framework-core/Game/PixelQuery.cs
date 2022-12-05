@@ -67,6 +67,16 @@ unsafe class Map {
         return pixels[(int) coord.X,(int) coord.Y];
     }
 
+    public bool onGround(Vector2 coord)
+    {
+        return getPixelType(coord) == GROUND_CODE;
+    }
+
+    public bool inAir(Vector2 coord)
+    {
+        return getPixelType(coord) == AIR_CODE;
+    }
+
     //getting slope angle
     // TODO: remember to account for cases where the ground is above or below and just general edge cases like vert
     public double getSlopeAngle(Vector2 coord)
@@ -127,6 +137,16 @@ unsafe class Map {
 
         return Math.Atan((double) (rightShift.Y - leftShift.Y) / (rightShift.X - leftShift.X));
 
+
+    }
+
+    public Vector2 getNormalVector(Vector2 pos)
+    {
+
+    }
+
+    public float getSurfaceRadius(Vector2 pos)
+    {
 
     }
 

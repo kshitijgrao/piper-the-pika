@@ -16,13 +16,11 @@ class PhysicsSprite : Sprite
 
     public void setVelocity(Vector2 vel)
     {
-        vel.Y *= 1;
         this.vel = vel;
     }
 
     public void setAcceleration(Vector2 acc)
     {
-        acc.Y *= 1;
         this.acc = acc;
     }
 
