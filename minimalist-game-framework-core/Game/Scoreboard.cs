@@ -14,7 +14,7 @@ public class Scoreboard
     public Scoreboard()
     {
         score = 0;
-        time = 0;
+        time = -3;
         flowers = 0;
         lives = 3;
         oneUps = 0;
@@ -141,6 +141,11 @@ public class Scoreboard
                 score += 500;
             }
         }
+
+    public float getTime()
+    {
+        return time;
+    }
 
 }
 

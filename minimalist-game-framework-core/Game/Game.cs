@@ -18,6 +18,7 @@ class Game
 
 
     Scoreboard sb;
+    Cutscenes scene;
     float speed = 2;
 
 
@@ -27,7 +28,7 @@ class Game
     {
         //scoreboard
         sb = new Scoreboard();
-        map = new Map("C:/Users/evane/source/repos/recreate-a-classic-game-sonic-yeer/minimalist-game-framework-core/Assets/testing_query.bmp");
+        scene = new Cutscenes();
 
 
         // create piper sprite
@@ -39,7 +40,13 @@ class Game
 
     public void Update()
     {
+        if (sb.getTime() < 0)
+        {
+            scene.titleScene();
+        }
+        
         piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
         sb.updateScoreboard();
+        
     }
 }
