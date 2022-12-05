@@ -28,6 +28,7 @@ class Sonic : PhysicsSprite
 
     public void setAcceleration(String key)
     {
+        loc = this.getBotPoint();
         if(key == Game.RIGHT)
         {
             acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(90);
@@ -50,5 +51,11 @@ class Sonic : PhysicsSprite
         }
 
         acc += Physics.getPhysicsAcceleration(loc, vel);
+    }
+
+    public override void updateState()
+    {
+        base.updateState();
+        base.keepOnSurface();
     }
 }

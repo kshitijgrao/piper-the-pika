@@ -8,10 +8,15 @@ class PhysicsSprite : Sprite
     public Vector2 vel;
     public Vector2 acc;
 
+    private bool collided;
+    private float timeLeft;
+
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2[] hitboxes) : base(loc,sprites,hitboxes)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
+        collided = false;
+        timeLeft = 0;
     }
 
     public void setVelocity(Vector2 vel)
@@ -38,13 +43,36 @@ class PhysicsSprite : Sprite
 
     public override void updateState()
     {
-        loc = loc + vel * Engine.TimeDelta;
-        vel += acc * Engine.TimeDelta;
+        if (collided)
+        {
+            loc = loc + vel * timeLeft;
+            vel += acc * timeLeft;
+            collided = false;
+        }
+        else
+        {
+            loc = loc + vel * Engine.TimeDelta;
+            vel += acc * Engine.TimeDelta;
+        }
     }
 
     public override void collide(Sprite other)
     {
 
+    }
+
+    public void collideGround(float timeLeft)
+    {
+        this.timeLeft = timeLeft;
+    }
+
+    public void keepOnSurface()
+    {
+        Vector2 pos = this.getBotPoint();
+        if (Game.map.onGround(pos))
+        {
+            this.loc.Y += (Game.map.getSurfaceY(pos) - pos.Y);
+        }
     }
 
 }

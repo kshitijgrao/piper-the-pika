@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 
@@ -70,20 +71,23 @@ class Physics
     public static void detectGround(PhysicsSprite obj)
     {
         Vector2 pos = obj.getBotPoint();
+        Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
 
-        if(Game.map.getPixelType(pos) == Map.GROUND_CODE)
+        if(Game.map.inAir(pos) && Game.map.onGround(finalPos))
         {
+            Vector2 diff = finalPos - pos;
+            while (!Game.map.onGround(pos) && pos.X <= finalPos.X)
+                pos += diff / diff.X;
+
+            obj.loc += diff - (finalPos - pos);
+            obj.keepOnSurface();
+            pos = obj.getBotPoint();
+            obj.vel = obj.vel - Game.map.getNormalVector(pos) * Vector2.Dot(Game.map.getNormalVector(pos), obj.vel);
 
 
+
+            obj.collideGround((diff.X - x) / diff.X * Engine.TimeDelta);
         }
-
-
-
-    }
-
-    public static void keepOnSurface(PhysicsSprite obj)
-    {
-
     }
 
     public static Vector2 getPhysicsAcceleration(Vector2 loc, Vector2 vel)

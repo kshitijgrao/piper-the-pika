@@ -15,8 +15,10 @@ unsafe class Map {
     private int h;
 
     //TODO: come up with color key for waht the different types of blocks represent
-    public static readonly int AIR_CODE = 0;
-    public static readonly int GROUND_CODE = 1;
+    public static readonly int AIR_CODE = 255+255;
+    public static readonly int GROUND_CODE = 113;
+    public static readonly int PASS_THROUGH_CODE = 255;
+    public static readonly int SOLID_CODE = 255 + 199;
 
     private static readonly int SLOPE_MAX_COUNT = 15;
 
@@ -142,12 +144,12 @@ unsafe class Map {
 
     public Vector2 getNormalVector(Vector2 pos)
     {
-
+        return new Vector2(0, 1);
     }
 
     public float getSurfaceRadius(Vector2 pos)
     {
-
+        return 0;
     }
 
     public int getSurfaceY(Vector2 pos)
