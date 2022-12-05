@@ -19,5 +19,13 @@ public class Cutscenes
 
 
         //End Scene
+		public void endScene()
+	{
+		Engine.DrawString("PIPER HAS", new Vector2(100, 150), Color.White, title);
+		Engine.DrawString("PASSED", new Vector2(0, 0), Color.White, title);
+		Engine.DrawString("Act", new Vector2(0, 0), Color.Orange, title);
+		Engine.DrawString("1", new Vector2(0, 0), Color.Yellow, title);
+	}
+	
     }
 
