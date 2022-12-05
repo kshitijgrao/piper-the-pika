@@ -15,7 +15,7 @@ internal static class Animator
     public static float animatePiper(Sprite piper, float speed, float frameIndex)
     {
         // player input
-        if (Engine.GetKeyHeld(Key.A))
+        if (Engine.GetKeyHeld(Key.A) || Engine.GetKeyHeld(Key.Left))
         {
             piper.setState(1);
             piper.move(new Vector2(-speed, 0));
@@ -24,7 +24,7 @@ internal static class Animator
                 piper.turn();
             }
         }
-        else if (Engine.GetKeyHeld(Key.D))
+        else if (Engine.GetKeyHeld(Key.D) || Engine.GetKeyHeld(Key.Right))
         {
             piper.setState(1);
             piper.move(new Vector2(speed, 0));

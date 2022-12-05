@@ -24,8 +24,6 @@ class Rendering
         Engine.DrawTexture(map, pos);
         character.draw();
 
-        
-
         if (Engine.GetKeyHeld(Key.Right))
         {
             if (character.loc.X < Game.Resolution.X * 0.8)
