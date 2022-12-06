@@ -4,7 +4,8 @@ public class Scenes
 	{
         Font h1 = Engine.LoadFont("Arial.ttf", 40);
 		Font h2 = Engine.LoadFont("Arial.ttf", 20);
-		Font h3 = Engine.LoadFont("Arial.tff", 15);
+		Font h3 = Engine.LoadFont("Arial.ttf", 12);
+		Texture piper = Engine.LoadTexture("pika-spritemap-no-dots.png");
 
         public Scenes()
 		{
@@ -20,9 +21,10 @@ public class Scenes
 		}
 		else
 		{
+            Engine.DrawTexture(piper, new Vector2(140, 50), size: new Vector2(50, 50));
             Engine.DrawString("PIPER", new Vector2(100, 100), Color.White, h1);
             Engine.DrawString("THE PIKA", new Vector2(115, 140), Color.White, h2);
-            Engine.DrawString("Click to Start", new Vector2(100, 160), Color.Red, h3);
+            Engine.DrawString("Click to Start", new Vector2(125, 170), Color.Yellow, h3);
             return true;
 		}
 			
