@@ -7,8 +7,8 @@ class Game
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
     public static Map map;
-    public Boolean title;
-    public Boolean end;
+    public Boolean startScene;
+    public Boolean endScene;
 
 
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-no-dots.png");
@@ -29,8 +29,8 @@ class Game
     public Game()
     {
         //scene control
-        title = true;
-        end = false;
+        startScene = true;
+        endScene = false;
 
         //scoreboard
         sb = new Scoreboard();
@@ -46,8 +46,8 @@ class Game
 
     public void Update()
     {
-        if (title){ title = scene.titleScene();}
-        else if (end == true){scene.endScene();}
+        if (startScene){ startScene = scene.titleScene();}
+        else if (endScene){scene.endScene();}
         else
         {
             piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
