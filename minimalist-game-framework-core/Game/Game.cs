@@ -7,6 +7,8 @@ class Game
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
     public static Map map;
+    public Boolean title;
+    public Boolean end;
 
 
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-no-dots.png");
@@ -18,7 +20,7 @@ class Game
 
 
     Scoreboard sb;
-    Cutscenes scene;
+    Scenes scene;
     float speed = 2;
 
 
@@ -26,12 +28,16 @@ class Game
 
     public Game()
     {
+        //scene control
+        title = true;
+        end = false;
+
         //scoreboard
         sb = new Scoreboard();
-        scene = new Cutscenes();
+        scene = new Scenes();
 
 
-        // create piper sprite
+        //create piper sprite
         piper = new Sprite(Resolution / 2, piperTexture);
         piperFrameIndex = 0;
         sprites.Add(piper);
@@ -40,13 +46,16 @@ class Game
 
     public void Update()
     {
-        if (sb.getTime() < 0)
+        if (title){ title = scene.titleScene();}
+        else if (end == true){scene.endScene();}
+        else
         {
-            scene.titleScene();
+            piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
+            sb.updateScoreboard();
         }
+      
         
-        piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
-        sb.updateScoreboard();
+        
         
     }
 }

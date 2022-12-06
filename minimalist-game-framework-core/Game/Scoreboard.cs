@@ -14,7 +14,7 @@ public class Scoreboard
     public Scoreboard()
     {
         score = 0;
-        time = -3;
+        time = 0;
         flowers = 0;
         lives = 3;
         oneUps = 0;
@@ -46,11 +46,13 @@ public class Scoreboard
             Engine.DrawString("SCORE", new Vector2(0, 0), Color.Yellow, arial);
             Engine.DrawString("" + score, new Vector2(40, 0), Color.White, arial);
             Engine.DrawString("TIME", new Vector2(0, 15), Color.Yellow, arial);
+
             String timeDisplay = (int)time / 60 + ":";
             if (time % 60 < 10)
             {
                 timeDisplay += 0;
             }
+
             timeDisplay += (int)time % 60;
 
             Engine.DrawString(timeDisplay, new Vector2(28, 15), Color.White, arial);
