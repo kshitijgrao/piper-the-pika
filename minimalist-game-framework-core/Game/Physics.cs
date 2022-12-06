@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 
@@ -7,6 +8,9 @@ using System.Text;
 //TODO: this class + subclasses for different shaped hitboxes
 class Physics
 {
+    public static readonly Vector2 g = new Vector2(0,5);
+    public static readonly int collisionSteps = 5;
+
     //detect collisions for things that are within the window
     public static void detectCollisions(Sprite[] sprites)
     {
@@ -64,26 +68,48 @@ class Physics
 
     }
 
+    //detecting ground
 
     public static void detectGround(PhysicsSprite obj)
     {
         Vector2 pos = obj.getBotPoint();
+        Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
 
-        if(Game.map.getPixelType(pos) == Map.GROUND_CODE)
+        if(Game.map.inAir(pos) && Game.map.onGround(finalPos))
         {
+            Vector2 diff = finalPos - pos;
+            while (!Game.map.onGround(pos) && pos.X <= finalPos.X)
+                pos += diff / collisionSteps;
+
+            obj.loc += diff - (finalPos - pos);
+            obj.keepOnSurface();
+            pos = obj.getBotPoint();
+            obj.vel = obj.vel - Game.map.getNormalVector(pos) * Vector2.Dot(Game.map.getNormalVector(pos), obj.vel);
 
 
+            //might have to check for some 0 cases with the dividing here
+            obj.collideGround((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
+        }
+    }
+
+    public static Vector2 getPhysicsAcceleration(Vector2 loc, Vector2 vel)
+    {
+        Vector2 norm = Game.map.getNormalVector(loc);
+        float radius = Game.map.getSurfaceRadius(loc);
+        if (Game.map.onGround(loc))
+        {
+            if(radius < 0)
+            {
+                return g - norm * Vector2.Dot(g, norm);
+            }
+            return g - norm * Vector2.Dot(g, norm) + vel.Length() * vel.Length() / radius * norm;
+        }
+        else
+        {
+            return g;
         }
 
-
-
     }
-
-    public static void keepOnSurface(PhysicsSprite obj)
-    {
-
-    }
-
 
 
     //update physics for things that are within the window

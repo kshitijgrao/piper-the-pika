@@ -6,43 +6,32 @@ class Sprite {
 
     public Vector2 loc;
     private Texture spritemap;
-    private protected Vector2[] hitboxes;
+    private protected Vector2 hitbox;
     private protected int state;
     private Boolean spriteFaceLeft;
-    private float[] hitboxCoord;
-    
-    
+
+    public static readonly int landState = 6;
+
     public Sprite(Vector2 loc, Texture spritemap)
     {
         this.loc = loc;
         this.spritemap = spritemap;
-        hitboxes = new Vector2[1];
+        hitbox = new Vector2(24, 24);
         spriteFaceLeft = false;
         state = 0;
-        hitboxCoord = new float[hitboxes.Length];
-        hitboxCoord[0] = 0;
-        for(int i = 0; i < hitboxes.Length - 1; i++)
-        {
-            hitboxCoord[i + 1] = hitboxCoord[i] + hitboxes[i].X;
-        }
+
     }
 
-    public Sprite(Vector2 loc, Texture spritemap, Vector2[] hitboxes)
+    public Sprite(Vector2 loc, Texture spritemap, Vector2 hitbox)
     {
         this.loc = loc;
         this.spritemap = spritemap;
-        this.hitboxes = hitboxes;
+        this.hitbox = hitbox;
         spriteFaceLeft = false;
         state = 0;
-        hitboxCoord = new float[hitboxes.Length];
-        hitboxCoord[0] = 0;
-        for (int i = 0; i < hitboxes.Length - 1; i++)
-        {
-            hitboxCoord[i + 1] = hitboxCoord[i] + hitboxes[i].X;
-        }
     }
 
-    public Sprite(float x, float y, Texture sprites, Vector2[] hitboxes) : this(new Vector2(x, y), sprites, hitboxes)
+    public Sprite(float x, float y, Texture sprites, Vector2 hitbox) : this(new Vector2(x, y), sprites, hitbox)
     {
         
     }
@@ -50,11 +39,6 @@ class Sprite {
     public virtual void collide(Sprite other)
     {
 
-    }
-
-    private Bounds2 getTextureSource()
-    {
-        return new Bounds2(hitboxCoord[state], 0, hitboxes[state].X, hitboxes[state].Y);
     }
 
     public void move(Vector2 v)
@@ -72,9 +56,9 @@ class Sprite {
         return spriteFaceLeft;
     }
     
-    public void draw()
+    public void testDraw()
     {
-        Engine.DrawTexture(spritemap, loc - hitboxes[state] / 2, source: getTextureSource());
+        Engine.DrawTexture(spritemap, loc - hitbox / 2, source: new Bounds2(0,0,24,24));
     }
 
     public void draw(Bounds2 bounds)
@@ -95,18 +79,18 @@ class Sprite {
 
     public virtual void updateState()
     {
-        state = (state + 1) % hitboxes.Length;
+        state = (state + 1) % 5;
     }
 
     public Bounds2 getHitbox()
     {
-        return new Bounds2(loc - hitboxes[state] / 2, hitboxes[state]);
+        return new Bounds2(loc - hitbox / 2, hitbox);
     }
 
 
     public Vector2 getBotPoint()
     {
-        return loc + hitboxes[state] / 2;
+        return loc + hitbox / 2;
     }
 
 }
