@@ -8,7 +8,8 @@ using System.Text;
 //TODO: this class + subclasses for different shaped hitboxes
 class Physics
 {
-    public static readonly Vector2 g = new Vector2(0,-5);
+    public static readonly Vector2 g = new Vector2(0,5);
+    public static readonly int collisionSteps = 5;
 
     //detect collisions for things that are within the window
     public static void detectCollisions(Sprite[] sprites)
@@ -67,6 +68,7 @@ class Physics
 
     }
 
+    //detecting ground
 
     public static void detectGround(PhysicsSprite obj)
     {
@@ -77,7 +79,7 @@ class Physics
         {
             Vector2 diff = finalPos - pos;
             while (!Game.map.onGround(pos) && pos.X <= finalPos.X)
-                pos += diff / diff.X;
+                pos += diff / collisionSteps;
 
             obj.loc += diff - (finalPos - pos);
             obj.keepOnSurface();
@@ -85,8 +87,8 @@ class Physics
             obj.vel = obj.vel - Game.map.getNormalVector(pos) * Vector2.Dot(Game.map.getNormalVector(pos), obj.vel);
 
 
-
-            obj.collideGround((diff.X - x) / diff.X * Engine.TimeDelta);
+            //might have to check for some 0 cases with the dividing here
+            obj.collideGround((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
         }
     }
 

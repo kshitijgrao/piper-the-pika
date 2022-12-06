@@ -10,6 +10,7 @@ class PhysicsSprite : Sprite
 
     private bool collided;
     private float timeLeft;
+    internal bool onGround;
 
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2[] hitboxes) : base(loc,sprites,hitboxes)
     {
@@ -17,6 +18,16 @@ class PhysicsSprite : Sprite
         acc = new Vector2(0, 0);
         collided = false;
         timeLeft = 0;
+        onGround = Game.map.onGround(this.getBotPoint());
+    }
+
+    public PhysicsSprite(Vector2 loc, Texture sprites) : base(loc, sprites)
+    {
+        vel = new Vector2(0, 0);
+        acc = new Vector2(0, 0);
+        collided = false;
+        timeLeft = 0;
+        onGround = Game.map.onGround(this.getBotPoint());
     }
 
     public void setVelocity(Vector2 vel)
@@ -54,6 +65,7 @@ class PhysicsSprite : Sprite
             loc = loc + vel * Engine.TimeDelta;
             vel += acc * Engine.TimeDelta;
         }
+        keepOnSurface();
     }
 
     public override void collide(Sprite other)
@@ -63,6 +75,7 @@ class PhysicsSprite : Sprite
 
     public void collideGround(float timeLeft)
     {
+        onGround = true;
         this.timeLeft = timeLeft;
     }
 

@@ -17,6 +17,7 @@ class Sprite {
         this.loc = loc;
         this.spritemap = spritemap;
         hitboxes = new Vector2[1];
+        hitboxes[0] = new Vector2(24, 24);
         spriteFaceLeft = false;
         state = 0;
         hitboxCoord = new float[hitboxes.Length];
@@ -74,7 +75,7 @@ class Sprite {
     
     public void draw()
     {
-        Engine.DrawTexture(spritemap, loc - hitboxes[state] / 2, source: getTextureSource());
+        Engine.DrawTexture(spritemap, loc - hitboxes[state] / 2, source: new Bounds2(0,0,24,24));
     }
 
     public void draw(Bounds2 bounds)

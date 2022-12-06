@@ -5,57 +5,68 @@ using System.Text;
 class Sonic : PhysicsSprite
 {
     public static readonly int boostFrameTime = 10;
-    public static readonly float maxHorVel = 6;
+    public static readonly float maxHorVel = 10;
     public static readonly float maxHorVelBoost = 2;
-    public static readonly float jumpImpulseMag = 3;
-    public static readonly float accelerationMag = 1;
-    public static readonly float brakeAccMag = 1;
-    public static readonly float accelerationBoostFactor = 1.2;
+    public static readonly float jumpImpulseMag = 10;
+    public static readonly float accelerationMag = 5;
+    public static readonly float brakeAccMag = 4;
+    public static readonly float accelerationBoostFactor = (float) 1.2;
 
     private int flows;
     private bool[] recentFlows;
+    
 
     public Sonic(Vector2 loc, Texture sprites, Vector2[] hitboxes):base(loc, sprites, hitboxes)
     {
         flows = 0;
         recentFlows = new bool[boostFrameTime];
+        
+    }
+    public Sonic(Vector2 loc, Texture sprites) : base(loc, sprites)
+    {
+        flows = 0;
+        recentFlows = new bool[boostFrameTime];
+        onGround = Game.map.onGround(this.getBotPoint());
     }
 
     public void jump()
     {
-        vel = vel + jumpImpulseMag * Game.map.getNormalVector(loc);
+        if (!Game.map.onGround(this.getBotPoint()))
+        {
+            return;
+        }
+        this.vel = this.vel + jumpImpulseMag * Game.map.getNormalVector(loc);
     }
 
     public void setAcceleration(String key)
     {
-        loc = this.getBotPoint();
-        if(key == Game.RIGHT)
+        Vector2 tempLoc = this.getBotPoint();
+        if(key.Equals(Game.RIGHT))
         {
-            acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(90);
+            this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(90);
         }
-        else if(key == Game.LEFT)
+        else if(key.Equals(Game.LEFT))
         {
-            acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(270);
+            this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(270);
         }
         else
         {
-            if (Game.map.onGround(loc))
-                acc = vel.Normalized() * (-1) * brakeAccMag;
+            if (Game.map.onGround(tempLoc))
+                this.acc = vel.Normalized() * (-1) * brakeAccMag;
             else
-                acc = Vector2.Zero;
+                this.acc = Vector2.Zero;
         }
 
         if (Game.map.inAir(loc))
         {
-            acc *= accelerationBoostFactor;
+            acc.X *= accelerationBoostFactor;
         }
 
-        acc += Physics.getPhysicsAcceleration(loc, vel);
+        this.acc += Physics.getPhysicsAcceleration(tempLoc, this.vel);
     }
 
     public override void updateState()
     {
         base.updateState();
-        base.keepOnSurface();
     }
 }
