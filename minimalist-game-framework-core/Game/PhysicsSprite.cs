@@ -12,7 +12,7 @@ class PhysicsSprite : Sprite
     private float timeLeft;
     internal bool onGround;
 
-    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2[] hitboxes) : base(loc,sprites,hitboxes)
+    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes) : base(loc,sprites,hitboxes)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
@@ -76,6 +76,7 @@ class PhysicsSprite : Sprite
     public void collideGround(float timeLeft)
     {
         onGround = true;
+        this.setState(Sprite.landState);
         this.timeLeft = timeLeft;
     }
 

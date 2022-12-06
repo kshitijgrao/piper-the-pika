@@ -11,12 +11,14 @@ class Sonic : PhysicsSprite
     public static readonly float accelerationMag = 5;
     public static readonly float brakeAccMag = 4;
     public static readonly float accelerationBoostFactor = (float) 1.2;
+    
+
 
     private int flows;
     private bool[] recentFlows;
     
 
-    public Sonic(Vector2 loc, Texture sprites, Vector2[] hitboxes):base(loc, sprites, hitboxes)
+    public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes)
     {
         flows = 0;
         recentFlows = new bool[boostFrameTime];

@@ -35,8 +35,8 @@ class Game
     {
         //scoreboard
         sb = new Scoreboard();
-        map = new Map("C:/Users/evane/source/repos/recreate-a-classic-game-sonic-yeer/minimalist-game-framework-core/Assets/bruhbruh.bmp");
-        bg = Engine.LoadTexture("bruhbruh.bmp");
+        map = new Map("TestMap.bmp");
+        bg = Engine.LoadTexture("TestMap.bmp");
 
 
         // create piper sprite
@@ -78,7 +78,7 @@ class Game
         Engine.DrawTexture(bg, new Vector2(0, 0));
         
         //replace this with proper drawing with rao/yasemin's rendering/animation system
-        piper.draw();
+        piper.testDraw();
 
 
 

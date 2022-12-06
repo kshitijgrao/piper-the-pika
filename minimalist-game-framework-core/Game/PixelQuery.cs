@@ -25,9 +25,9 @@ unsafe class Map {
 
     public Map(String loc)
     {
-        pixelMap = (SDL.SDL_Surface*) SDL.SDL_LoadBMP(loc);
+        pixelMap = (SDL.SDL_Surface*) SDL.SDL_LoadBMP(Engine.GetAssetPath(loc));
 
-        SDL.SDL_FreeSurface((IntPtr) pixelMap);
+        
         SDL.SDL_LockSurface((IntPtr) pixelMap);
 
         int pitch = (*pixelMap).pitch;
@@ -42,9 +42,8 @@ unsafe class Map {
             transitions[i] = new List<int>();
         }
         
-        int bpp = 3;
+        int bpp = 4;
         byte* pixelsImg = (byte*)(*pixelMap).pixels;
-        System.Diagnostics.Debug.WriteLine(*pixelsImg);
 
 
         for (int x = 0; x < pixels.GetLength(0); x++)
@@ -62,7 +61,8 @@ unsafe class Map {
             }
         }
 
-        SDL.SDL_UnlockSurface((IntPtr) pixelMap);    
+        SDL.SDL_UnlockSurface((IntPtr) pixelMap);
+        SDL.SDL_FreeSurface((IntPtr) pixelMap);
     }
 
     //gets the pixel type at the given coordinate
