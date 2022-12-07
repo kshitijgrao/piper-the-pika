@@ -18,43 +18,49 @@ class Game
     
 
 
-    Sonic piper;
+    public static Sonic piper;
 
 
     Scoreboard sb;
     //float speed = 2;
-
+    
 
     Font arial = Engine.LoadFont("Arial.ttf", 10);
 
     Sprite[] sprites = new Sprite[1];
 
-    Texture bg;
+    Rendering scroll;
+    //Texture bg;
+    Vector2 pos;
 
     public Game()
     {
         //scoreboard
         sb = new Scoreboard();
         map = new Map("TestMap.bmp");
-        bg = Engine.LoadTexture("TestMap.bmp");
+
+        //bg = Engine.LoadTexture("TestMap.bmp");
 
 
         // create piper sprite
-        piper = new Sonic(new Vector2(30,129), piperTexture);
+        piper = new Sonic(new Vector2(100, 960), piperTexture);
         sprites[0] = piper;
         //sprites.Add(piper);
+        scroll = new Rendering("TestMap.bmp");
 
     }
 
     public void Update()
     {
+        
+
         //getting input (need to adjust this to work generally, this is just for testing)
         String currKey = "None";
         if (Engine.GetKeyHeld(Key.Right))
         {
             currKey = Game.RIGHT;
         }
-        else if(Engine.GetKeyHeld(Key.Left))
+        else if (Engine.GetKeyHeld(Key.Left))
         {
             currKey = Game.LEFT;
         }
@@ -75,12 +81,13 @@ class Game
         Physics.updatePhysics(sprites);
 
 
-        Engine.DrawTexture(bg, new Vector2(0, 0));
-        
+        //Engine.DrawTexture(bg, new Vector2(0, 0));
+
+        scroll.scrollingWindow();
+
         //replace this with proper drawing with rao/yasemin's rendering/animation system
-        piper.testDraw();
-
-
+        //piper.testDraw();
+        piper.draw(new Bounds2(0, 0, 24, 24), scroll.pos + piper.loc - new Vector2(12, 12));
 
         //piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
         //sb.updateScoreboard();

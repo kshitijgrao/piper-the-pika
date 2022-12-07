@@ -8,7 +8,7 @@ using System.Text;
 //TODO: this class + subclasses for different shaped hitboxes
 class Physics
 {
-    public static readonly Vector2 g = new Vector2(0,5);
+    public static readonly Vector2 g = new Vector2(0,10);
     public static readonly int collisionSteps = 5;
 
     //detect collisions for things that are within the window
