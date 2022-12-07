@@ -10,7 +10,7 @@ class Rendering
     Sprite character;
     Vector2 center;
 
-    public Rendering(String texture, String charSprite, Vector2[] hitbox)
+    public Rendering(String texture, String charSprite, Vector2 hitbox)
     {
         pos = new Vector2(0, 0);
         map = Engine.LoadTexture(texture);
@@ -22,7 +22,7 @@ class Rendering
     public void scrollingWindow()
     {
         Engine.DrawTexture(map, pos);
-        character.draw();
+        character.testDraw();
 
         if (Engine.GetKeyHeld(Key.Right))
         {

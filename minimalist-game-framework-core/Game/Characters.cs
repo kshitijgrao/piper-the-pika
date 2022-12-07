@@ -15,19 +15,16 @@ class Sonic : PhysicsSprite
 
 
     private int flows;
-    private bool[] recentFlows;
     
 
     public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes)
     {
         flows = 0;
-        recentFlows = new bool[boostFrameTime];
         
     }
     public Sonic(Vector2 loc, Texture sprites) : base(loc, sprites)
     {
         flows = 0;
-        recentFlows = new bool[boostFrameTime];
         onGround = Game.map.onGround(this.getBotPoint());
     }
 
@@ -70,5 +67,42 @@ class Sonic : PhysicsSprite
     public override void updateState()
     {
         base.updateState();
+        flows *= 2;
+        flows %= ((int)Math.Pow(2, boostFrameTime));
     }
+
+    public void addFlower()
+    {
+
+    }
+}
+
+
+class Flower : Sprite
+{
+    public static readonly Vector2 defaultFlowerHitbox = new Vector2(20, 20);
+    public static readonly Texture defaultFlower = Engine.LoadTexture("flower.png");
+    public Flower(Vector2 loc) : base(loc, defaultFlower, defaultFlowerHitbox)
+    {
+
+    }
+
+    public override void collide(Sprite mainCharacter)
+    {
+        Game.sb.modifyFlowers(1);
+        ((Sonic) mainCharacter).addFlower();
+        base.collide(mainCharacter);
+    }
+}
+
+class Enemy : PhysicsSprite
+{
+    public static readonly Vector2 defaultEnemyHitbox = new Vector2(20, 20);
+    public static readonly Texture enemyTextureBruh = Engine.LoadTexture("hello.png");
+
+    public Enemy(Vector2 loc, Texture text) : base(loc, text, defaultEnemyHitbox)
+    {
+
+    }
+
 }

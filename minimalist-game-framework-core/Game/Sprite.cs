@@ -10,6 +10,8 @@ class Sprite {
     private protected int state;
     private Boolean spriteFaceLeft;
 
+    private bool invisible;
+
     public static readonly int landState = 6;
 
     public Sprite(Vector2 loc, Texture spritemap)
@@ -19,6 +21,7 @@ class Sprite {
         hitbox = new Vector2(24, 24);
         spriteFaceLeft = false;
         state = 0;
+        invisible = false;
 
     }
 
@@ -29,6 +32,7 @@ class Sprite {
         this.hitbox = hitbox;
         spriteFaceLeft = false;
         state = 0;
+        invisible = false;
     }
 
     public Sprite(float x, float y, Texture sprites, Vector2 hitbox) : this(new Vector2(x, y), sprites, hitbox)
@@ -38,7 +42,7 @@ class Sprite {
 
     public virtual void collide(Sprite other)
     {
-
+        invisible = true;
     }
 
     public void move(Vector2 v)
@@ -63,8 +67,10 @@ class Sprite {
 
     public void draw(Bounds2 bounds)
     {
-        TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
-        Engine.DrawTexture(spritemap, loc, source: bounds, mirror: mirror);
+        if (!invisible) {
+            TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
+            Engine.DrawTexture(spritemap, loc, source: bounds, mirror: mirror);
+        }
     }
 
     public void setState(int state)
@@ -91,6 +97,11 @@ class Sprite {
     public Vector2 getBotPoint()
     {
         return loc + hitbox / 2;
+    }
+
+    public bool notCollidable()
+    {
+        return invisible;
     }
 
 }

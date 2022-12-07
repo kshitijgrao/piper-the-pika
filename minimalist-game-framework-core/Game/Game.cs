@@ -12,6 +12,7 @@ class Game
     public static readonly string LEFT = "left";
 
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-no-dots.png");
+    
 
     // sprites
     //float piperFrameIndex;
@@ -21,13 +22,14 @@ class Game
     Sonic piper;
 
 
-    Scoreboard sb;
+    public static Scoreboard sb;
     //float speed = 2;
 
 
     Font arial = Engine.LoadFont("Arial.ttf", 10);
 
     Sprite[] sprites = new Sprite[1];
+    Sprite[] rings = new Flower[1];
 
     Texture bg;
 
@@ -35,14 +37,18 @@ class Game
     {
         //scoreboard
         sb = new Scoreboard();
-        map = new Map("TestMap.bmp");
-        bg = Engine.LoadTexture("TestMap.bmp");
+        map = new Map("bruhbruh.bmp");
+        bg = Engine.LoadTexture("bruhbruh.bmp");
 
 
         // create piper sprite
         piper = new Sonic(new Vector2(30,129), piperTexture);
         sprites[0] = piper;
         //sprites.Add(piper);
+        for(int i =0; i < rings.Length; i++)
+        {
+            rings[i] = new Flower(new Vector2(113,149));
+        }
 
     }
 
@@ -62,10 +68,14 @@ class Game
         //update velocity (mainly jump velocity)
         if (Engine.GetKeyDown(Key.Z))
         {
-            piper.jump();
+           piper.jump();
         }
 
         //collision detection
+
+        //rings
+        Physics.detectCollisions(piper, rings);
+        //ground
         Physics.detectGround(piper);
 
         //update acceleration
@@ -79,10 +89,12 @@ class Game
         
         //replace this with proper drawing with rao/yasemin's rendering/animation system
         piper.testDraw();
+        rings[0].testDraw();
 
 
 
         //piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
-        //sb.updateScoreboard();
+        sb.updateScoreboard();
+        sb.renderScoreboard();
     }
 }
