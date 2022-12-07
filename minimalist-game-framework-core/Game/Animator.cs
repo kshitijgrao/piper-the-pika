@@ -41,7 +41,7 @@ internal static class Animator
         frameIndex = (frameIndex + Engine.TimeDelta * Framerate) % 4.0f;
         Vector2 piperFrame = new Vector2((int)frameIndex * 24, piper.getState() * 24);
         Bounds2 piperFrameBounds = new Bounds2(piperFrame, new Vector2(24, 24));
-        piper.draw(piperFrameBounds);
+        //piper.draw(piperFrameBounds);
         return frameIndex;
     }
 }

@@ -65,11 +65,11 @@ class Sprite {
         Engine.DrawTexture(spritemap, loc - hitbox / 2, source: new Bounds2(0,0,24,24));
     }
 
-    public void draw(Bounds2 bounds)
+    public void draw(Bounds2 bounds, Vector2 position)
     {
         if (!invisible) {
             TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
-            Engine.DrawTexture(spritemap, loc, source: bounds, mirror: mirror);
+            Engine.DrawTexture(spritemap, position, source: bounds, mirror: mirror);
         }
     }
 
