@@ -43,10 +43,10 @@ class Game
 
 
         // create piper sprite
-        piper = new Sonic(new Vector2(100, 960), piperTexture);
+        piper = new Sonic(new Vector2(160, 960), piperTexture);
         sprites[0] = piper;
         //sprites.Add(piper);
-        scroll = new Rendering("TestMap.bmp");
+        scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X/8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
 
     }
 
@@ -90,6 +90,6 @@ class Game
         piper.draw(new Bounds2(0, 0, 24, 24), scroll.pos + piper.loc - new Vector2(12, 12));
 
         //piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
-        //sb.updateScoreboard();
+        sb.updateScoreboard();
     }
 }

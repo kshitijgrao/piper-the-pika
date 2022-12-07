@@ -7,12 +7,14 @@ class Rendering
     public Texture map; //1944 x 1172
     public Vector2 pos;
     private Vector2 center;
+    private Bounds2 window;
 
-    public Rendering(String texture)
+    public Rendering(String texture, Bounds2 window)
     {
-        pos = new Vector2(60, -838);
+        pos = new Vector2(0, -838);
         map = Engine.LoadTexture(texture);
         center = new Vector2(Game.Resolution.X / 2, Game.Resolution.Y / 2);
+        this.window = window;
     }
 
     public void scrollingWindow()
@@ -21,24 +23,24 @@ class Rendering
 
         Vector2 onScreenCoord = Game.piper.loc + pos;
 
-        if (onScreenCoord.X > Game.Resolution.X * 0.8)
+        if (onScreenCoord.X > window.Max.X && Game.piper.vel.X > 0)
         {
             pos.X -= Engine.TimeDelta * Game.piper.vel.X;
         }
         
-        if (onScreenCoord.X < Game.Resolution.X * 0.2)
+        if (onScreenCoord.X < window.Min.X && Game.piper.vel.X < 0)
         {
-            pos.X += Engine.TimeDelta * Game.piper.vel.X;
+            pos.X -= Engine.TimeDelta * Game.piper.vel.X;
         }
 
-        if (onScreenCoord.Y > Game.Resolution.Y * 0.8)
+        if (onScreenCoord.Y < window.Min.Y && Game.piper.vel.Y < 0)
         {
             pos.Y -= Engine.TimeDelta * Game.piper.vel.Y;
         }
 
-        if (onScreenCoord.Y < Game.Resolution.Y * 0.2)
+        if (onScreenCoord.Y > window.Max.Y && Game.piper.vel.Y > 0)
         {
-            pos.Y += Engine.TimeDelta * Game.piper.vel.Y;
+            pos.Y -= Engine.TimeDelta * Game.piper.vel.Y;
         }
     }
 
