@@ -17,7 +17,7 @@ class Game
 
     // sprites
     //float piperFrameIndex;
-    
+
 
 
     public static Sonic piper;
@@ -41,15 +41,10 @@ class Game
 
         //scoreboard
         sb = new Scoreboard();
-        
+
         //new scene
-        scene = new Scenes();
+        //scene = new Scenes();
 
-
-        //create piper sprite
-        piper = new Sprite(Resolution / 2, piperTexture);
-        piperFrameIndex = 0;
-        sprites.Add(piper);
 
         //create map
         map = new Map("TestMap.bmp");
@@ -61,7 +56,7 @@ class Game
         piper = new Sonic(new Vector2(160, 960), piperTexture);
         sprites[0] = piper;
         //sprites.Add(piper);
-        scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X/8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
+        scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
 
 
     }
@@ -69,50 +64,48 @@ class Game
     public void Update()
     {
         //scene control
-        if (startScene){ startScene = scene.titleScene();}
-        else if (endScene){scene.endScene();}
+        if (startScene) { startScene = Scenes.titleScene(); }
+        else if (endScene) { Scenes.endScene(); }
         else
         {
-        
+            //getting input (need to adjust this to work generally, this is just for testing)
+            String currKey = "None";
+            if (Engine.GetKeyHeld(Key.Right))
+            {
+                currKey = Game.RIGHT;
+            }
+            else if (Engine.GetKeyHeld(Key.Left))
+            {
+                currKey = Game.LEFT;
+            }
 
-        //getting input (need to adjust this to work generally, this is just for testing)
-        String currKey = "None";
-        if (Engine.GetKeyHeld(Key.Right))
-        {
-            currKey = Game.RIGHT;
-        }
-        else if (Engine.GetKeyHeld(Key.Left))
-        {
-            currKey = Game.LEFT;
-        }
+            //update velocity (mainly jump velocity)
+            if (Engine.GetKeyDown(Key.Z))
+            {
+                piper.jump();
+            }
 
-        //update velocity (mainly jump velocity)
-        if (Engine.GetKeyDown(Key.Z))
-        {
-            piper.jump();
-        }
+            //collision detection
+            Physics.detectGround(piper);
 
-        //collision detection
-        Physics.detectGround(piper);
+            //update acceleration
+            piper.setAcceleration(currKey);
 
-        //update acceleration
-        piper.setAcceleration(currKey);
-
-        //update overall physics
-        Physics.updatePhysics(sprites);
+            //update overall physics
+            Physics.updatePhysics(sprites);
 
 
-        //Engine.DrawTexture(bg, new Vector2(0, 0));
+            //Engine.DrawTexture(bg, new Vector2(0, 0));
 
-        scroll.scrollingWindow();
+            scroll.scrollingWindow();
 
-        //replace this with proper drawing with rao/yasemin's rendering/animation system
-        //piper.testDraw();
-        piper.draw(new Bounds2(0, 0, 24, 24), scroll.pos + piper.loc - new Vector2(12, 12));
+            //replace this with proper drawing with rao/yasemin's rendering/animation system
+            //piper.testDraw();
+            piper.draw(new Bounds2(0, 0, 24, 24), scroll.pos + piper.loc - new Vector2(12, 12));
 
-        //piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
-        sb.updateScoreboard();
-        
+            //piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
+            sb.updateScoreboard();
+
         }
     }
 }
