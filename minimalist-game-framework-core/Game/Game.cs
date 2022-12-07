@@ -7,6 +7,8 @@ class Game
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
     public static Map map;
+    public Boolean startScene;
+    public Boolean endScene;
 
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
@@ -22,8 +24,6 @@ class Game
 
 
     Scoreboard sb;
-    //float speed = 2;
-    
 
     Font arial = Engine.LoadFont("Arial.ttf", 10);
 
@@ -35,8 +35,23 @@ class Game
 
     public Game()
     {
+        //scene control
+        startScene = true;
+        endScene = false;
+
         //scoreboard
         sb = new Scoreboard();
+        
+        //new scene
+        scene = new Scenes();
+
+
+        //create piper sprite
+        piper = new Sprite(Resolution / 2, piperTexture);
+        piperFrameIndex = 0;
+        sprites.Add(piper);
+
+        //create map
         map = new Map("TestMap.bmp");
 
         //bg = Engine.LoadTexture("TestMap.bmp");
@@ -48,10 +63,16 @@ class Game
         //sprites.Add(piper);
         scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X/8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
 
+
     }
 
     public void Update()
     {
+        //scene control
+        if (startScene){ startScene = scene.titleScene();}
+        else if (endScene){scene.endScene();}
+        else
+        {
         
 
         //getting input (need to adjust this to work generally, this is just for testing)
@@ -91,5 +112,7 @@ class Game
 
         //piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
         sb.updateScoreboard();
+        
+        }
     }
 }
