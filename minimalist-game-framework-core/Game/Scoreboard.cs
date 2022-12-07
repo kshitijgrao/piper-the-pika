@@ -43,14 +43,17 @@ public class Scoreboard
     public void renderScoreboard()
         {
             //topLeft scoreboard elements
+
             Engine.DrawString("SCORE", new Vector2(0, 0), Color.Black, arial); //yellow
             Engine.DrawString("" + score, new Vector2(40, 0), Color.White, arial); //white
             Engine.DrawString("TIME", new Vector2(0, 15), Color.Yellow, arial); //yellow
+
             String timeDisplay = (int)time / 60 + ":";
             if (time % 60 < 10)
             {
                 timeDisplay += 0;
             }
+
             timeDisplay += (int)time % 60;
 
             Engine.DrawString(timeDisplay, new Vector2(28, 15), Color.White, arial); //white
@@ -141,6 +144,11 @@ public class Scoreboard
                 score += 500;
             }
         }
+
+    public float getTime()
+    {
+        return time;
+    }
 
 }
 
