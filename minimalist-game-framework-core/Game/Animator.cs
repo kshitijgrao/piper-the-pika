@@ -32,7 +32,7 @@ internal static class Animator
             else if (key.Equals(Key.A) || key.Equals(Key.D))
             {
                 piper.setState(movementState);
-                if (piper.isLeft() != key.Equals(Key.A))
+                if (piper.isLeft() != piper.vel.X < 0)
                 {
                     piper.turn();
                 }
