@@ -94,15 +94,3 @@ class Flower : Sprite
         base.collide(mainCharacter);
     }
 }
-
-class Enemy : PhysicsSprite
-{
-    public static readonly Vector2 defaultEnemyHitbox = new Vector2(20, 20);
-    public static readonly Texture enemyTextureBruh = Engine.LoadTexture("hello.png");
-
-    public Enemy(Vector2 loc, Texture text) : base(loc, text, defaultEnemyHitbox)
-    {
-
-    }
-
-}

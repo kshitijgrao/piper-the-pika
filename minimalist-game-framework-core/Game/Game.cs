@@ -56,7 +56,7 @@ class Game
         //sprites.Add(piper);
         for(int i =0; i < rings.Length; i++)
         {
-            rings[i] = new Flower(new Vector2(113,149));
+            rings[i] = new Flower(new Vector2(324,962));
         }
         scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
 
@@ -85,12 +85,12 @@ class Game
             if (Engine.GetKeyDown(Key.Z))
             {
                 piper.jump();
-            }
+            } 
 
             //collision detection
             Physics.detectGround(piper);
             //ground
-            Physics.detectGround(piper);
+            Physics.detectCollisions(rings);
 
             //update acceleration
             piper.setAcceleration(currKey);
