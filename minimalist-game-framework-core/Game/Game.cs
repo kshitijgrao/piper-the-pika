@@ -9,16 +9,14 @@ class Game
     public static Map map;
 
 
-    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-no-dots.png");
+    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
 
     // sprites
     Sprite piper;
-    float piperFrameIndex;
     ArrayList sprites = new ArrayList();
 
 
     Scoreboard sb;
-    float speed = 2;
 
 
     Font arial = Engine.LoadFont("Arial.ttf", 10);
@@ -27,19 +25,17 @@ class Game
     {
         //scoreboard
         sb = new Scoreboard();
-        map = new Map("C:/Users/evane/source/repos/recreate-a-classic-game-sonic-yeer/minimalist-game-framework-core/Assets/testing_query.bmp");
+        //map = new Map("C:/Users/evane/source/repos/recreate-a-classic-game-sonic-yeer/minimalist-game-framework-core/Assets/testing_query.bmp");
 
 
         // create piper sprite
         piper = new Sprite(Resolution / 2, piperTexture);
-        piperFrameIndex = 0;
         sprites.Add(piper);
-
     }
 
     public void Update()
     {
-        piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
+        InputHandler.getPlayerInput(piper);
         sb.updateScoreboard();
     }
 }
