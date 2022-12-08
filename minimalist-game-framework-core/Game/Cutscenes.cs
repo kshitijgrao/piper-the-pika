@@ -6,6 +6,7 @@ public class Scenes
 		Font h2 = Engine.LoadFont("Arial.ttf", 20);
 		Font h3 = Engine.LoadFont("Arial.ttf", 12);
 		Texture piper = Engine.LoadTexture("pika-spritemap-no-dots.png");
+		Boolean scoreUpdate = false;
 
         public Scenes()
 		{
@@ -29,7 +30,7 @@ public class Scenes
 
 
         //End Scene
-		public Boolean endScene()
+		public Boolean endScene(Scoreboard sb)
 	{
 		if (Engine.GetMouseButtonDown(MouseButton.Left))
 		{
@@ -39,6 +40,18 @@ public class Scenes
 		Engine.DrawString("PASSED", new Vector2(0, 0), Color.White, h2);
 		Engine.DrawString("Act", new Vector2(0, 0), Color.Orange, h2);
 		Engine.DrawString("1", new Vector2(0, 0), Color.Yellow, h1);
+		sb.addFlowerScore();
+
+		if (!scoreUpdate)
+		{
+
+			sb.addFlowerScore();
+			int tBonus = sb.timeBonus();
+			Engine.DrawString(tBonus + "", new Vector2(100, 00), Color.Black, h2);
+
+			scoreUpdate = true;
+		}
+
 		return true;
 	}
 	

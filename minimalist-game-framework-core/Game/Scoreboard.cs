@@ -108,45 +108,60 @@ public class Scoreboard
         }
 
     //time bonus after level
-    public void timeBonus(int seconds)
+    public int timeBonus()
         {
             if ((int)time < 29)
             {
                 score += 50000;
+                return 50000;
             }
             else if ((int)time < 45)
             {
                 score += 10000;
+                return 10000;
             }
             else if ((int)time < 60)
             {
                 score += 5000;
+            return 5000;
             }
             else if ((int)time < 90)
             {
                 score += 4000;
+            return 4000;
             }
             else if ((int)time < 120)
             {
                 score += 3000;
+            return 3000;
             }
             else if ((int)time < 180)
             {
                 score += 2000;
+            return 2000;
             }
             else if ((int)time < 240)
             {
                 score += 1000;
+            return 1000;
             }
             else if ((int)time < 300)
             {
                 score += 500;
+            return 500;
             }
+            return 0;
         }
 
     public float getTime()
     {
         return time;
+    }
+
+    public void addFlowerScore()
+    {
+        score += flowers * 10;
+        
     }
 
 }

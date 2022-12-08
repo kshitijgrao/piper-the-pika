@@ -71,7 +71,7 @@ class Game
     {
         //scene control
         if (startScene){ startScene = scene.titleScene();}
-        else if (endScene){scene.endScene();}
+        else if (endScene){scene.endScene(); sb.updateScoreboard(); }
         else
         {
             piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
