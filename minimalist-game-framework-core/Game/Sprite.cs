@@ -6,9 +6,11 @@ class Sprite {
 
     public Vector2 loc;
     private Texture spritemap;
-    private protected Vector2 hitbox;
+    private float frameIndex;
     private protected int state;
     private Boolean spriteFaceLeft;
+    private Boolean AnimationLocked; // a sprite is locked if stuck finishing an animation
+    private protected Vector2 hitbox;
 
     public static readonly int landState = 6;
 
@@ -16,10 +18,11 @@ class Sprite {
     {
         this.loc = loc;
         this.spritemap = spritemap;
+        frameIndex = 0;
         hitbox = new Vector2(24, 24);
         spriteFaceLeft = false;
+        AnimationLocked = false;
         state = 0;
-
     }
 
     public Sprite(Vector2 loc, Texture spritemap, Vector2 hitbox)
@@ -81,6 +84,31 @@ class Sprite {
     public virtual void updateState()
     {
         state = (state + 1) % 5;
+    }
+
+    public float getFrameIndex()
+    {
+        return frameIndex;
+    }
+
+    public void setFrameIndex(float frameIndex)
+    {
+        this.frameIndex = frameIndex;
+    }
+
+    public Boolean animationIsLocked()
+    {
+        return AnimationLocked;
+    }
+
+    public void takeDamage()
+    {
+        Animator.animatePiperTakingDamage(this);
+    }
+
+    public void changeLocked(Boolean isLocked)
+    {
+        AnimationLocked = isLocked;
     }
 
     public Bounds2 getHitbox()

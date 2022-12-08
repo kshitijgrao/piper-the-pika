@@ -13,12 +13,10 @@ class Game
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
 
-    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-no-dots.png");
+    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
 
     // sprites
     //float piperFrameIndex;
-
-
 
     public static Sonic piper;
 
@@ -40,8 +38,7 @@ class Game
         endScene = false;
 
         //scoreboard
-        sb = new Scoreboard();
-
+        sb = new Scoreboard(); 
         //new scene
         //scene = new Scenes();
 
@@ -57,7 +54,6 @@ class Game
         sprites[0] = piper;
         //sprites.Add(piper);
         scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
-
 
     }
 
