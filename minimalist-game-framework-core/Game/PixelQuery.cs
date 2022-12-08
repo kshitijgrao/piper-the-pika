@@ -51,6 +51,8 @@ unsafe class Map {
             for(int y = 0; y < pixels.GetLength(1); y++)
             {
                 pixels[x, y] = *(pixelsImg + pitch * y + bpp * x) + *(pixelsImg + pitch * y + bpp * x + 2);
+                // rings: 255, 0, 245
+                if ()
                 if(y > 0 && pixels[x,y] != pixels[x, y - 1])
                 {
                     if (pixels[x, y - 1] == AIR_CODE)

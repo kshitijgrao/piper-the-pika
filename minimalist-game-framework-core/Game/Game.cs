@@ -80,7 +80,7 @@ class Game
             }
 
             //update velocity (mainly jump velocity)
-            if (Engine.GetKeyDown(Key.Z))
+            if (Engine.GetKeyDown(Key.Up) || Engine.GetKeyDown(Key.W) || Engine.GetKeyDown(Key.Z) || Engine.GetKeyHeld(Key.Up) || Engine.GetKeyHeld(Key.W) || Engine.GetKeyHeld(Key.Z))
             {
                 piper.jump();
             }
