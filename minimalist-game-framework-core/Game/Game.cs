@@ -13,13 +13,11 @@ class Game
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
 
-    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-no-dots.png");
-    
+
+    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
 
     // sprites
     //float piperFrameIndex;
-
-
 
     public static Sonic piper;
 
@@ -59,7 +57,6 @@ class Game
             rings[i] = new Flower(new Vector2(324,962));
         }
         scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
-
 
     }
 
