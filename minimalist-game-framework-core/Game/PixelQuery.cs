@@ -27,7 +27,6 @@ unsafe class Map {
     {
         pixelMap = (SDL.SDL_Surface*) SDL.SDL_LoadBMP(Engine.GetAssetPath(loc));
 
-        
         SDL.SDL_LockSurface((IntPtr) pixelMap);
 
         int pitch = (*pixelMap).pitch;
@@ -42,7 +41,7 @@ unsafe class Map {
             transitions[i] = new List<int>();
         }
         
-        int bpp = 4;
+        int bpp = 3;
         byte* pixelsImg = (byte*)(*pixelMap).pixels;
 
 

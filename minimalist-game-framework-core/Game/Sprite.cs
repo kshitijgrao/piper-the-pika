@@ -6,9 +6,13 @@ class Sprite {
 
     public Vector2 loc;
     private Texture spritemap;
-    private protected Vector2 hitbox;
+    private float frameIndex;
     private protected int state;
     private Boolean spriteFaceLeft;
+    private Boolean AnimationLocked; // a sprite is locked if stuck finishing an animation
+    private protected Vector2 hitbox;
+
+    private bool invisible;
 
     public static readonly int landState = 6;
 
@@ -16,10 +20,12 @@ class Sprite {
     {
         this.loc = loc;
         this.spritemap = spritemap;
+        frameIndex = 0;
         hitbox = new Vector2(24, 24);
         spriteFaceLeft = false;
+        AnimationLocked = false;
         state = 0;
-
+        invisible = false;
     }
 
     public Sprite(Vector2 loc, Texture spritemap, Vector2 hitbox)
@@ -29,6 +35,7 @@ class Sprite {
         this.hitbox = hitbox;
         spriteFaceLeft = false;
         state = 0;
+        invisible = false;
     }
 
     public Sprite(float x, float y, Texture sprites, Vector2 hitbox) : this(new Vector2(x, y), sprites, hitbox)
@@ -38,7 +45,7 @@ class Sprite {
 
     public virtual void collide(Sprite other)
     {
-
+        invisible = true;
     }
 
     public void move(Vector2 v)
@@ -63,9 +70,10 @@ class Sprite {
 
     public void draw(Bounds2 bounds, Vector2 position)
     {
-        // new parameter: position
-        TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
-        Engine.DrawTexture(spritemap, position, source: bounds, mirror: mirror);
+        if (!invisible) {
+            TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
+            Engine.DrawTexture(spritemap, position, source: bounds, mirror: mirror);
+        }
     }
 
     public void setState(int state)
@@ -83,6 +91,31 @@ class Sprite {
         state = (state + 1) % 5;
     }
 
+    public float getFrameIndex()
+    {
+        return frameIndex;
+    }
+
+    public void setFrameIndex(float frameIndex)
+    {
+        this.frameIndex = frameIndex;
+    }
+
+    public Boolean animationIsLocked()
+    {
+        return AnimationLocked;
+    }
+
+    public void takeDamage()
+    {
+        Animator.animatePiperTakingDamage(this);
+    }
+
+    public void changeLocked(Boolean isLocked)
+    {
+        AnimationLocked = isLocked;
+    }
+
     public Bounds2 getHitbox()
     {
         return new Bounds2(loc - hitbox / 2, hitbox);
@@ -92,6 +125,11 @@ class Sprite {
     public Vector2 getBotPoint()
     {
         return loc + hitbox / 2;
+    }
+
+    public bool notCollidable()
+    {
+        return invisible;
     }
 
 }

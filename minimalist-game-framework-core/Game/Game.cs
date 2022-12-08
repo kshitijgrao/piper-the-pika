@@ -13,21 +13,21 @@ class Game
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
 
-    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-no-dots.png");
+
+    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
 
     // sprites
     //float piperFrameIndex;
 
-
-
     public static Sonic piper;
 
 
-    Scoreboard sb;
+    public static Scoreboard sb;
 
     Font arial = Engine.LoadFont("Arial.ttf", 10);
 
     Sprite[] sprites = new Sprite[1];
+    Sprite[] rings = new Flower[1];
 
     Rendering scroll;
     //Texture bg;
@@ -42,10 +42,6 @@ class Game
         //scoreboard
         sb = new Scoreboard();
 
-        //new scene
-        //scene = new Scenes();
-
-
         //create map
         map = new Map("TestMap.bmp");
 
@@ -56,8 +52,11 @@ class Game
         piper = new Sonic(new Vector2(160, 960), piperTexture);
         sprites[0] = piper;
         //sprites.Add(piper);
+        for(int i =0; i < rings.Length; i++)
+        {
+            rings[i] = new Flower(new Vector2(324,962));
+        }
         scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
-
 
     }
 
@@ -83,10 +82,12 @@ class Game
             if (Engine.GetKeyDown(Key.Up) || Engine.GetKeyDown(Key.W) || Engine.GetKeyDown(Key.Z) || Engine.GetKeyHeld(Key.Up) || Engine.GetKeyHeld(Key.W) || Engine.GetKeyHeld(Key.Z))
             {
                 piper.jump();
-            }
+            } 
 
             //collision detection
             Physics.detectGround(piper);
+            //ground
+            Physics.detectCollisions(rings);
 
             //update acceleration
             piper.setAcceleration(currKey);
@@ -102,6 +103,7 @@ class Game
             //replace this with proper drawing with rao/yasemin's rendering/animation system
             //piper.testDraw();
             piper.draw(new Bounds2(0, 0, 24, 24), scroll.pos + piper.loc - new Vector2(12, 12));
+            rings[0].draw(new Bounds2(0, 0, 24, 24), scroll.pos + rings[0].loc - new Vector2(10,10));
 
             //piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
             sb.updateScoreboard();
