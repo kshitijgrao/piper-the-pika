@@ -40,14 +40,14 @@ class Sonic : PhysicsSprite
         this.vel = this.vel + jumpImpulseMag * Game.map.getNormalVector(loc);
     }
 
-    public void setAcceleration(String key)
+    public void setAcceleration(Key key)
     {
         Vector2 tempLoc = this.getBotPoint();
-        if(key.Equals(Game.RIGHT))
+        if(key.Equals(Key.D))
         {
             this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(90);
         }
-        else if(key.Equals(Game.LEFT))
+        else if(key.Equals(Key.A))
         {
             this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(270);
         }

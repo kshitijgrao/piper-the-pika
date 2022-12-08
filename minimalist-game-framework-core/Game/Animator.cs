@@ -15,7 +15,7 @@ internal static class Animator
     // variables
     static int movementState = 1;
 
-    public static float animatePiper(Sprite piper, Key key)
+    public static float animatePiper(Sonic piper, Vector2 position, Key key)
     {
         float currentFrame = piper.getFrameIndex();
 
@@ -55,10 +55,10 @@ internal static class Animator
             piper.changeLocked(false);
         }
         
-        return changeFrame(piper);
+        return changeFrame(piper, position);
     }
 
-    private static float changeFrame(Sprite piper)
+    private static float changeFrame(Sprite piper, Vector2 position)
     {
         // find frame
         piper.setFrameIndex((piper.getFrameIndex() + Engine.TimeDelta * Framerate) % 4.0f);
@@ -67,7 +67,7 @@ internal static class Animator
         // find bounds on spritemap and draw
         Vector2 piperFrameStart = new Vector2((int)frameIndex * 24, piper.getState() * 24);
         Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, new Vector2(24, 24));
-        piper.draw(piperFrameBounds);
+        piper.draw(piperFrameBounds, position);
 
         // return current frame
         return frameIndex;
@@ -86,7 +86,7 @@ internal static class Animator
         piper.changeLocked(true);
     }
 
-    public static void piperSprinting(Boolean isSprinting)
+    public static void setPiperSprinting(Boolean isSprinting)
     {
         if (isSprinting)
         {
