@@ -6,6 +6,7 @@ class Game
 {
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
+    public static ArrayList flowerCoords = new ArrayList();
     public static Map map;
     public Boolean startScene;
     public Boolean endScene;
