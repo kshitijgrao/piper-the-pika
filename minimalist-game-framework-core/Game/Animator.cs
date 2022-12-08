@@ -54,7 +54,7 @@ internal static class Animator
         {
             piper.changeLocked(false);
         }
-
+        
         return changeFrame(piper);
     }
 

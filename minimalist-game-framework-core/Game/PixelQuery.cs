@@ -15,17 +15,19 @@ unsafe class Map {
     private int h;
 
     //TODO: come up with color key for waht the different types of blocks represent
-    public static readonly int AIR_CODE = 0;
-    public static readonly int GROUND_CODE = 1;
+    public static readonly int AIR_CODE = 255+255;
+    public static readonly int GROUND_CODE = 113;
+    public static readonly int PASS_THROUGH_CODE = 255;
+    public static readonly int SOLID_CODE = 255 + 199;
 
     private static readonly int SLOPE_MAX_COUNT = 15;
 
 
     public Map(String loc)
     {
-        pixelMap = (SDL.SDL_Surface*) SDL.SDL_LoadBMP(loc);
+        pixelMap = (SDL.SDL_Surface*) SDL.SDL_LoadBMP(Engine.GetAssetPath(loc));
 
-        SDL.SDL_FreeSurface((IntPtr) pixelMap);
+        
         SDL.SDL_LockSurface((IntPtr) pixelMap);
 
         int pitch = (*pixelMap).pitch;
@@ -40,17 +42,18 @@ unsafe class Map {
             transitions[i] = new List<int>();
         }
         
-        int bpp = 3;
-        byte* pixelsImg = (byte*)pixelMap->pixels;
-        
+        int bpp = 4;
+        byte* pixelsImg = (byte*)(*pixelMap).pixels;
+
+
         for (int x = 0; x < pixels.GetLength(0); x++)
         {
             for(int y = 0; y < pixels.GetLength(1); y++)
             {
-                pixels[x, y] = *(pixelsImg + pitch * y + bpp * x);
+                pixels[x, y] = *(pixelsImg + pitch * y + bpp * x) + *(pixelsImg + pitch * y + bpp * x + 2);
                 if(y > 0 && pixels[x,y] != pixels[x, y - 1])
                 {
-                    if (pixels[x, y - 1] == GROUND_CODE)
+                    if (pixels[x, y - 1] == AIR_CODE)
                         transitions[x].Add(y);
                     else
                         transitions[x].Add(y-1);
@@ -58,13 +61,28 @@ unsafe class Map {
             }
         }
 
-        SDL.SDL_UnlockSurface((IntPtr) pixelMap);    
+        SDL.SDL_UnlockSurface((IntPtr) pixelMap);
+        SDL.SDL_FreeSurface((IntPtr) pixelMap);
     }
 
     //gets the pixel type at the given coordinate
     public int getPixelType(Vector2 coord)
     {
+        if(coord.X >= w || coord.X < 0 || coord.Y >= h || coord.Y < 0)
+        {
+            return AIR_CODE;
+        }
         return pixels[(int) coord.X,(int) coord.Y];
+    }
+
+    public bool onGround(Vector2 coord)
+    {
+        return getPixelType(coord) == GROUND_CODE;
+    }
+
+    public bool inAir(Vector2 coord)
+    {
+        return getPixelType(coord) == AIR_CODE;
     }
 
     //getting slope angle
@@ -128,6 +146,16 @@ unsafe class Map {
         return Math.Atan((double) (rightShift.Y - leftShift.Y) / (rightShift.X - leftShift.X));
 
 
+    }
+
+    public Vector2 getNormalVector(Vector2 pos)
+    {
+        return new Vector2(0, -1);
+    }
+
+    public float getSurfaceRadius(Vector2 pos)
+    {
+        return -1;
     }
 
     public int getSurfaceY(Vector2 pos)
