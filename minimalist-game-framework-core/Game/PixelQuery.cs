@@ -27,7 +27,6 @@ unsafe class Map {
     {
         pixelMap = (SDL.SDL_Surface*) SDL.SDL_LoadBMP(Engine.GetAssetPath(loc));
 
-        
         SDL.SDL_LockSurface((IntPtr) pixelMap);
 
         int pitch = (*pixelMap).pitch;
@@ -42,21 +41,27 @@ unsafe class Map {
             transitions[i] = new List<int>();
         }
         
-        int bpp = 4;
+        int bpp = 3;
         byte* pixelsImg = (byte*)(*pixelMap).pixels;
 
 
         for (int x = 0; x < pixels.GetLength(0); x++)
         {
-            for(int y = 0; y < pixels.GetLength(1); y++)
+            for (int y = 0; y < pixels.GetLength(1); y++)
             {
                 pixels[x, y] = *(pixelsImg + pitch * y + bpp * x) + *(pixelsImg + pitch * y + bpp * x + 2);
-                if(y > 0 && pixels[x,y] != pixels[x, y - 1])
+                // rings: 255, 0, 245
+                if (*(pixelsImg + pitch * y + bpp * x + 2) == 245)
+                {
+                    Game.flowerCoords.Add(new Vector2(x, y));
+                }
+
+                if (y > 0 && pixels[x, y] != pixels[x, y - 1])
                 {
                     if (pixels[x, y - 1] == AIR_CODE)
                         transitions[x].Add(y);
                     else
-                        transitions[x].Add(y-1);
+                        transitions[x].Add(y - 1);
                 }
             }
         }

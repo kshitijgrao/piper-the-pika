@@ -8,7 +8,7 @@ using System.Text;
 //TODO: this class + subclasses for different shaped hitboxes
 class Physics
 {
-    public static readonly Vector2 g = new Vector2(0,5);
+    public static readonly Vector2 g = new Vector2(0,150);
     public static readonly int collisionSteps = 5;
 
     //detect collisions for things that are within the window
@@ -28,11 +28,15 @@ class Physics
 
     public static void detectCollision(PhysicsSprite obj1, Sprite obj2)
     {
+        if (obj2.notCollidable())
+        {
+            return;
+        }
         Bounds2 b1 = obj1.getHitbox();
         Bounds2 b2 = obj2.getHitbox();
         if (b1.Overlaps(b2))
         {
-            obj1.collide(obj2);
+            obj2.collide(obj1);
             return;
         }
 
@@ -63,7 +67,7 @@ class Physics
         //collided
         else
         {
-
+            obj2.collide(obj1);
         }
 
     }
