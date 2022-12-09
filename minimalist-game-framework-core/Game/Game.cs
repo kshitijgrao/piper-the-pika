@@ -19,7 +19,6 @@ class Game
 
     // sprites
     public static Sonic piper;
-    Sprite[] sprites = new Sprite[1];
 
     public static Scoreboard sb;
 
