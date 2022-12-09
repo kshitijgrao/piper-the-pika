@@ -6,6 +6,7 @@ class Game
 {
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
+    public static ArrayList flowerCoords = new ArrayList();
     public static Map map;
     public Boolean startScene;
     public Boolean endScene;
@@ -13,28 +14,22 @@ class Game
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
 
-    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-no-dots.png");
+
+    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
 
     // sprites
-    //float piperFrameIndex;
-    
+    public static Sonic piper;
 
-
-    Sonic piper;
-
-
-    Scoreboard sb;
-    Scenes scene;
-    float speed = 2;
-    float speed = 2;
-
-
+    public static Scoreboard sb;
 
     Font arial = Engine.LoadFont("Arial.ttf", 10);
 
     Sprite[] sprites = new Sprite[1];
+    Sprite[] rings = new Flower[1];
 
-    Texture bg;
+    Rendering scroll;
+    Vector2 pos;
+    Key currentKey = Key.Q; // defaults to unused key "Q"
 
     public Game()
     {
@@ -44,77 +39,47 @@ class Game
 
         //scoreboard
         sb = new Scoreboard();
-        
-        //new scene
-        scene = new Scenes();
-
-
-        //create piper sprite
-        piper = new Sprite(Resolution / 2, piperTexture);
-        piperFrameIndex = 0;
-        sprites.Add(piper);
 
         //create map
         map = new Map("TestMap.bmp");
-        bg = Engine.LoadTexture("TestMap.bmp");
-
 
         // create piper sprite
-        piper = new Sonic(new Vector2(30,129), piperTexture);
+        piper = new Sonic(new Vector2(160, 960), piperTexture);
         sprites[0] = piper;
         //sprites.Add(piper);
-
+        for(int i =0; i < rings.Length; i++)
+        {
+            rings[i] = new Flower(new Vector2(324,962));
+        }
+        scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
 
     }
 
     public void Update()
     {
         //scene control
-        if (startScene){ startScene = scene.titleScene();}
-        else if (endScene){scene.endScene(); sb.updateScoreboard(); }
+
+        if (startScene) { startScene = Scenes.titleScene(); }
+        else if (endScene) { Scenes.endScene(); }
         else
         {
-            piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
+            //collision detection
+            Physics.detectGround(piper);
+            //ground
+            Physics.detectCollisions(rings);
+
+            //update acceleration
+            piper.setAcceleration(currentKey);
+
+            //update overall physics
+            Physics.updatePhysics(sprites);
+
+            // collect input and draw frame
+            scroll.scrollingWindow();
+            currentKey = InputHandler.getPlayerInput(piper, scroll.pos + piper.loc - new Vector2(12, 12));
+            rings[0].draw(new Bounds2(0, 0, 24, 24), scroll.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
+
         }
-      
-        
-
-        //getting input (need to adjust this to work generally, this is just for testing)
-        String currKey = "None";
-        if (Engine.GetKeyHeld(Key.Right))
-        {
-            currKey = Game.RIGHT;
-        }
-        else if(Engine.GetKeyHeld(Key.Left))
-        {
-            currKey = Game.LEFT;
-        }
-
-        //update velocity (mainly jump velocity)
-        if (Engine.GetKeyDown(Key.Z))
-        {
-            piper.jump();
-        }
-
-        //collision detection
-        Physics.detectGround(piper);
-
-        //update acceleration
-        piper.setAcceleration(currKey);
-
-        //update overall physics
-        Physics.updatePhysics(sprites);
-
-
-        Engine.DrawTexture(bg, new Vector2(0, 0));
-        
-        //replace this with proper drawing with rao/yasemin's rendering/animation system
-        piper.testDraw();
-
-
-
-        //piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
-        //sb.updateScoreboard();
     }
 }

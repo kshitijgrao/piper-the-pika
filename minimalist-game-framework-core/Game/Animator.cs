@@ -12,36 +12,106 @@ internal static class Animator
     // animation constants
     static readonly float Framerate = 5;
 
-    public static float animatePiper(Sprite piper, float speed, float frameIndex)
+    // variables
+    static int movementState = 1;
+
+    public static float animatePiper(Sonic piper, Vector2 position, Key key)
     {
-        // player input
-        if (Engine.GetKeyHeld(Key.A) || Engine.GetKeyHeld(Key.Left))
+        float currentFrame = piper.getFrameIndex();
+
+        // only changes state if piper if not spinning or taking damage (aka not locked)
+        // states --> idle 0, walk 1, sprint 2, starting jump 3, spining 4, landing 5, damage 6
+        if (!piper.animationIsLocked())
         {
-            piper.setState(1);
-            piper.move(new Vector2(-speed, 0));
-            if (!piper.isLeft())
+            if (key.Equals(Key.Space))
             {
-                piper.turn();
+                piper.setState(3);
+                piper.setFrameIndex(0);
+                piper.changeLocked(true);
             }
+            else if ((int)Math.Abs(piper.vel.X) == 0)
+            {
+                piper.setState(0);
+            }
+            else
+            {
+                piper.setState(movementState);
+            }
+        } 
+        else if (piper.getState() == 3 && (int)currentFrame == 3) // spin starts on frame 3
+        {
+            piper.setState(4);
+        } 
+        else if (piper.getState() == 6 && (int)currentFrame == 2) // damage lasts 2 frames 
+        {
+            piper.changeLocked(false);
+        } 
+        else if (piper.getState() == 5 && (int)currentFrame == 1) // landing lasts 1 frames
+        {
+            piper.changeLocked(false);
         }
-        else if (Engine.GetKeyHeld(Key.D) || Engine.GetKeyHeld(Key.Right))
+        
+        return changeFrame(piper, position);
+    }
+
+    private static float changeFrame(Sprite piper, Vector2 position)
+    {
+        // find frame
+        piper.setFrameIndex((piper.getFrameIndex() + Engine.TimeDelta * Framerate) % 4.0f);
+        float frameIndex = piper.getFrameIndex();
+
+        // find bounds on spritemap and draw
+        Vector2 piperFrameStart = new Vector2((int)frameIndex * 24, piper.getState() * 24);
+        Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, new Vector2(24, 24));
+        piper.draw(piperFrameBounds, position);
+
+        // return current frame
+        return frameIndex;
+    }
+
+    public static void animatePiperLanding(Sprite piper)
+    {
+        piper.setState(5);
+        piper.setFrameIndex(0);
+    }
+
+    public static void animatePiperTakingDamage(Sprite piper)
+    {
+        piper.setState(6);
+        piper.setFrameIndex(0);
+        piper.changeLocked(true);
+    }
+
+    public static void setPiperSprinting(Boolean isSprinting)
+    {
+        if (isSprinting)
         {
-            piper.setState(1);
-            piper.move(new Vector2(speed, 0));
-            if (piper.isLeft())
-            {
-                piper.turn();
-            }
+            movementState = 2;
+        } 
+        else
+        {
+            movementState = 1;
+        }
+    }
+    public static void setPiperSpinning(Boolean isSpinning, Sprite piper)
+    {
+        if (isSpinning)
+        {
+            piper.setState(4);
+            piper.changeLocked(true);
         }
         else
         {
-            piper.setState(0);
+            piper.setState(5);
+            //piper.changeLocked(false);
         }
+    }
 
-        frameIndex = (frameIndex + Engine.TimeDelta * Framerate) % 4.0f;
-        Vector2 piperFrame = new Vector2((int)frameIndex * 24, piper.getState() * 24);
-        Bounds2 piperFrameBounds = new Bounds2(piperFrame, new Vector2(24, 24));
-        piper.draw(piperFrameBounds);
-        return frameIndex;
+    public static void checkPiperTurn(Sonic piper)
+    {
+        if (piper.isLeft() != piper.vel.X < 0)
+        {
+            piper.turn();
+        }
     }
 }
