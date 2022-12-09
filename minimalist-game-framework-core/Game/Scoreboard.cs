@@ -45,8 +45,8 @@ public class Scoreboard
             //topLeft scoreboard elements
 
             Engine.DrawString("SCORE", new Vector2(0, 0), Color.Black, arial); //yellow
-            Engine.DrawString("" + score, new Vector2(40, 0), Color.White, arial); //white
-            Engine.DrawString("TIME", new Vector2(0, 15), Color.Yellow, arial); //yellow
+            Engine.DrawString("" + score, new Vector2(40, 0), Color.Black, arial); //white
+            Engine.DrawString("TIME", new Vector2(0, 15), Color.Black, arial); //yellow
 
             String timeDisplay = (int)time / 60 + ":";
             if (time % 60 < 10)
@@ -56,23 +56,22 @@ public class Scoreboard
 
             timeDisplay += (int)time % 60;
 
-            Engine.DrawString(timeDisplay, new Vector2(28, 15), Color.White, arial); //white
-            Engine.DrawString("FLOWERS", new Vector2(0, 30), Color.Yellow, arial); //yellow
-            Engine.DrawString("" + flowers, new Vector2(55, 30), Color.White, arial); //white
+            Engine.DrawString(timeDisplay, new Vector2(28, 15), Color.Black, arial); //white
+            Engine.DrawString("FLOWERS", new Vector2(0, 30), Color.Black, arial); //yellow
+            Engine.DrawString("" + flowers, new Vector2(55, 30), Color.Black, arial); //white
 
 
 
             //bottom left scoreboard elements
             Engine.DrawTexture(pikaPlaceholder, new Vector2(6, 197), size: new Vector2(19, 17));
-            Engine.DrawString("PIPER", new Vector2(26, 195), Color.Yellow, arial); //yellow
-            Engine.DrawString("x      " + lives, new Vector2(26, 204), Color.White, arial); //white
+            Engine.DrawString("PIPER", new Vector2(26, 195), Color.Black, arial); //yellow
+            Engine.DrawString("x      " + lives, new Vector2(26, 204), Color.Black, arial); //white
         }
 
     //modify flower count
-    public void modifyFlowers(int x)
+    public void addFlower()
         {
-            flowers += x;
-            score += x * 10;
+        flowers++;
         }
 
 
