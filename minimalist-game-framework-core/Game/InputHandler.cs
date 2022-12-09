@@ -40,6 +40,14 @@ internal static class InputHandler
         {
             Animator.setPiperSprinting(false);
         }
+        else if (Engine.GetKeyHeld(Key.LeftAlt) && Engine.GetKeyHeld(Key.K))
+        {
+            Animator.setPiperSpinning(true, piper);
+        }
+        else if (Engine.GetKeyHeld(Key.LeftAlt) && Engine.GetKeyHeld(Key.L))
+        {
+            Animator.setPiperSpinning(false, piper);
+        }
 
         piper.setFrameIndex(Animator.animatePiper(piper, position, k));
         return k;

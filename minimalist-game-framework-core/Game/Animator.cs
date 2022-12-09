@@ -46,7 +46,7 @@ internal static class Animator
         {
             piper.changeLocked(false);
         } 
-        else if (piper.getState() == 5 && (int)currentFrame == 2) // landing lasts 2 frames
+        else if (piper.getState() == 5 && (int)currentFrame == 1) // landing lasts 1 frames
         {
             piper.changeLocked(false);
         }
@@ -91,6 +91,19 @@ internal static class Animator
         else
         {
             movementState = 1;
+        }
+    }
+    public static void setPiperSpinning(Boolean isSpinning, Sprite piper)
+    {
+        if (isSpinning)
+        {
+            piper.setState(4);
+            piper.changeLocked(true);
+        }
+        else
+        {
+            piper.setState(5);
+            //piper.changeLocked(false);
         }
     }
 
