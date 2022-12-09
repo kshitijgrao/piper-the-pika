@@ -89,7 +89,7 @@ class Flower : Sprite
 
     public override void collide(Sprite mainCharacter)
     {
-        Game.sb.modifyFlowers(1);
+        Game.sb.addFlower();
         ((Sonic) mainCharacter).addFlower();
         base.collide(mainCharacter);
     }
