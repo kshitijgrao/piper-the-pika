@@ -2,11 +2,11 @@
 
 public class Scoreboard
 {
-    int score;
-    float time;
-    int flowers;
-    int lives;
-    int oneUps;
+    static int score;
+    static float time;
+    static int flowers;
+    static int lives;
+    static int oneUps;
 
     Texture pikaPlaceholder = Engine.LoadTexture("pikaPlaceholder.png");
     Font arial = Engine.LoadFont("Arial.ttf", 10);
@@ -102,13 +102,13 @@ public class Scoreboard
 
     //input -1 if a life is lost
     //input 1 if an extra life is gained
-    public void modifyLives(int x)
+    public static void modifyLives(int x)
         {
             lives += x;
         }
 
     //time bonus after level
-    public int timeBonus()
+    public static int timeBonus()
         {
             if ((int)time < 29)
             {
@@ -158,7 +158,7 @@ public class Scoreboard
         return time;
     }
 
-    public void addFlowerScore()
+    public static void addFlowerScore()
     {
         score += flowers * 10;
         

@@ -7,7 +7,7 @@ public class Scenes
 		static Font h2 = Engine.LoadFont("Arial.ttf", 20);
 		static Font h3 = Engine.LoadFont("Arial.ttf", 12);
 		static Texture piper = Engine.LoadTexture("pika-spritemap.png");
-		Boolean scoreUpdate = false;
+		static Boolean scoreUpdate = false;
 
 
         //Title Scene
@@ -39,13 +39,13 @@ public class Scenes
 		Engine.DrawString("PASSED", new Vector2(0, 0), Color.White, h2);
 		Engine.DrawString("Act", new Vector2(0, 0), Color.Orange, h2);
 		Engine.DrawString("1", new Vector2(0, 0), Color.Yellow, h1);
-		sb.addFlowerScore();
+		Scoreboard.addFlowerScore();
 
 		if (!scoreUpdate)
 		{
 
-			sb.addFlowerScore();
-			int tBonus = sb.timeBonus();
+			Scoreboard.addFlowerScore();
+			int tBonus = Scoreboard.timeBonus();
 			Engine.DrawString(tBonus + "", new Vector2(100, 00), Color.Black, h2);
 
 			scoreUpdate = true;
