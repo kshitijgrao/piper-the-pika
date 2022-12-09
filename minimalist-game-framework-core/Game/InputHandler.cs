@@ -15,10 +15,12 @@ internal static class InputHandler
         else if (Engine.GetKeyHeld(Key.A))
         {
             k = Key.A;
+            Animator.checkPiperTurn(piper);
         }
         else if (Engine.GetKeyHeld(Key.D))
         {
             k = Key.D;
+            Animator.checkPiperTurn(piper);
         }
 
         // TESTING

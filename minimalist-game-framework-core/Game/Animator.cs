@@ -29,17 +29,13 @@ internal static class Animator
                 piper.setFrameIndex(0);
                 piper.changeLocked(true);
             }
-            else if (key.Equals(Key.A) || key.Equals(Key.D))
+            else if ((int)Math.Abs(piper.vel.X) == 0)
             {
-                piper.setState(movementState);
-                if (piper.isLeft() != piper.vel.X < 0)
-                {
-                    piper.turn();
-                }
+                piper.setState(0);
             }
             else
             {
-                piper.setState(0);
+                piper.setState(movementState);
             }
         } 
         else if (piper.getState() == 3 && (int)currentFrame == 3) // spin starts on frame 3
@@ -95,6 +91,14 @@ internal static class Animator
         else
         {
             movementState = 1;
+        }
+    }
+
+    public static void checkPiperTurn(Sonic piper)
+    {
+        if (piper.isLeft() != piper.vel.X < 0)
+        {
+            piper.turn();
         }
     }
 }
