@@ -12,6 +12,8 @@ class Sprite {
     private Boolean AnimationLocked; // a sprite is locked if stuck finishing an animation
     private protected Vector2 hitbox;
 
+    private bool invisible;
+
     public static readonly int landState = 6;
 
     public Sprite(Vector2 loc, Texture spritemap)
@@ -23,6 +25,7 @@ class Sprite {
         spriteFaceLeft = false;
         AnimationLocked = false;
         state = 0;
+        invisible = false;
     }
 
     public Sprite(Vector2 loc, Texture spritemap, Vector2 hitbox)
@@ -32,6 +35,7 @@ class Sprite {
         this.hitbox = hitbox;
         spriteFaceLeft = false;
         state = 0;
+        invisible = false;
     }
 
     public Sprite(float x, float y, Texture sprites, Vector2 hitbox) : this(new Vector2(x, y), sprites, hitbox)
@@ -41,7 +45,7 @@ class Sprite {
 
     public virtual void collide(Sprite other)
     {
-
+        invisible = true;
     }
 
     public void move(Vector2 v)
@@ -66,9 +70,10 @@ class Sprite {
 
     public void draw(Bounds2 bounds, Vector2 position)
     {
-        // new parameter: position
-        TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
-        Engine.DrawTexture(spritemap, position, source: bounds, mirror: mirror);
+        if (!invisible) {
+            TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
+            Engine.DrawTexture(spritemap, position, source: bounds, mirror: mirror);
+        }
     }
 
     public void setState(int state)
@@ -120,6 +125,11 @@ class Sprite {
     public Vector2 getBotPoint()
     {
         return loc + hitbox / 2;
+    }
+
+    public bool notCollidable()
+    {
+        return invisible;
     }
 
 }
