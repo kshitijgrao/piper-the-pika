@@ -4,20 +4,23 @@ using System.Text;
 
 internal static class InputHandler
 {
-    public static float getPlayerInput(Sprite piper)
+    public static Key getPlayerInput(Sonic piper, Vector2 position)
     {
         Key k = Key.Q; // defaults to unused key "Q"
         if (Engine.GetKeyHeld(Key.Space))
         {
             k = Key.Space;
+            piper.jump();
         }
         else if (Engine.GetKeyHeld(Key.A))
         {
             k = Key.A;
+            Animator.checkPiperTurn(piper);
         }
         else if (Engine.GetKeyHeld(Key.D))
         {
             k = Key.D;
+            Animator.checkPiperTurn(piper);
         }
 
         // TESTING
@@ -31,13 +34,14 @@ internal static class InputHandler
         }
         else if (Engine.GetKeyHeld(Key.LeftAlt) && Engine.GetKeyHeld(Key.H))
         {
-            Animator.piperSprinting(true);
+            Animator.setPiperSprinting(true);
         }
         else if (Engine.GetKeyHeld(Key.LeftAlt) && Engine.GetKeyHeld(Key.J))
         {
-            Animator.piperSprinting(false);
+            Animator.setPiperSprinting(false);
         }
 
-        return Animator.animatePiper(piper, k);
+        piper.setFrameIndex(Animator.animatePiper(piper, position, k));
+        return k;
     }
 }

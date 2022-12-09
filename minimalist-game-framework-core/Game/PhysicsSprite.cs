@@ -4,6 +4,8 @@ using System.Text;
 
 class PhysicsSprite : Sprite
 {
+    internal readonly float sprintSpeed = 30;
+
     public float mass;
     public Vector2 vel;
     public Vector2 acc;
@@ -65,6 +67,16 @@ class PhysicsSprite : Sprite
             loc = loc + vel * Engine.TimeDelta;
             vel += acc * Engine.TimeDelta;
         }
+
+        // sprint if moving fast enough
+        if (vel.Length() > sprintSpeed)
+        {
+            Animator.setPiperSprinting(true);
+        } 
+        else
+        {
+            Animator.setPiperSprinting(false);
+        }
         keepOnSurface();
     }
 
@@ -76,7 +88,7 @@ class PhysicsSprite : Sprite
     public void collideGround(float timeLeft)
     {
         onGround = true;
-        this.setState(Sprite.landState);
+        Animator.animatePiperLanding(this);
         this.timeLeft = timeLeft;
     }
 
