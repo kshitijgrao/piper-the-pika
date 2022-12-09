@@ -23,6 +23,12 @@ struct Vector2
         return string.Format("({0}, {1})", X, Y);
     }
 
+    public void round(int numDec)
+    {
+        X = (float) Math.Round((float) X, numDec);
+        Y = (float)Math.Round((float)Y, numDec);
+    }
+
     /// <summary>
     /// Returns the length of this vector.
     /// </summary>

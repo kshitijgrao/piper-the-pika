@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Security;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -8,7 +10,7 @@ using System.Text;
 //TODO: this class + subclasses for different shaped hitboxes
 class Physics
 {
-    public static readonly Vector2 g = new Vector2(0,150);
+    public static readonly Vector2 g = new Vector2(0,30);
     public static readonly int collisionSteps = 5;
 
     //detect collisions for things that are within the window
@@ -79,16 +81,22 @@ class Physics
         Vector2 pos = obj.getBotPoint();
         Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
 
-        if(Game.map.inAir(pos) && Game.map.onGround(finalPos))
+        if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && obj.vel.Y > 0)))
         {
+            System.Diagnostics.Debug.Write("Acc: " + obj.acc.ToString() + " ");
+            System.Diagnostics.Debug.Write("COLLIDED!!!");
             Vector2 diff = finalPos - pos;
-            while (!Game.map.onGround(pos) && pos.X <= finalPos.X)
+            while (!(Game.map.onGround(pos) || Game.map.throughThrough(finalPos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
                 pos += diff / collisionSteps;
 
             obj.loc += diff - (finalPos - pos);
-            obj.keepOnSurface();
-            pos = obj.getBotPoint();
-            obj.vel = obj.vel - Game.map.getNormalVector(pos) * Vector2.Dot(Game.map.getNormalVector(pos), obj.vel);
+            obj.loc.Y += (Game.map.getSurfaceY(pos) - pos.Y);
+
+            Vector2 posNew = obj.getBotPoint();
+            
+            obj.vel = obj.vel - Game.map.getNormalVector(posNew) * Vector2.Dot(Game.map.getNormalVector(posNew), obj.vel);
+
+            System.Diagnostics.Debug.WriteLine(obj.vel.ToString());
 
 
             //might have to check for some 0 cases with the dividing here
@@ -96,11 +104,43 @@ class Physics
         }
     }
 
+    public static void detectUnpenetrable(PhysicsSprite obj)
+    {
+        Vector2 direc = Game.map.getNormalVector(obj.getBotPoint()).Rotated(90);
+
+        Vector2 pos = obj.getPoint(direc);
+
+        if (Game.map.impenetrable(pos))
+        {
+            obj.vel = obj.vel - (new Vector2(-1, 0)) * Math.Min(0,Vector2.Dot(new Vector2(-1, 0), obj.vel));
+            obj.acc = obj.acc - (new Vector2(-1, 0)) * Math.Min(0,Vector2.Dot(new Vector2(-1, 0), obj.acc));
+        }
+        
+        Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
+
+        if (Game.map.inAir(pos) && Game.map.impenetrable(finalPos))
+        {
+            Vector2 diff = finalPos - pos;
+            while (!(Game.map.impenetrable(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
+                pos += diff / collisionSteps;
+            obj.loc += diff - (finalPos - pos);
+
+            obj.vel = obj.vel - (new Vector2 (-1,0)) * Vector2.Dot(new Vector2(-1, 0), obj.vel);
+
+            obj.collideWall((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
+
+        }
+
+    }
+
     public static Vector2 getPhysicsAcceleration(Vector2 loc, Vector2 vel)
     {
         Vector2 norm = Game.map.getNormalVector(loc);
         float radius = Game.map.getSurfaceRadius(loc);
-        if (Game.map.onGround(loc))
+
+        System.Diagnostics.Debug.WriteLine("On Ground" + loc.ToString() + "? " +  Game.piper.onGround);
+
+        if (Game.piper.onGround)
         {
             if(radius < 0)
             {

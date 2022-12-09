@@ -5,6 +5,7 @@ using System.Drawing;
 using SDL2;
 using static SDL2.SDL;
 using System.Reflection;
+using System.Diagnostics;
 
 unsafe class Map {
 
@@ -41,7 +42,7 @@ unsafe class Map {
             transitions[i] = new List<int>();
         }
         
-        int bpp = 3;
+        int bpp = 4;
         byte* pixelsImg = (byte*)(*pixelMap).pixels;
 
 
@@ -50,6 +51,11 @@ unsafe class Map {
             for(int y = 0; y < pixels.GetLength(1); y++)
             {
                 pixels[x, y] = *(pixelsImg + pitch * y + bpp * x) + *(pixelsImg + pitch * y + bpp * x + 2);
+                if(x == 173 && y == 980)
+                {
+                    System.Diagnostics.Debug.WriteLine(*(pixelsImg + pitch * y + bpp * x) + " " +  + *(pixelsImg + pitch * y + bpp * x + 2));
+                }
+                
                 if(y > 0 && pixels[x,y] != pixels[x, y - 1])
                 {
                     if (pixels[x, y - 1] == AIR_CODE)
@@ -67,21 +73,33 @@ unsafe class Map {
     //gets the pixel type at the given coordinate
     public int getPixelType(Vector2 coord)
     {
-        if(coord.X >= w || coord.X < 0 || coord.Y >= h || coord.Y < 0)
+        int x = (int) Math.Round(coord.X);
+        int y = (int) Math.Round(coord.Y);
+        if(x >= w || x < 0 || y >= h || y < 0)
         {
             return AIR_CODE;
         }
-        return pixels[(int) coord.X,(int) coord.Y];
+        return pixels[x,y];
     }
 
     public bool onGround(Vector2 coord)
     {
-        return getPixelType(coord) == GROUND_CODE;
+        return getPixelType(coord) == GROUND_CODE || getPixelType(coord) == SOLID_CODE;
+    }
+
+    public bool impenetrable(Vector2 coord)
+    {
+        return getPixelType(coord) == GROUND_CODE || getPixelType(coord) == SOLID_CODE;
     }
 
     public bool inAir(Vector2 coord)
     {
         return getPixelType(coord) == AIR_CODE;
+    }
+
+    public bool throughThrough(Vector2 coord)
+    {
+        return getPixelType(coord) == PASS_THROUGH_CODE;
     }
 
     //getting slope angle
@@ -147,31 +165,48 @@ unsafe class Map {
 
     }
 
+
+    //need to fix for LOTS of edge cases
     public Vector2 getNormalVector(Vector2 pos)
     {
+        Vector2 slope = new Vector2(10,0);
+        slope.Y = getSurfaceY(pos + slope / 2) - getSurfaceY(pos - slope / 2);
+
+        return slope.Rotated(270).Normalized();
+
+
         return new Vector2(0, -1);
     }
 
     public float getSurfaceRadius(Vector2 pos)
     {
         return -1;
+        /*Vector2 shift = new Vector2(5, 0);
+        Vector2 x1 = new Vector2(pos.X - shift.X, getSurfaceY(pos - shift));
+        Vector2 x2 = new Vector2(pos.X + shift.X, getSurfaceY(pos + shift));
+        Vector2 norm1 = getNormalVector(x1);
+        Vector2 norm2 = getNormalVector(x2);
+        float angle = (float) Math.Round(Math.Acos(Vector2.Dot(norm1, norm2)),1);
+
+        if (angle == 0)
+            return -1;
+        return (x1 - x2).Length() / angle;*/
     }
 
     public int getSurfaceY(Vector2 pos)
     {
         List<int> currTransitions = transitions[(int) pos.X];
-        int testY = currTransitions[0];
         int i = 0;
-        while (testY > pos.Y && i < currTransitions.Count - 1)
+        while(i < currTransitions.Count && currTransitions[i] <= pos.Y)
         {
-            if (i % 2 == 0)
-                testY = (currTransitions[i + 1] + currTransitions[i]) / 2;
-            else
-                testY = currTransitions[i + 1];
             i++;
         }
+        if (currTransitions[i] <= pos.Y)
+        {
+            return currTransitions[i];
+        }
+        return currTransitions[Math.Max(0,i - 1)];
 
-        return currTransitions[i];
 
     }
 

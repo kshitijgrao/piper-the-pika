@@ -45,7 +45,7 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("TestMap.bmp");
+        map = new Map("rasterizedMap.bmp");
 
         //bg = Engine.LoadTexture("TestMap.bmp");
 
@@ -89,6 +89,7 @@ class Game
 
             //collision detection
             Physics.detectGround(piper);
+            Physics.detectUnpenetrable(piper);
             //ground
             Physics.detectCollisions(rings);
 
@@ -106,6 +107,7 @@ class Game
             //replace this with proper drawing with rao/yasemin's rendering/animation system
             //piper.testDraw();
             piper.draw(new Bounds2(0, 0, 24, 24), scroll.pos + piper.loc - new Vector2(12, 12));
+            piper.drawVectors(scroll.pos + piper.loc);
             rings[0].draw(new Bounds2(0, 0, 24, 24), scroll.pos + rings[0].loc - new Vector2(10,10));
 
             //piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);

@@ -94,9 +94,13 @@ class Sprite {
     }
 
 
-    public Vector2 getBotPoint()
+    public Vector2 getBotPoint() { return getPoint(new Vector2(0, 1)); }
+    public Vector2 getRightPoint() { return getPoint(new Vector2(1, 0)); }
+    public Vector2 getLeftPoint() { return getPoint(new Vector2(-1, 0)); }
+
+    public Vector2 getPoint(Vector2 direc)
     {
-        return loc + hitbox / 2;
+        return loc + hitbox.X / 2 * direc;
     }
 
     public bool notCollidable()
