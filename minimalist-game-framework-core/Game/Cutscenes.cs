@@ -5,7 +5,7 @@ public class Scenes
         static Font h1 = Engine.LoadFont("Arial.ttf", 40);
 		static Font h2 = Engine.LoadFont("Arial.ttf", 20);
 		static Font h3 = Engine.LoadFont("Arial.ttf", 12);
-		static Texture piper = Engine.LoadTexture("pika-spritemap-no-dots.png");
+		static Texture piper = Engine.LoadTexture("pika-spritemap.png");
 
 
         //Title Scene
