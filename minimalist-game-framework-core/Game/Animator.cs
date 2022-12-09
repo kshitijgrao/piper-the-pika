@@ -67,7 +67,7 @@ internal static class Animator
         // find bounds on spritemap and draw
         Vector2 piperFrameStart = new Vector2((int)frameIndex * 24, piper.getState() * 24);
         Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, new Vector2(24, 24));
-        piper.draw(piperFrameBounds);
+        //piper.draw(piperFrameBounds);
 
         // return current frame
         return frameIndex;
