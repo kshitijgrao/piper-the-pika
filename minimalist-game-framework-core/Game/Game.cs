@@ -17,10 +17,8 @@ class Game
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
 
     // sprites
-    //float piperFrameIndex;
-
     public static Sonic piper;
-
+    Sprite[] sprites = new Sprite[1];
 
     public static Scoreboard sb;
 
@@ -30,8 +28,8 @@ class Game
     Sprite[] rings = new Flower[1];
 
     Rendering scroll;
-    //Texture bg;
     Vector2 pos;
+    Key currentKey = Key.Q; // defaults to unused key "Q"
 
     public Game()
     {
@@ -44,9 +42,6 @@ class Game
 
         //create map
         map = new Map("TestMap.bmp");
-
-        //bg = Engine.LoadTexture("TestMap.bmp");
-
 
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture);
@@ -67,45 +62,21 @@ class Game
         else if (endScene) { Scenes.endScene(); }
         else
         {
-            //getting input (need to adjust this to work generally, this is just for testing)
-            String currKey = "None";
-            if (Engine.GetKeyHeld(Key.Right))
-            {
-                currKey = Game.RIGHT;
-            }
-            else if (Engine.GetKeyHeld(Key.Left))
-            {
-                currKey = Game.LEFT;
-            }
-
-            //update velocity (mainly jump velocity)
-            if (Engine.GetKeyDown(Key.Z))
-            {
-                piper.jump();
-            } 
-
             //collision detection
             Physics.detectGround(piper);
             //ground
             Physics.detectCollisions(rings);
 
             //update acceleration
-            piper.setAcceleration(currKey);
+            piper.setAcceleration(currentKey);
 
             //update overall physics
             Physics.updatePhysics(sprites);
 
-
-            //Engine.DrawTexture(bg, new Vector2(0, 0));
-
+            // collect input and draw frame
             scroll.scrollingWindow();
-
-            //replace this with proper drawing with rao/yasemin's rendering/animation system
-            //piper.testDraw();
-            piper.draw(new Bounds2(0, 0, 24, 24), scroll.pos + piper.loc - new Vector2(12, 12));
+            currentKey = InputHandler.getPlayerInput(piper, scroll.pos + piper.loc - new Vector2(12, 12));
             rings[0].draw(new Bounds2(0, 0, 24, 24), scroll.pos + rings[0].loc - new Vector2(10,10));
-
-            //piperFrameIndex = Animator.animatePiper(piper, speed, piperFrameIndex);
             sb.updateScoreboard();
 
         }
