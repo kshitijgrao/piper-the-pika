@@ -153,7 +153,7 @@ public class Scoreboard
             return 0;
         }
 
-    public float getTime()
+    public static float getTime()
     {
         return time;
     }
