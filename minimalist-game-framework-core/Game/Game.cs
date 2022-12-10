@@ -35,7 +35,7 @@ class Game
     {
         //scene control
         startScene = true;
-        endScene = true;
+        endScene = false;
 
         //scoreboard
         sb = new Scoreboard();
