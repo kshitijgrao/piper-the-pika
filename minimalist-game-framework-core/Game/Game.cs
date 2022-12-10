@@ -58,6 +58,7 @@ class Game
     public void Update()
     {
         //scene control
+
         if (startScene) { startScene = Scenes.titleScene(); }
         else if (endScene) { Scenes.endScene(); }
         else
