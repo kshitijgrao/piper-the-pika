@@ -48,20 +48,21 @@ unsafe class Map {
 
         for (int x = 0; x < pixels.GetLength(0); x++)
         {
-            for(int y = 0; y < pixels.GetLength(1); y++)
+            for (int y = 0; y < pixels.GetLength(1); y++)
             {
                 pixels[x, y] = *(pixelsImg + pitch * y + bpp * x) + *(pixelsImg + pitch * y + bpp * x + 2);
-                if(x == 173 && y == 980)
+                // rings: 255, 0, 245
+                if (*(pixelsImg + pitch * y + bpp * x + 2) == 245)
                 {
-                    System.Diagnostics.Debug.WriteLine(*(pixelsImg + pitch * y + bpp * x) + " " +  + *(pixelsImg + pitch * y + bpp * x + 2));
+                    Game.flowerCoords.Add(new Vector2(x, y));
                 }
-                
-                if(y > 0 && pixels[x,y] != pixels[x, y - 1])
+
+                if (y > 0 && pixels[x, y] != pixels[x, y - 1])
                 {
                     if (pixels[x, y - 1] == AIR_CODE)
                         transitions[x].Add(y);
                     else
-                        transitions[x].Add(y-1);
+                        transitions[x].Add(y - 1);
                 }
             }
         }

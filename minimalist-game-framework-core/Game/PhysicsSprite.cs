@@ -4,6 +4,8 @@ using System.Text;
 
 class PhysicsSprite : Sprite
 {
+    internal readonly float sprintSpeed = 30;
+
     public float mass;
     public Vector2 vel;
     public Vector2 acc;
@@ -66,10 +68,19 @@ class PhysicsSprite : Sprite
         }
         if (onGround && Game.map.inAir(getBotPoint()))
         {
-            System.Diagnostics.Debug.WriteLine("BURHBUHOJFIA");
             onGround = false;
         }
 
+
+        // sprint if moving fast enough
+        if (vel.Length() > sprintSpeed)
+        {
+            Animator.setPiperSprinting(true);
+        } 
+        else
+        {
+            Animator.setPiperSprinting(false);
+        }
         keepOnSurface();
     }
 
@@ -83,6 +94,7 @@ class PhysicsSprite : Sprite
         onGround = true;
         this.setState(Sprite.landState);
         collideWall(timeLeft);
+        Animator.animatePiperLanding(this);
     }
 
     public void collideWall(float timeLeft)
