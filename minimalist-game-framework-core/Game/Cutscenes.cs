@@ -29,7 +29,7 @@ public class Scenes
 			return false;
 		}
 
-        Engine.DrawTexture(piper, new Vector2(140, 50), size: new Vector2(50, 50));
+        Engine.DrawTexture(piper, new Vector2(135, 50), size: new Vector2(50, 50));
         Engine.DrawString("PIPER", new Vector2(100, 100), Color.White, h1);
         Engine.DrawString("THE PIKA", new Vector2(115, 140), Color.White, h2);
 		if (frameCount%90<=45)
