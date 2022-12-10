@@ -8,6 +8,10 @@ public class Scenes
 		static Font h3 = Engine.LoadFont("Arial.ttf", 12);
 		static Texture piper = Engine.LoadTexture("pika-spritemap.png");
 		static Boolean scoreUpdate = false;
+		static int line1X = -100;
+		static int line2X = -100;
+		static int line3X = 320;
+		static int textSlideSpeed = 10;
 
 
         //Title Scene
@@ -35,10 +39,27 @@ public class Scenes
 		{
 			return false;
 		}
-		Engine.DrawString("PIPER HAS", new Vector2(100, 150), Color.White, h1);
-		Engine.DrawString("PASSED", new Vector2(0, 0), Color.White, h2);
-		Engine.DrawString("Act", new Vector2(0, 0), Color.Orange, h2);
-		Engine.DrawString("1", new Vector2(0, 0), Color.Yellow, h1);
+
+
+		if (line1X < 100)
+		{
+			line1X += textSlideSpeed;
+		}
+		else if (line2X < 115)
+		{
+			line2X += textSlideSpeed;
+		}
+		else if (line3X > 170)
+		{
+			line3X -= textSlideSpeed;
+		}
+
+		Engine.DrawString("PIPER  HAS", new Vector2(line1X, 50), Color.White, h2); //100, 50
+		Engine.DrawString("PASSED", new Vector2(line2X, 75), Color.White, h2); //15 , 75
+
+
+		Engine.DrawString("Act", new Vector2(line3X + 5, 97), Color.Orange, h3); //170, 97
+		Engine.DrawString("1", new Vector2(line3X + 30, 72), Color.Yellow, h1) ; //200, 72
 		Scoreboard.addFlowerScore();
 
 		if (!scoreUpdate)
