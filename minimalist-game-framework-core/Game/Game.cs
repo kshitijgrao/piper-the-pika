@@ -45,7 +45,7 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("RingEnemyMap.bmp");
+        map = new Map("RingEnemyMap5.bmp");
         flowers = new Flower[flowerCoords.Count];
 
         // create piper sprite
@@ -54,19 +54,11 @@ class Game
         //sprites.Add(piper);
 
         // TESTING ENEMIES
-        Bounds2 testPath = new Bounds2(new Vector2(100, 0), new Vector2(200, 0));
-        wolf = new Enemy(new Vector2(150, 960), wolfTexture, new Vector2(40, 34), testPath);
-        hawk = new Enemy(new Vector2(160, 900), hawkTexture, new Vector2(54, 37), testPath);
-        wolf.setState(1);
-        hawk.setState(1);
-        enemiesOnScreen.Add(wolf);
-        enemiesOnScreen.Add(hawk);
-
-        for (int i = 0; i < flowers.Length; i++)
-        {
-            flowers[i] = new Flower(flowerCoords[i]);
-        }
-        render = new Rendering("TestMapPng.png", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
+        //wolf.setState(1);
+        //hawk.setState(1);
+        //enemiesOnScreen.Add(wolf);
+        //enemiesOnScreen.Add(hawk);
+        render = new Rendering("NewTestMap.png", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
     }
 
     public void Update()
@@ -103,6 +95,10 @@ class Game
             piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc - new Vector2(12, 12), currentKey));
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
+            if (piper.loc.X >= 6125)
+            {
+                endScene = true;
+            }
         }
     }
 }
