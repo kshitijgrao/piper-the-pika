@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 class Sprite {
@@ -108,6 +109,10 @@ class Sprite {
 
     public void setFrameIndex(float frameIndex)
     {
+        if (frameIndex == 0)
+        {
+            Debug.WriteLine("Resetting frame index");
+        }
         this.frameIndex = frameIndex;
     }
 
