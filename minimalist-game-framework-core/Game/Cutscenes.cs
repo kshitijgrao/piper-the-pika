@@ -38,6 +38,9 @@ public class Scenes
         Engine.DrawString("PIPER", new Vector2(100, 100), Color.White, h1);
         Engine.DrawString("THE PIKA", new Vector2(115, 140), Color.White, h2);
 		Engine.DrawString("Press SPACE for Instructions", new Vector2(0, 0), Color.White, h3);
+		Engine.DrawString(">   Easy", new Vector2(267,5), Color.White, h3);
+		Engine.DrawString("Medium", new Vector2(273,25), Color.White, h3);
+		Engine.DrawString("Hard", new Vector2(280,45), Color.White, h3);
 		if (frameCount%90<=45)
 		{
 			Engine.DrawString("Click to Start", new Vector2(125, 170), Color.Yellow, h3);
