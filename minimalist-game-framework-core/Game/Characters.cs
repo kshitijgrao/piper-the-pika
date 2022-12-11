@@ -7,10 +7,10 @@ class Sonic : PhysicsSprite
     public static readonly int boostFrameTime = 10;
     public static readonly float maxHorVel = 10;
     public static readonly float maxHorVelBoost = 2;
-    public static readonly float jumpImpulseMag = 60;
-    public static readonly float accelerationMag = 15;
-    public static readonly float brakeAccMag = 10;
-    public static readonly float accelerationBoostFactor = (float) 1.2;
+    public static readonly float jumpImpulseMag = 30;
+    public static readonly float accelerationMag = 30;
+    public static readonly float brakeAccMag = 20;
+    public static readonly float accelerationBoostFactor = (float) 2;
     
 
 
