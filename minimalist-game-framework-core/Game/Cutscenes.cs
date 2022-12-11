@@ -47,11 +47,11 @@ public class Scenes
 		public static Boolean endScene()
 
 		{
-			//will be used later for next level/restart game
+			//exit game
 			if (Engine.GetMouseButtonDown(MouseButton.Left))
 			{
-				return false;
-			}
+				Environment.Exit(0);
+            }
 
 			//line sliding animation
 			if (line1X < 100)
