@@ -26,7 +26,6 @@ class Game
     public static Enemy wolf;
     public static Enemy hawk;
     Sprite[] sprites = new Sprite[1];
-    Sprite[] rings = new Flower[1];
     ArrayList enemiesOnScreen = new ArrayList();
 
     public static Scoreboard sb;
@@ -63,7 +62,7 @@ class Game
         enemiesOnScreen.Add(wolf);
         enemiesOnScreen.Add(hawk);
 
-        for (int i = 0; i < rings.Length; i++)
+        for (int i = 0; i < flowers.Length; i++)
         {
             flowers[i] = new Flower(flowerCoords[i]);
         }
