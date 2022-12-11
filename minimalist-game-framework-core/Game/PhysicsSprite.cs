@@ -9,6 +9,7 @@ class PhysicsSprite : Sprite
     public float mass;
     public Vector2 vel;
     public Vector2 acc;
+    public float airTime;
 
     private bool collided;
     private float timeLeft;
@@ -20,6 +21,7 @@ class PhysicsSprite : Sprite
         acc = new Vector2(0, 0);
         collided = false;
         timeLeft = 0;
+        airTime = 0;
         onGround = Game.map.onGround(this.getBotPoint());
     }
 
@@ -29,6 +31,7 @@ class PhysicsSprite : Sprite
         acc = new Vector2(0, 0);
         collided = false;
         timeLeft = 0;
+        airTime = 0;
         onGround = Game.map.onGround(this.getBotPoint());
     }
 
@@ -40,6 +43,16 @@ class PhysicsSprite : Sprite
     public void setAcceleration(Vector2 acc)
     {
         this.acc = acc;
+    }
+
+    public float getAirTime()
+    {
+        return airTime;
+    }
+
+    public void addAirTime(float time)
+    {
+        airTime+= time;
     }
 
     public void setAccelerationDirect(Vector2 acc)
@@ -94,7 +107,10 @@ class PhysicsSprite : Sprite
         onGround = true;
         this.setState(Sprite.landState);
         collideWall(timeLeft);
-        Animator.animatePiperLanding(this);
+        if (airTime > 50)
+        {
+            Animator.animatePiperLanding(this);
+        }
     }
 
     public void collideWall(float timeLeft)
