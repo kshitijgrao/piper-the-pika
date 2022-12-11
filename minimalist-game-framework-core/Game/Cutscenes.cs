@@ -24,13 +24,12 @@ public class Scenes
         //Title Scene
 		public static int titleScene()
 		{
+		if (Engine.GetKeyDown(Key.Space))
+		{
+			return 2;
+		}
 		if (Engine.GetMouseButtonDown(MouseButton.Left))
 		{
-			Vector2 mousePos = Engine.MousePosition;
-			if (mousePos.X < 75 && mousePos.Y<25)
-			{
-				return 2;
-			}
 			return 0;
             frameCount = 0;
         }
@@ -38,7 +37,7 @@ public class Scenes
         Engine.DrawTexture(piper, new Vector2(135, 50), size: new Vector2(50, 50));
         Engine.DrawString("PIPER", new Vector2(100, 100), Color.White, h1);
         Engine.DrawString("THE PIKA", new Vector2(115, 140), Color.White, h2);
-		Engine.DrawString("Instructions", new Vector2(0, 0), Color.White, h3);
+		Engine.DrawString("Press SPACE for Instructions", new Vector2(0, 0), Color.White, h3);
 		if (frameCount%90<=45)
 		{
 			Engine.DrawString("Click to Start", new Vector2(125, 170), Color.Yellow, h3);
@@ -52,7 +51,7 @@ public class Scenes
 		//Instructions Scene
 		public static int instructionsScene()
 		{
-		if (Engine.GetMouseButtonDown(MouseButton.Left))
+		if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
 		{ 
 			return 1;
 		}
