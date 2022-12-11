@@ -38,8 +38,8 @@ class Game
     public Game()
     {
         //scene control
-        startScene = true;
-        endScene = false;
+        startScene = false;
+        endScene = true;
 
         //scoreboard
         sb = new Scoreboard();
@@ -74,7 +74,7 @@ class Game
         //scene control
 
         if (startScene) { startScene = Scenes.titleScene(); }
-        else if (endScene) { Scenes.endScene(); }
+        else if (endScene) {Scenes.endScene(); }
         else
         {
             currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));
