@@ -48,7 +48,7 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("RingEnemyMap2.bmp");
+        map = new Map("RingEnemyMap4.bmp");
 
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
