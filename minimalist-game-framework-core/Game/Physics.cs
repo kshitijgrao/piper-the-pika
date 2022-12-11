@@ -81,7 +81,7 @@ class Physics
         Vector2 pos = obj.getBotPoint();
         Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
 
-        if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && obj.vel.Y > 0)))
+        if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel,Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
         {
             System.Diagnostics.Debug.Write("Acc: " + obj.acc.ToString() + " ");
             System.Diagnostics.Debug.Write("COLLIDED!!!");

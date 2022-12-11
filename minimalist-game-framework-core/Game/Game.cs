@@ -9,7 +9,7 @@ class Game
     public static readonly Vector2 Resolution = new Vector2(320, 224);
     //public static List<Vector2> enemyCoords = new List<Vector2>();
     public static Map map;
-    public Boolean startScene;
+    public int startScene; //0 = false, 1 = true, 2 = instructions
     public Boolean endScene;
     public static List<Flower> flowers = new List<Flower>();
     public static List<Enemy> enemies = new List<Enemy>();
@@ -17,7 +17,7 @@ class Game
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
 
-
+    
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
     readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
     readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
@@ -39,8 +39,10 @@ class Game
     public Game()
     {
         //scene control
-        startScene = true;
+        startScene = 1;
         endScene = false;
+
+
 
         //scoreboard
         sb = new Scoreboard();
@@ -64,9 +66,12 @@ class Game
     public void Update()
     {
         //scene control
-
-        if (startScene) { startScene = Scenes.titleScene(); }
-        else if (endScene) { Scenes.endScene(); }
+        if (startScene==2)
+        {
+            startScene = Scenes.instructionsScene();
+        }
+        else if (startScene==1) { startScene = Scenes.titleScene(); }
+        else if (endScene) {Scenes.endScene(); }
         else
         {
             currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));
