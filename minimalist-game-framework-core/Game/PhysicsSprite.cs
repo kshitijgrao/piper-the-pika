@@ -4,7 +4,7 @@ using System.Text;
 
 class PhysicsSprite : Sprite
 {
-    internal readonly float sprintSpeed = 30;
+    internal readonly float sprintSpeed = 80;
 
     public float mass;
     public Vector2 vel;
