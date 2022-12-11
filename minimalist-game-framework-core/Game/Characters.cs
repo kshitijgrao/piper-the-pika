@@ -7,9 +7,9 @@ class Sonic : PhysicsSprite
     public static readonly int boostFrameTime = 10;
     public static readonly float maxHorVel = 10;
     public static readonly float maxHorVelBoost = 2;
-    public static readonly float jumpImpulseMag = 200;
+    public static readonly float jumpImpulseMag = 60;
     public static readonly float accelerationMag = 15;
-    public static readonly float brakeAccMag = 10000;
+    public static readonly float brakeAccMag = 10;
     public static readonly float accelerationBoostFactor = (float) 1.2;
     
 
@@ -30,21 +30,21 @@ class Sonic : PhysicsSprite
 
     public void jump()
     {
-        if (!Game.map.onGround(this.getBotPoint()))
+        if (onGround)
         {
-            return;
+            this.vel = this.vel + jumpImpulseMag * Game.map.getNormalVector(loc);
         }
-        this.vel = this.vel + jumpImpulseMag * Game.map.getNormalVector(loc);
+        
     }
 
     public void setAcceleration(Key key)
     {
         Vector2 tempLoc = this.getBotPoint();
-        if(key.Equals(Key.D))
+        if(key == Key.D)
         {
             this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(90);
         }
-        else if(key.Equals(Key.A))
+        else if(key == Key.A)
         {
             this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(270);
         }
@@ -62,6 +62,10 @@ class Sonic : PhysicsSprite
         }
 
         this.acc += Physics.getPhysicsAcceleration(tempLoc, this.vel);
+
+        System.Diagnostics.Debug.WriteLine(this.acc.ToString());
+        //account for weird floating point errors
+        this.acc.round(2);
     }
 
     public override void updateState()

@@ -49,7 +49,7 @@ internal static class InputHandler
             Animator.setPiperSpinning(false, piper);
         }
 
-        piper.setFrameIndex(Animator.animatePiper(piper, position, k));
+        
         return k;
     }
 }

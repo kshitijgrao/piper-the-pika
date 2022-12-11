@@ -41,7 +41,7 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("TestMap.bmp");
+        map = new Map("rasterizedMap.bmp");
 
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture);
@@ -63,8 +63,12 @@ class Game
         else if (endScene) { Scenes.endScene(); }
         else
         {
+            currentKey = InputHandler.getPlayerInput(piper, scroll.pos + piper.loc - new Vector2(12, 12));
+            
+            
             //collision detection
             Physics.detectGround(piper);
+            Physics.detectUnpenetrable(piper);
             //ground
             Physics.detectCollisions(rings);
 
@@ -76,7 +80,9 @@ class Game
 
             // collect input and draw frame
             scroll.scrollingWindow();
-            currentKey = InputHandler.getPlayerInput(piper, scroll.pos + piper.loc - new Vector2(12, 12));
+            
+
+            piper.setFrameIndex(Animator.animatePiper(piper, scroll.pos + piper.loc - new Vector2(12, 12), currentKey));
             rings[0].draw(new Bounds2(0, 0, 24, 24), scroll.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
 
