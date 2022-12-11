@@ -15,7 +15,7 @@ class Sprite {
 
     private bool invisible;
 
-    public static readonly int landState = 6;
+    public static readonly int landState = 5;
 
     public Sprite(Vector2 loc, Texture spritemap)
     {
