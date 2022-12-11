@@ -12,8 +12,7 @@ internal static class InputHandler
             k = Key.Space;
             piper.jump();
         }
-
-        if (Engine.GetKeyHeld(Key.A))
+        else if (Engine.GetKeyHeld(Key.A))
         {
             k = Key.A;
             Animator.checkPiperTurn(piper);

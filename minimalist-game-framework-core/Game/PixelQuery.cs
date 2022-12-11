@@ -23,8 +23,6 @@ unsafe class Map {
 
     private static readonly int SLOPE_MAX_COUNT = 15;
 
-    private static readonly int SLOPE_SAMPLING_WIDTH = 10;
-
 
     public Map(String loc)
     {
@@ -172,32 +170,13 @@ unsafe class Map {
     //need to fix for LOTS of edge cases
     public Vector2 getNormalVector(Vector2 pos)
     {
-        Vector2 slope = new Vector2(SLOPE_SAMPLING_WIDTH, 0);
+        Vector2 slope = new Vector2(10,0);
+        slope.Y = getSurfaceY(pos + slope / 2) - getSurfaceY(pos - slope / 2);
 
-        // tests for slope difference
-        Vector2 slopeDiff = new Vector2(0, 0);
-
-        Vector2 point1 = new Vector2(0, getSurfaceY(pos + slope / 2));
-        Vector2 point2 = new Vector2(SLOPE_SAMPLING_WIDTH, getSurfaceY(pos - slope / 2));
-
-        slopeDiff.X = point1.Y - pos.Y;
-        slopeDiff.Y = pos.Y - point2.Y;
-
-        //Console.WriteLine("diff: " + (slopeDiff.Y - slopeDiff.X));
-
-        if (slopeDiff.Y - slopeDiff.X >= 10)
-        {
-            slope.Y = slopeDiff.X;
-            slope.X = SLOPE_SAMPLING_WIDTH / 2;
-        } else
-        {
-            slope.Y = point1.Y - point2.Y;
-        }
-
-        if ( (pos.Y >= 869) ) {
-            Console.WriteLine(slope.Rotated(270).Normalized());
-        }
         return slope.Rotated(270).Normalized();
+
+
+        return new Vector2(0, -1);
     }
 
     public float getSurfaceRadius(Vector2 pos)
