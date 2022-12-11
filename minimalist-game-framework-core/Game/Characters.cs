@@ -120,9 +120,7 @@ class Enemy : PhysicsSprite
 
     public override void collide(Sprite other)
     {
-        Debug.WriteLine("collided with sonic");
         if (other is PhysicsSprite) {
-            Debug.WriteLine("is thisdddddd sonic");
             if (((PhysicsSprite)other).vel.Length() > killSpeed)
             {
                 Game.sb.enemyKilled(1);
