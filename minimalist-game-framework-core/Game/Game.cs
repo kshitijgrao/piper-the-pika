@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Diagnostics;
 
 class Game
 {
@@ -17,16 +18,18 @@ class Game
 
 
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
+    readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
 
     // sprites
     public static Sonic piper;
+    public static Enemy wolf;
+    Sprite[] sprites = new Sprite[1];
+    Sprite[] rings = new Flower[1];
+    ArrayList enemiesOnScreen = new ArrayList();
 
     public static Scoreboard sb;
 
     Font arial = Engine.LoadFont("Arial.ttf", 10);
-
-    Sprite[] sprites = new Sprite[1];
-
     Rendering render;
     Vector2 pos;
     Key currentKey = Key.Q; // defaults to unused key "Q"
@@ -45,15 +48,21 @@ class Game
         flowers = new Flower[flowerCoords.Count];
 
         // create piper sprite
-        piper = new Sonic(new Vector2(160, 960), piperTexture);
+        piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = piper;
         //sprites.Add(piper);
-        for (int i = 0; i < flowerCoords.Count; i++)
+
+        // TESTING ENEMIES
+        Bounds2 testPath = new Bounds2(new Vector2(100, 0), new Vector2(200, 0));
+        wolf = new Enemy(new Vector2(150, 960), wolfTexture, new Vector2(40, 34), testPath);
+        wolf.setState(1);
+        enemiesOnScreen.Add(wolf);
+
+        for (int i = 0; i < rings.Length; i++)
         {
             flowers[i] = new Flower(flowerCoords[i]);
         }
         render = new Rendering("TestMapPng.png", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
-
     }
 
     public void Update()
@@ -80,14 +89,16 @@ class Game
             Physics.updatePhysics(sprites);
 
             // collect input and draw frame
+            
             render.scrollingMotion();
-            
-
+            foreach (Enemy enemy in enemiesOnScreen)
+            {
+                enemy.updateState();
+                enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc - new Vector2(12, 13)));
+            };
             piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc - new Vector2(12, 12), currentKey));
-            //flowers[0].draw(new Bounds2(0, 0, 24, 24), scroll.pos + flowers[0].loc - new Vector2(10,10));
+            //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
-            
-
         }
     }
 }

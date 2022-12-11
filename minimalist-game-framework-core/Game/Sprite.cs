@@ -43,6 +43,16 @@ class Sprite {
         
     }
 
+    public Boolean isInvisible()
+    {
+        return invisible;
+    }
+
+    public Vector2 getHitboxNoCalc()
+    {
+        return hitbox;
+    }
+
     public virtual void collide(Sprite other)
     {
         invisible = true;
