@@ -70,8 +70,6 @@ unsafe class Map {
                 Bounds2 testPath = new Bounds2(new Vector2(locVect.X - 100, 0), new Vector2(locVect.X + 100, 0));
                 if (pixels[x, y] == 5)
                 {
-                    //locVect.X -= 20;
-                    //locVect.Y -= 13;
                     enemyToAdd = new Enemy(locVect, testPath, false);
                     enemyToAdd.setState(1);
                     Game.enemies.Add(enemyToAdd);
@@ -81,8 +79,6 @@ unsafe class Map {
                 //checking for flying enemies
                 if (pixels[x, y] == 25)
                 {
-                    //locVect.X -= 27;
-                    //locVect.Y -= (float)18.5;
                     enemyToAdd = new Enemy(locVect, testPath, true);
                     enemyToAdd.setState(1);
                     Game.enemies.Add(enemyToAdd);
