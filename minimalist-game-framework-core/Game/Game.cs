@@ -54,7 +54,7 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("RingEnemyMap4.bmp");
+        map = new Map("RingEnemyMap5.bmp");
         enemyArr = enemies.ToArray();
         flowerArr = flowers.ToArray();
 
@@ -62,7 +62,7 @@ class Game
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = piper;
 
-        render = new Rendering("RenderMapVersion.png", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
+        render = new Rendering("NewTestMap.png", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
     }
 
     public void Update()
@@ -106,6 +106,10 @@ class Game
             piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
+            if (piper.loc.X >= 6125)
+            {
+                endScene = true;
+            }
         }
     }
 }

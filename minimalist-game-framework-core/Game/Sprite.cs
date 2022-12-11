@@ -15,7 +15,7 @@ class Sprite {
 
     private bool invisible;
 
-    public static readonly int landState = 6;
+    public static readonly int landState = 5;
 
     public Sprite(Vector2 loc, Texture spritemap)
     {
@@ -84,7 +84,6 @@ class Sprite {
         if (!invisible) {
             TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
             Engine.DrawTexture(spritemap, position - hitbox / 2, source: bounds, mirror: mirror);
-            Engine.DrawRectSolid(new Bounds2(position - hitbox/2, hitbox), Color.Black);
         }
     }
 
