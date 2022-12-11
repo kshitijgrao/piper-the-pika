@@ -23,7 +23,7 @@ class Rendering
 
         foreach (Flower flow in Game.flowers)
         {
-            flow.draw(new Bounds2(0, 0, 13, 14), flow.loc);
+            flow.draw(new Bounds2(0, 0, 13, 14), flow.loc + pos);
         }
 
         Vector2 onScreenCoord = Game.piper.loc + pos;

@@ -52,7 +52,8 @@ unsafe class Map {
             {
                 pixels[x, y] = *(pixelsImg + pitch * y + bpp * x) + *(pixelsImg + pitch * y + bpp * x + 2);
                 // rings: 255, 0, 245
-                if (*(pixelsImg + pitch * y + bpp * x + 2) == 245)
+                //Console.WriteLine(*(pixelsImg + pitch * y + bpp * x + 2));
+                if (pixels[x, y] == (245 + 255))
                 {
                     Game.flowerCoords.Add(new Vector2(x, y));
                 }
