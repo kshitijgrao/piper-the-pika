@@ -81,6 +81,37 @@ class Sonic : PhysicsSprite
     }
 }
 
+class Enemy : PhysicsSprite
+{
+    Bounds2 path; // holds the max and minumum vector displacement (from loc) of an enemy
+    float speed = 20;
+
+    public Enemy(Vector2 loc, Texture sprites, Vector2 hitboxes, Bounds2 path) : base(loc, sprites, hitboxes)
+    {
+        this.path = path;
+    }
+
+    public Enemy(Vector2 loc, Texture sprites, Bounds2 path) : base(loc, sprites)
+    {
+        this.path = path;
+    }
+    public Enemy(Vector2 loc, Texture sprites, Bounds2 path, float speed) : base(loc, sprites)
+    {
+        this.path = path;
+        this.speed = speed;
+    }
+
+
+    public Bounds2 getPath()
+    {
+        return path;
+    }
+
+    public float getSpeed()
+    {
+        return speed;
+    }
+}
 
 class Flower : Sprite
 {
