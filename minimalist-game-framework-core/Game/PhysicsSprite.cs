@@ -25,6 +25,15 @@ class PhysicsSprite : Sprite
         onGround = Game.map.onGround(this.getBotPoint());
     }
 
+    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, bool onGround) : base(loc, sprites, hitboxes)
+    {
+        vel = new Vector2(0, 0);
+        acc = new Vector2(0, 0);
+        collided = false;
+        timeLeft = 0;
+        this.onGround = false;
+    }
+
     public PhysicsSprite(Vector2 loc, Texture sprites) : base(loc, sprites)
     {
         vel = new Vector2(0, 0);

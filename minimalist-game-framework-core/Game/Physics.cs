@@ -10,11 +10,11 @@ using System.Text;
 //TODO: this class + subclasses for different shaped hitboxes
 class Physics
 {
-    public static readonly Vector2 g = new Vector2(0,30);
+    public static readonly Vector2 g = new Vector2(0,40);
     public static readonly int collisionSteps = 5;
 
     //detect collisions for things that are within the window
-    public static void detectCollisions(Sprite[] sprites)
+    public static void detectCollisions(List<Flower> flowers)
     {
 
     }
