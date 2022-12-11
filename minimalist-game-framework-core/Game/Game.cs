@@ -42,6 +42,7 @@ class Game
         endScene = true;
 
 
+
         //scoreboard
         sb = new Scoreboard();
 
