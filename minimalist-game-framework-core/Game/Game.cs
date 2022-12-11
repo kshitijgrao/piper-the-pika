@@ -7,10 +7,11 @@ class Game
 {
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
-    public static ArrayList flowerCoords = new ArrayList();
+    public static List<Vector2> flowerCoords = new List<Vector2>();
     public static Map map;
     public Boolean startScene;
     public Boolean endScene;
+    public static Sprite[] flowers;
 
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
@@ -29,8 +30,7 @@ class Game
     public static Scoreboard sb;
 
     Font arial = Engine.LoadFont("Arial.ttf", 10);
-
-    Rendering scroll;
+    Rendering render;
     Vector2 pos;
     Key currentKey = Key.Q; // defaults to unused key "Q"
 
@@ -44,11 +44,13 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("rasterizedMap.bmp");
+        map = new Map("RingEnemyMap.bmp");
+        flowers = new Flower[flowerCoords.Count];
 
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = piper;
+        //sprites.Add(piper);
 
         // TESTING ENEMIES
         Bounds2 testPath = new Bounds2(new Vector2(100, 0), new Vector2(200, 0));
@@ -56,11 +58,11 @@ class Game
         wolf.setState(1);
         enemiesOnScreen.Add(wolf);
 
-        for(int i =0; i < rings.Length; i++)
+        for (int i = 0; i < rings.Length; i++)
         {
-            rings[i] = new Flower(new Vector2(324,962));
+            flowers[i] = new Flower(flowerCoords[i]);
         }
-        scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
+        render = new Rendering("TestMapPng.png", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
     }
 
     public void Update()
@@ -71,14 +73,14 @@ class Game
         else if (endScene) { Scenes.endScene(); }
         else
         {
-            currentKey = InputHandler.getPlayerInput(piper, scroll.pos + piper.loc - new Vector2(12, 12));
+            currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));
             
             
             //collision detection
             Physics.detectGround(piper);
             Physics.detectUnpenetrable(piper);
             //ground
-            Physics.detectCollisions(rings);
+            Physics.detectCollisions(flowers);
 
             //update acceleration
             piper.setAcceleration(currentKey);
@@ -87,14 +89,15 @@ class Game
             Physics.updatePhysics(sprites);
 
             // collect input and draw frame
-            scroll.scrollingWindow();
+            
+            render.scrollingMotion();
             foreach (Enemy enemy in enemiesOnScreen)
             {
                 enemy.updateState();
-                enemy.setFrameIndex(Animator.animateEnemy(enemy, scroll.pos + enemy.loc - new Vector2(12, 13)));
+                enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc - new Vector2(12, 13)));
             };
-            piper.setFrameIndex(Animator.animatePiper(piper, scroll.pos + piper.loc - new Vector2(12, 12), currentKey));
-            rings[0].draw(new Bounds2(0, 0, 24, 24), scroll.pos + rings[0].loc - new Vector2(10,10));
+            piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc - new Vector2(12, 12), currentKey));
+            //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
         }
     }
