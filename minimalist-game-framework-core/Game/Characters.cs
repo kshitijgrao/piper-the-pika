@@ -85,21 +85,25 @@ class Enemy : PhysicsSprite
 {
     Bounds2 path; // holds the max and minumum vector displacement (from loc) of an enemy
     float speed = 20;
+    public static readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
+    public static readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
+    public static readonly Vector2 wolfHit = new Vector2(40, 34);
+    public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
-    public Enemy(Vector2 loc, Texture sprites, Vector2 hitboxes, Bounds2 path) : base(loc, sprites, hitboxes)
+    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
     {
         this.path = path;
     }
 
-    public Enemy(Vector2 loc, Texture sprites, Bounds2 path) : base(loc, sprites)
-    {
-        this.path = path;
-    }
-    public Enemy(Vector2 loc, Texture sprites, Bounds2 path, float speed) : base(loc, sprites)
-    {
-        this.path = path;
-        this.speed = speed;
-    }
+    //public Enemy(Vector2 loc, Texture sprites, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, false)
+    //{
+    //    this.path = path;
+    //}
+    //public Enemy(Vector2 loc, Texture sprites, Bounds2 path, float speed, bool flying) : base(loc, flying ? hawkTexture : wolfTexture)
+    //{
+    //    this.path = path;
+    //    this.speed = speed;
+    //}
 
 
     public Bounds2 getPath()

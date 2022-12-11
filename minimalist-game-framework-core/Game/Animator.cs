@@ -30,7 +30,7 @@ internal static class Animator
                 piper.setFrameIndex(0);
                 piper.changeLocked(true);
             }
-            else if ((int)Math.Abs(piper.vel.X) == 0)
+            else if ((int)Math.Abs(piper.vel.X) == 0 && !key.Equals(Key.A) && !key.Equals(Key.D))
             {
                 piper.setState(0);
             }
@@ -53,9 +53,18 @@ internal static class Animator
         }
         if (!piper.onGround)
         {
-            piper.setState(4);
+            piper.addAirTime(1);
+            if (piper.getAirTime() > 50)
+            {
+                piper.setState(4);
+            }
         }
-        
+        else
+        {
+            piper.addAirTime(-piper.getAirTime());
+        }
+
+        Debug.WriteLine(piper.getFrameIndex());
         return changeFrame(piper, position, 4);
     }
 
@@ -63,7 +72,7 @@ internal static class Animator
     {
         Vector2 maxPosition = enemy.getPath().Size;
         Vector2 minPosition = enemy.getPath().Position;
-        if (!enemy.isLeft()) // CURRENTLY BROKEN. IF ENEMY "IS LEFT" THEY ARE ACTUALLY FACING RIGHT. THIS WILL BE FIXED LATER
+        if (!enemy.isLeft()) // CURRENTLY INCORRECT. IF ENEMY "IS LEFT" THEY ARE ACTUALLY FACING RIGHT. THIS WILL BE FIXED LATER
         {
             if (enemy.loc.X > minPosition.X)
             {
@@ -90,6 +99,7 @@ internal static class Animator
     private static float changeFrame(Sprite sprite, Vector2 position, int totalFrames)
     {
         // find frame
+        Debug.WriteLine(" for " + sprite + ": " + sprite.getFrameIndex() + " + " + Engine.TimeDelta + " * " + Framerate + " % " + (float)(totalFrames) + " = " + ((sprite.getFrameIndex() + Engine.TimeDelta * Framerate) % (float)totalFrames));
         sprite.setFrameIndex((sprite.getFrameIndex() + Engine.TimeDelta * Framerate) % (float)totalFrames);
         float frameIndex = sprite.getFrameIndex();
 

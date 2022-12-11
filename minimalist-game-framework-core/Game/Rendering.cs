@@ -26,6 +26,22 @@ class Rendering
             flow.draw(new Bounds2(0, 0, 13, 14), flow.loc + pos);
         }
 
+        for (int i = 0; i < Game.enemies.Count; i++)
+        {
+            Vector2 enemyPos = Game.enemies[i].loc + pos;
+
+            if (enemyPos.X < Game.Resolution.X && enemyPos.Y < Game.Resolution.Y)
+            {
+                if (!Game.enemiesOnScreen.Contains(Game.enemies[i]))
+                {
+                    Game.enemiesOnScreen.Add(Game.enemies[i]);
+                }
+            } else if (Game.enemiesOnScreen.Contains(Game.enemies[i]))
+            {
+                Game.enemiesOnScreen.Remove(Game.enemies[i]);
+            }
+        }
+
         Vector2 onScreenCoord = Game.piper.loc + pos;
 
         if (onScreenCoord.X > window.Max.X && Game.piper.vel.X > 0)

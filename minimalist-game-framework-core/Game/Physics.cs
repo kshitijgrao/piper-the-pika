@@ -10,11 +10,11 @@ using System.Text;
 //TODO: this class + subclasses for different shaped hitboxes
 class Physics
 {
-    public static readonly Vector2 g = new Vector2(0,30);
+    public static readonly Vector2 g = new Vector2(0,40);
     public static readonly int collisionSteps = 5;
 
     //detect collisions for things that are within the window
-    public static void detectCollisions(Sprite[] sprites)
+    public static void detectCollisions(List<Flower> flowers)
     {
 
     }
@@ -81,7 +81,7 @@ class Physics
         Vector2 pos = obj.getBotPoint();
         Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
 
-        if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && obj.vel.Y > 0)))
+        if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel,Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
         {
             System.Diagnostics.Debug.Write("Acc: " + obj.acc.ToString() + " ");
             System.Diagnostics.Debug.Write("COLLIDED!!!");

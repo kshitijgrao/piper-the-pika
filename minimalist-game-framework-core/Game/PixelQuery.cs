@@ -55,9 +55,24 @@ unsafe class Map {
                 pixels[x, y] = *(pixelsImg + pitch * y + bpp * x) + *(pixelsImg + pitch * y + bpp * x + 2);
                 // rings: 255, 0, 245
                 //Console.WriteLine(*(pixelsImg + pitch * y + bpp * x + 2));
+                Vector2 locVect = new Vector2(x, y);
                 if (pixels[x, y] == (245 + 255))
                 {
-                    Game.flowerCoords.Add(new Vector2(x, y));
+                    Game.flowers.Add(new Flower(locVect));
+                    pixels[x, y] = AIR_CODE;
+                }
+
+                Bounds2 testPath = new Bounds2(new Vector2(locVect.X - 100, 0), new Vector2(locVect.X + 100, 0));
+                if (pixels[x, y] == 5)
+                {
+                    Game.enemies.Add(new Enemy(locVect, testPath, false));
+                    pixels[x, y] = AIR_CODE;
+                }
+
+                if (pixels[x, y] == 25)
+                {
+                    Game.enemies.Add(new Enemy(locVect, testPath, true));
+                    pixels[x, y] = AIR_CODE;
                 }
 
                 if (y > 0 && pixels[x, y] != pixels[x, y - 1])
@@ -104,6 +119,11 @@ unsafe class Map {
     public bool throughThrough(Vector2 coord)
     {
         return getPixelType(coord) == PASS_THROUGH_CODE;
+    }
+
+    public bool closeToSurface(Vector2 coord)
+    {
+        return Math.Abs(getSurfaceY(coord) - coord.Y) < CLOSE_THRESHOLD;
     }
 
     //getting slope angle
@@ -200,20 +220,53 @@ unsafe class Map {
     public int getSurfaceY(Vector2 pos)
     {
         List<int> currTransitions = transitions[(int) pos.X];
-        int i = 0;
+
+        for (int i = 0; i < currTransitions.Count; i++)
+        {
+            if(i % 2 == 0)
+            {
+                if (i + 1 >= currTransitions.Count || (pos.Y >= currTransitions[i] && pos.Y <( currTransitions[i] + currTransitions[i + 1]) / 2))
+                {
+                    return currTransitions[i];
+                }
+                //air case
+                if (currTransitions[i] > pos.Y)
+                {
+                    return currTransitions[i];
+                }
+            }
+            //upside down ground case
+            if(i % 2 != 0)
+            {
+                if(pos.Y  <= currTransitions[i] && pos.Y >= (currTransitions[i] + currTransitions[i-1]) / 2)
+                {
+                    return currTransitions[i];
+                }
+            }
+        }
+        return -1;
+
+
+
+        /*
+        if(currTransitions.Count == 1)
+        {
+            return currTransitions[0];
+        }
+
+        int i = 1;
         while(i < currTransitions.Count && currTransitions[i] <= pos.Y)
         {
-            i++;
+            i += 2;
+        }
+        if (i >= 2 && i >= currTransitions.Count)
+        {
+            return currTransitions[i - 2];
         }
         if (currTransitions[i] <= pos.Y)
         {
             return currTransitions[i];
         }
-        return currTransitions[Math.Max(0,i - 1)];
-
-
+        return currTransitions[Math.Max(0,i - 2)];*/
     }
-
-
 }
-
