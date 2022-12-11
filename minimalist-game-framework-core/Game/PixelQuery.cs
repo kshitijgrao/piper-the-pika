@@ -23,6 +23,8 @@ unsafe class Map {
 
     private static readonly int SLOPE_MAX_COUNT = 15;
 
+    public static readonly int CLOSE_THRESHOLD = 4;
+
 
     public Map(String loc)
     {
@@ -102,6 +104,11 @@ unsafe class Map {
     public bool throughThrough(Vector2 coord)
     {
         return getPixelType(coord) == PASS_THROUGH_CODE;
+    }
+
+    public bool closeToSurface(Vector2 coord)
+    {
+        return Math.Abs(getSurfaceY(coord) - coord.Y) < CLOSE_THRESHOLD;
     }
 
     //getting slope angle
@@ -198,20 +205,53 @@ unsafe class Map {
     public int getSurfaceY(Vector2 pos)
     {
         List<int> currTransitions = transitions[(int) pos.X];
-        int i = 0;
+
+        for (int i = 0; i < currTransitions.Count; i++)
+        {
+            if(i % 2 == 0)
+            {
+                if (i + 1 >= currTransitions.Count || (pos.Y >= currTransitions[i] && pos.Y <( currTransitions[i] + currTransitions[i + 1]) / 2))
+                {
+                    return currTransitions[i];
+                }
+                //air case
+                if (currTransitions[i] > pos.Y)
+                {
+                    return currTransitions[i];
+                }
+            }
+            //upside down ground case
+            if(i % 2 != 0)
+            {
+                if(pos.Y  <= currTransitions[i] && pos.Y >= (currTransitions[i] + currTransitions[i-1]) / 2)
+                {
+                    return currTransitions[i];
+                }
+            }
+        }
+        return -1;
+
+
+
+        /*
+        if(currTransitions.Count == 1)
+        {
+            return currTransitions[0];
+        }
+
+        int i = 1;
         while(i < currTransitions.Count && currTransitions[i] <= pos.Y)
         {
-            i++;
+            i += 2;
+        }
+        if (i >= 2 && i >= currTransitions.Count)
+        {
+            return currTransitions[i - 2];
         }
         if (currTransitions[i] <= pos.Y)
         {
             return currTransitions[i];
         }
-        return currTransitions[Math.Max(0,i - 1)];
-
-
+        return currTransitions[Math.Max(0,i - 2)];*/
     }
-
-
 }
-

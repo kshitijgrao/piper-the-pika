@@ -38,8 +38,8 @@ class Game
     public Game()
     {
         //scene control
-        startScene = false;
-        endScene = true;
+        startScene = true;
+        endScene = false;
 
         //scoreboard
         sb = new Scoreboard();
