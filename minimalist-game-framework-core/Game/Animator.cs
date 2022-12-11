@@ -51,6 +51,10 @@ internal static class Animator
         {
             piper.changeLocked(false);
         }
+        if (!piper.onGround)
+        {
+            piper.setState(4);
+        }
         
         return changeFrame(piper, position, 4);
     }
