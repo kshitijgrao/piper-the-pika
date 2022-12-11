@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 class Sonic : PhysicsSprite
 {
     public static readonly int boostFrameTime = 10;
-    public static readonly float maxHorVel = 10;
-    public static readonly float maxHorVelBoost = 2;
+    public static readonly float maxHorVel = 200;
+    public static readonly float maxHorVelBoost = 300;
     public static readonly float jumpImpulseMag = 30;
     public static readonly float accelerationMag = 30;
     public static readonly float brakeAccMag = 10;
-    public static readonly float accelerationBoostFactor = (float) 2;
+    public static readonly float accelerationBoostFactor = (float) 1.3;
+    public static readonly float flowerAccBoost = (float)2.5;
     
 
 
-    private int flows;
+    private float flows;
     
 
     public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes)
@@ -56,6 +58,10 @@ class Sonic : PhysicsSprite
             else
                 this.acc = Vector2.Zero;
         }
+        if(flows > 0)
+        {
+            acc.X *= accelerationBoostFactor;
+        }
 
         if (Game.map.inAir(loc))
         {
@@ -71,13 +77,27 @@ class Sonic : PhysicsSprite
     public override void updateState()
     {
         base.updateState();
-        flows *= 2;
-        flows %= ((int)Math.Pow(2, boostFrameTime));
+        Debug.WriteLine(this.vel.X);
+        
+        float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
+
+        if(this.vel.X >= 0)
+        {
+            this.vel.X = Math.Min(this.vel.X, horVelCap);
+        }
+        else
+        {
+            this.vel.X = Math.Max(this.vel.X, -1 * horVelCap);
+        }
+
+
+        if(flows > 0)
+           flows -= 1 / ((float) boostFrameTime);
     }
 
     public void addFlower()
     {
-
+        flows += 1;
     }
 }
 
@@ -92,7 +112,7 @@ class Enemy : PhysicsSprite
 
     public static readonly float killSpeed = 5;
 
-    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc + (flying ? hawkHit : wolfHit) / 2, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
+    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
     {
         this.path = path;
     }
@@ -177,6 +197,8 @@ class Flower : Sprite
     public override void collide(Sprite mainCharacter)
     {
         Game.sb.addFlower();
+        if(mainCharacter is Sonic)
+            ((Sonic)mainCharacter).addFlower();
         ((Sonic) mainCharacter).addFlower();
         base.collide(mainCharacter);
     }
