@@ -108,7 +108,7 @@ class PhysicsSprite : Sprite
 
     public override void collide(Sprite other)
     {
-
+        base.collide(other);
     }
 
     public void collideGround(float timeLeft)

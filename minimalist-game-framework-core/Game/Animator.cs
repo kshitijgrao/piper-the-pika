@@ -64,7 +64,6 @@ internal static class Animator
             piper.addAirTime(-piper.getAirTime());
         }
 
-        Debug.WriteLine(piper.getFrameIndex());
         return changeFrame(piper, position, 4);
     }
 
@@ -99,7 +98,6 @@ internal static class Animator
     private static float changeFrame(Sprite sprite, Vector2 position, int totalFrames)
     {
         // find frame
-        Debug.WriteLine(" for " + sprite + ": " + sprite.getFrameIndex() + " + " + Engine.TimeDelta + " * " + Framerate + " % " + (float)(totalFrames) + " = " + ((sprite.getFrameIndex() + Engine.TimeDelta * Framerate) % (float)totalFrames));
         sprite.setFrameIndex((sprite.getFrameIndex() + Engine.TimeDelta * Framerate) % (float)totalFrames);
         float frameIndex = sprite.getFrameIndex();
 
