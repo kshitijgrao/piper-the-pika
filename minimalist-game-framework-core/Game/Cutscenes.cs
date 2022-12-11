@@ -98,8 +98,8 @@ public class Scenes
             //score update animation
             else if (bonus > 0)
 			{
-				Scoreboard.updateScore(100);
-				bonus-=100;
+				Scoreboard.updateScore(25);
+				bonus -= 25;
 			}
 
 			//flashing exit text
