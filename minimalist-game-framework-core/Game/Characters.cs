@@ -92,7 +92,7 @@ class Enemy : PhysicsSprite
 
     public static readonly float killSpeed = 5;
 
-    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc + (flying ? hawkHit : wolfHit) / 2, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
+    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
     {
         this.path = path;
     }
