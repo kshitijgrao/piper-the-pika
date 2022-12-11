@@ -18,10 +18,12 @@ class Game
 
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
     readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
+    readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
 
     // sprites
     public static Sonic piper;
     public static Enemy wolf;
+    public static Enemy hawk;
     Sprite[] sprites = new Sprite[1];
     Sprite[] rings = new Flower[1];
     ArrayList enemiesOnScreen = new ArrayList();
@@ -53,8 +55,11 @@ class Game
         // TESTING ENEMIES
         Bounds2 testPath = new Bounds2(new Vector2(100, 0), new Vector2(200, 0));
         wolf = new Enemy(new Vector2(150, 960), wolfTexture, new Vector2(40, 34), testPath);
+        hawk = new Enemy(new Vector2(160, 900), hawkTexture, new Vector2(54, 37), testPath);
         wolf.setState(1);
+        hawk.setState(1);
         enemiesOnScreen.Add(wolf);
+        enemiesOnScreen.Add(hawk);
 
         for(int i =0; i < rings.Length; i++)
         {
