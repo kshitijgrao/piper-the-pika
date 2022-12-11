@@ -53,9 +53,24 @@ unsafe class Map {
                 pixels[x, y] = *(pixelsImg + pitch * y + bpp * x) + *(pixelsImg + pitch * y + bpp * x + 2);
                 // rings: 255, 0, 245
                 //Console.WriteLine(*(pixelsImg + pitch * y + bpp * x + 2));
+                Vector2 locVect = new Vector2(x, y);
                 if (pixels[x, y] == (245 + 255))
                 {
-                    Game.flowerCoords.Add(new Vector2(x, y));
+                    Game.flowers.Add(new Flower(locVect));
+                    pixels[x, y] = AIR_CODE;
+                }
+
+                Bounds2 testPath = new Bounds2(new Vector2(locVect.X - 100, 0), new Vector2(locVect.X + 100, 0));
+                if (pixels[x, y] == 5)
+                {
+                    Game.enemies.Add(new Enemy(locVect, testPath, false));
+                    pixels[x, y] = AIR_CODE;
+                }
+
+                if (pixels[x, y] == 25)
+                {
+                    Game.enemies.Add(new Enemy(locVect, testPath, true));
+                    pixels[x, y] = AIR_CODE;
                 }
 
                 if (y > 0 && pixels[x, y] != pixels[x, y - 1])

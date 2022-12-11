@@ -7,11 +7,12 @@ class Game
 {
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
-    public static List<Vector2> flowerCoords = new List<Vector2>();
+    //public static List<Vector2> enemyCoords = new List<Vector2>();
     public static Map map;
     public Boolean startScene;
     public Boolean endScene;
-    public static Sprite[] flowers;
+    public static List<Flower> flowers = new List<Flower>();
+    public static List<Enemy> enemies = new List<Enemy>();
 
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
@@ -26,7 +27,7 @@ class Game
     public static Enemy wolf;
     public static Enemy hawk;
     Sprite[] sprites = new Sprite[1];
-    ArrayList enemiesOnScreen = new ArrayList();
+    public static ArrayList enemiesOnScreen = new ArrayList();
 
     public static Scoreboard sb;
 
@@ -45,8 +46,7 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("RingEnemyMap.bmp");
-        flowers = new Flower[flowerCoords.Count];
+        map = new Map("RingEnemyMap2.bmp");
 
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
@@ -54,19 +54,11 @@ class Game
         //sprites.Add(piper);
 
         // TESTING ENEMIES
-        Bounds2 testPath = new Bounds2(new Vector2(100, 0), new Vector2(200, 0));
-        wolf = new Enemy(new Vector2(150, 960), wolfTexture, new Vector2(40, 34), testPath);
-        hawk = new Enemy(new Vector2(160, 900), hawkTexture, new Vector2(54, 37), testPath);
-        wolf.setState(1);
-        hawk.setState(1);
-        enemiesOnScreen.Add(wolf);
-        enemiesOnScreen.Add(hawk);
-
-        for (int i = 0; i < flowers.Length; i++)
-        {
-            flowers[i] = new Flower(flowerCoords[i]);
-        }
-        render = new Rendering("TestMapPng.png", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
+        //wolf.setState(1);
+        //hawk.setState(1);
+        //enemiesOnScreen.Add(wolf);
+        //enemiesOnScreen.Add(hawk);
+        render = new Rendering("RenderMapVersion.png", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
     }
 
     public void Update()

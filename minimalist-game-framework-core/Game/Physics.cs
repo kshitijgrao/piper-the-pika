@@ -14,7 +14,7 @@ class Physics
     public static readonly int collisionSteps = 5;
 
     //detect collisions for things that are within the window
-    public static void detectCollisions(Sprite[] sprites)
+    public static void detectCollisions(List<Flower> flowers)
     {
 
     }
