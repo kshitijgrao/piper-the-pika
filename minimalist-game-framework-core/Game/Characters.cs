@@ -7,10 +7,10 @@ class Sonic : PhysicsSprite
     public static readonly int boostFrameTime = 10;
     public static readonly float maxHorVel = 10;
     public static readonly float maxHorVelBoost = 2;
-    public static readonly float jumpImpulseMag = 60;
-    public static readonly float accelerationMag = 15;
-    public static readonly float brakeAccMag = 10;
-    public static readonly float accelerationBoostFactor = (float) 1.2;
+    public static readonly float jumpImpulseMag = 30;
+    public static readonly float accelerationMag = 30;
+    public static readonly float brakeAccMag = 20;
+    public static readonly float accelerationBoostFactor = (float) 2;
     
 
 
@@ -81,6 +81,73 @@ class Sonic : PhysicsSprite
     }
 }
 
+class Enemy : PhysicsSprite
+{
+    Bounds2 path; // holds the max and minumum vector displacement (from loc) of an enemy
+
+    // defaults, otherwise based on speed given during construction
+    public static int boostFrameTime = 10;
+    public static float maxHorVel = 10;
+    public static float maxHorVelBoost = 2;
+    public static float jumpImpulseMag = 30;
+    public static float accelerationMag = 30;
+    public static float brakeAccMag = 20;
+    public static float accelerationBoostFactor = (float)2;
+
+    public Enemy(Vector2 loc, Texture sprites, Vector2 hitboxes, Bounds2 path) : base(loc, sprites, hitboxes)
+    {
+        this.path = path;
+    }
+
+    public Enemy(Vector2 loc, Texture sprites, Bounds2 path) : base(loc, sprites)
+    {
+        this.path = path;
+    }
+    public Enemy(Vector2 loc, Texture sprites, Bounds2 path, float speed) : base(loc, sprites)
+    {
+        this.path = path;
+    }
+
+    public void jump()
+    {
+        if (onGround)
+        {
+            this.vel = this.vel + jumpImpulseMag * Game.map.getNormalVector(loc);
+        }
+
+    }
+
+    public void setAcceleration(Key key)
+    {
+        Vector2 tempLoc = this.getBotPoint();
+        if (key == Key.D)
+        {
+            this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(90);
+        }
+        else if (key == Key.A)
+        {
+            this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(270);
+        }
+        else
+        {
+            if (Game.map.onGround(tempLoc))
+                this.acc = vel.Normalized() * (-1) * brakeAccMag;
+            else
+                this.acc = Vector2.Zero;
+        }
+
+        if (Game.map.inAir(loc))
+        {
+            acc.X *= accelerationBoostFactor;
+        }
+
+        this.acc += Physics.getPhysicsAcceleration(tempLoc, this.vel);
+
+        System.Diagnostics.Debug.WriteLine(this.acc.ToString());
+        //account for weird floating point errors
+        this.acc.round(2);
+    }
+}
 
 class Flower : Sprite
 {

@@ -54,16 +54,21 @@ internal static class Animator
         return changeFrame(piper, position);
     }
 
-    private static float changeFrame(Sprite piper, Vector2 position)
+    public static void animateEnemy(Enemy enemy, Vector2 position, Key key)
+    {
+        enemy.draw(new Bounds2(new Vector2(0, 0), new Vector2(40, 34)), position);
+    }
+
+    private static float changeFrame(Sprite sprite, Vector2 position)
     {
         // find frame
-        piper.setFrameIndex((piper.getFrameIndex() + Engine.TimeDelta * Framerate) % 4.0f);
-        float frameIndex = piper.getFrameIndex();
+        sprite.setFrameIndex((sprite.getFrameIndex() + Engine.TimeDelta * Framerate) % 4.0f);
+        float frameIndex = sprite.getFrameIndex();
 
         // find bounds on spritemap and draw
-        Vector2 piperFrameStart = new Vector2((int)frameIndex * 24, piper.getState() * 24);
+        Vector2 piperFrameStart = new Vector2((int)frameIndex * 24, sprite.getState() * 24);
         Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, new Vector2(24, 24));
-        piper.draw(piperFrameBounds, position);
+        sprite.draw(piperFrameBounds, position);
 
         // return current frame
         return frameIndex;

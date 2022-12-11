@@ -43,6 +43,11 @@ class Sprite {
         
     }
 
+    public Boolean isInvisible()
+    {
+        return invisible;
+    }
+
     public virtual void collide(Sprite other)
     {
         invisible = true;
