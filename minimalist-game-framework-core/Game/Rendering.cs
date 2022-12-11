@@ -17,9 +17,14 @@ class Rendering
         this.window = window;
     }
 
-    public void scrollingWindow()
+    public void scrollingMotion()
     {
         Engine.DrawTexture(map, pos);
+
+        foreach (Flower flow in Game.flowers)
+        {
+            flow.draw(new Bounds2(0, 0, 13, 14), flow.loc);
+        }
 
         Vector2 onScreenCoord = Game.piper.loc + pos;
 

@@ -84,7 +84,7 @@ class Sonic : PhysicsSprite
 
 class Flower : Sprite
 {
-    public static readonly Vector2 defaultFlowerHitbox = new Vector2(20, 20);
+    public static readonly Vector2 defaultFlowerHitbox = new Vector2(13, 14);
     public static readonly Texture defaultFlower = Engine.LoadTexture("flower.png");
     public Flower(Vector2 loc) : base(loc, defaultFlower, defaultFlowerHitbox)
     {

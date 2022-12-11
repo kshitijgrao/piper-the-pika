@@ -25,9 +25,9 @@ class Game
     Font arial = Engine.LoadFont("Arial.ttf", 10);
 
     Sprite[] sprites = new Sprite[1];
-    Sprite[] rings = new Flower[1];
+    public static Sprite[] flowers = new Flower[flowerCoords.Count];
 
-    Rendering scroll;
+    Rendering render;
     Vector2 pos;
     Key currentKey = Key.Q; // defaults to unused key "Q"
 
@@ -41,17 +41,17 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("rasterizedMap.bmp");
+        map = new Map("RingEnemyMap.bmp");
 
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture);
         sprites[0] = piper;
         //sprites.Add(piper);
-        for(int i =0; i < rings.Length; i++)
+        for(int i =0; i < flowers.Length; i++)
         {
-            rings[i] = new Flower(new Vector2(324,962));
+            flowers[i] = new Flower((Vector2) flowerCoords[i]);
         }
-        scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
+        render = new Rendering("RingEnemyMap.png", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
 
     }
 
@@ -63,14 +63,14 @@ class Game
         else if (endScene) { Scenes.endScene(); }
         else
         {
-            currentKey = InputHandler.getPlayerInput(piper, scroll.pos + piper.loc - new Vector2(12, 12));
+            currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));
             
             
             //collision detection
             Physics.detectGround(piper);
             Physics.detectUnpenetrable(piper);
             //ground
-            Physics.detectCollisions(rings);
+            Physics.detectCollisions(flowers);
 
             //update acceleration
             piper.setAcceleration(currentKey);
@@ -79,11 +79,11 @@ class Game
             Physics.updatePhysics(sprites);
 
             // collect input and draw frame
-            scroll.scrollingWindow();
+            render.scrollingMotion();
             
 
-            piper.setFrameIndex(Animator.animatePiper(piper, scroll.pos + piper.loc - new Vector2(12, 12), currentKey));
-            rings[0].draw(new Bounds2(0, 0, 24, 24), scroll.pos + rings[0].loc - new Vector2(10,10));
+            piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc - new Vector2(12, 12), currentKey));
+            //flowers[0].draw(new Bounds2(0, 0, 24, 24), scroll.pos + flowers[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
 
         }
