@@ -38,6 +38,7 @@ class Physics
         Bounds2 b2 = obj2.getHitbox();
         if (b1.Overlaps(b2))
         {
+            System.Diagnostics.Debug.WriteLine("l;ajsdfljaslkdf");
             obj2.collide(obj1);
             return;
         }
@@ -83,8 +84,6 @@ class Physics
 
         if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel,Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
         {
-            System.Diagnostics.Debug.Write("Acc: " + obj.acc.ToString() + " ");
-            System.Diagnostics.Debug.Write("COLLIDED!!!");
             Vector2 diff = finalPos - pos;
             while (!(Game.map.onGround(pos) || Game.map.throughThrough(finalPos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
                 pos += diff / collisionSteps;
@@ -96,7 +95,6 @@ class Physics
             
             obj.vel = obj.vel - Game.map.getNormalVector(posNew) * Vector2.Dot(Game.map.getNormalVector(posNew), obj.vel);
 
-            System.Diagnostics.Debug.WriteLine(obj.vel.ToString());
 
 
             //might have to check for some 0 cases with the dividing here
@@ -137,8 +135,6 @@ class Physics
     {
         Vector2 norm = Game.map.getNormalVector(loc);
         float radius = Game.map.getSurfaceRadius(loc);
-
-        System.Diagnostics.Debug.WriteLine("On Ground" + loc.ToString() + "? " +  Game.piper.onGround);
 
         if (Game.piper.onGround)
         {

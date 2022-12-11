@@ -63,7 +63,6 @@ class Sonic : PhysicsSprite
 
         this.acc += Physics.getPhysicsAcceleration(tempLoc, this.vel);
 
-        System.Diagnostics.Debug.WriteLine(this.acc.ToString());
         //account for weird floating point errors
         this.acc.round(2);
     }
