@@ -2,11 +2,11 @@
 
 public class Scoreboard
 {
-    int score;
-    float time;
-    int flowers;
-    int lives;
-    int oneUps;
+    static int score;
+    static float time;
+    static int flowers;
+    static int lives;
+    static int oneUps;
 
     Texture pikaPlaceholder = Engine.LoadTexture("pikaPlaceholder.png");
     Font arial = Engine.LoadFont("Arial.ttf", 10);
@@ -43,9 +43,10 @@ public class Scoreboard
     public void renderScoreboard()
         {
             //topLeft scoreboard elements
-            Engine.DrawString("SCORE", new Vector2(0, 0), Color.Yellow, arial);
-            Engine.DrawString("" + score, new Vector2(40, 0), Color.White, arial);
-            Engine.DrawString("TIME", new Vector2(0, 15), Color.Yellow, arial);
+
+            Engine.DrawString("SCORE", new Vector2(0, 0), Color.Black, arial); //yellow
+            Engine.DrawString("" + score, new Vector2(40, 0), Color.Black, arial); //white
+            Engine.DrawString("TIME", new Vector2(0, 15), Color.Black, arial); //yellow
 
             String timeDisplay = (int)time / 60 + ":";
             if (time % 60 < 10)
@@ -55,23 +56,23 @@ public class Scoreboard
 
             timeDisplay += (int)time % 60;
 
-            Engine.DrawString(timeDisplay, new Vector2(28, 15), Color.White, arial);
-            Engine.DrawString("FLOWERS", new Vector2(0, 30), Color.Yellow, arial);
-            Engine.DrawString("" + flowers, new Vector2(55, 30), Color.White, arial);
+            Engine.DrawString(timeDisplay, new Vector2(28, 15), Color.Black, arial); //white
+            Engine.DrawString("FLOWERS", new Vector2(0, 30), Color.Black, arial); //yellow
+            Engine.DrawString("" + flowers, new Vector2(55, 30), Color.Black, arial); //white
 
 
 
             //bottom left scoreboard elements
             Engine.DrawTexture(pikaPlaceholder, new Vector2(6, 197), size: new Vector2(19, 17));
-            Engine.DrawString("PIPER", new Vector2(26, 195), Color.Yellow, arial);
-            Engine.DrawString("x      " + lives, new Vector2(26, 204), Color.White, arial);
+            Engine.DrawString("PIPER", new Vector2(26, 195), Color.Black, arial); //yellow
+            Engine.DrawString("x      " + lives, new Vector2(26, 204), Color.Black, arial); //white
         }
 
     //modify flower count
-    public void modifyFlowers(int x)
+    public void addFlower()
         {
-            flowers += x;
-            score += x * 10;
+        flowers++;
+        score += 10;
         }
 
 
@@ -102,53 +103,63 @@ public class Scoreboard
 
     //input -1 if a life is lost
     //input 1 if an extra life is gained
-    public void modifyLives(int x)
+    public static void modifyLives(int x)
         {
             lives += x;
         }
 
     //time bonus after level
-    public void timeBonus(int seconds)
+    public static int timeBonus()
         {
             if ((int)time < 29)
             {
-                score += 50000;
+                return 50000;
             }
             else if ((int)time < 45)
             {
-                score += 10000;
+                return 10000;
             }
             else if ((int)time < 60)
             {
-                score += 5000;
+            return 5000;
             }
             else if ((int)time < 90)
             {
-                score += 4000;
+            return 4000;
             }
             else if ((int)time < 120)
             {
-                score += 3000;
+            return 3000;
             }
             else if ((int)time < 180)
             {
-                score += 2000;
+            return 2000;
             }
             else if ((int)time < 240)
             {
-                score += 1000;
+            return 1000;
             }
             else if ((int)time < 300)
             {
-                score += 500;
+            return 500;
             }
+            return 0;
         }
 
-    public float getTime()
+    public static float getTime()
     {
         return time;
     }
 
+    public static int getScore()
+    {
+        return score;
+    }
+
+    public static void updateScore(int x)
+    {
+        score += x;
+    }
 }
 
 
