@@ -48,6 +48,7 @@ unsafe class Map {
         int bpp = 4;
         byte* pixelsImg = (byte*)(*pixelMap).pixels;
 
+        Enemy enemyToAdd;
         //looping through all the pixels
         for (int x = 0; x < pixels.GetLength(0); x++)
         {
@@ -69,14 +70,18 @@ unsafe class Map {
                 Bounds2 testPath = new Bounds2(new Vector2(locVect.X - 100, 0), new Vector2(locVect.X + 100, 0));
                 if (pixels[x, y] == 5)
                 {
-                    Game.enemies.Add(new Enemy(locVect, testPath, false));
+                    enemyToAdd = new Enemy(locVect, testPath, false);
+                    enemyToAdd.setState(1);
+                    Game.enemies.Add(enemyToAdd);
                     pixels[x, y] = AIR_CODE;
                 }
 
                 //checking for flying enemies
                 if (pixels[x, y] == 25)
                 {
-                    Game.enemies.Add(new Enemy(locVect, testPath, true));
+                    enemyToAdd = new Enemy(locVect, testPath, true);
+                    enemyToAdd.setState(1);
+                    Game.enemies.Add(enemyToAdd);
                     pixels[x, y] = AIR_CODE;
                 }
 
