@@ -17,12 +17,11 @@ class Game
 
 
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
-    readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy.png");
+    readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
 
     // sprites
     public static Sonic piper;
     public static Enemy wolf;
-    public static Sprite enemy2;
     Sprite[] sprites = new Sprite[1];
     Sprite[] rings = new Flower[1];
     ArrayList enemiesOnScreen = new ArrayList();
@@ -48,23 +47,20 @@ class Game
         map = new Map("rasterizedMap.bmp");
 
         // create piper sprite
-        piper = new Sonic(new Vector2(160, 960), piperTexture);
+        piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = piper;
 
         // TESTING ENEMIES
-        Bounds2 testPath = new Bounds2(new Vector2(0, 0), new Vector2(100, 0));
-        enemiesOnScreen.Add(new Enemy(new Vector2(160, 960), wolfTexture, testPath));
-        enemy2 = new Sprite(new Vector2(160, 960), wolfTexture);
+        Bounds2 testPath = new Bounds2(new Vector2(100, 0), new Vector2(200, 0));
+        wolf = new Enemy(new Vector2(150, 960), wolfTexture, new Vector2(40, 34), testPath);
+        wolf.setState(1);
+        enemiesOnScreen.Add(wolf);
 
         for(int i =0; i < rings.Length; i++)
         {
             rings[i] = new Flower(new Vector2(324,962));
         }
         scroll = new Rendering("TestMap.bmp", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
-
-        // test
-
-
     }
 
     public void Update()
@@ -94,7 +90,8 @@ class Game
             scroll.scrollingWindow();
             foreach (Enemy enemy in enemiesOnScreen)
             {
-                Animator.animateEnemy(enemy, scroll.pos + enemy.loc - new Vector2(12, 13), currentKey);
+                enemy.updateState();
+                enemy.setFrameIndex(Animator.animateEnemy(enemy, scroll.pos + enemy.loc - new Vector2(12, 13)));
             };
             piper.setFrameIndex(Animator.animatePiper(piper, scroll.pos + piper.loc - new Vector2(12, 12), currentKey));
             rings[0].draw(new Bounds2(0, 0, 24, 24), scroll.pos + rings[0].loc - new Vector2(10,10));

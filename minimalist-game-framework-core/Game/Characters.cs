@@ -84,15 +84,7 @@ class Sonic : PhysicsSprite
 class Enemy : PhysicsSprite
 {
     Bounds2 path; // holds the max and minumum vector displacement (from loc) of an enemy
-
-    // defaults, otherwise based on speed given during construction
-    public static int boostFrameTime = 10;
-    public static float maxHorVel = 10;
-    public static float maxHorVelBoost = 2;
-    public static float jumpImpulseMag = 30;
-    public static float accelerationMag = 30;
-    public static float brakeAccMag = 20;
-    public static float accelerationBoostFactor = (float)2;
+    float speed = 20;
 
     public Enemy(Vector2 loc, Texture sprites, Vector2 hitboxes, Bounds2 path) : base(loc, sprites, hitboxes)
     {
@@ -106,46 +98,18 @@ class Enemy : PhysicsSprite
     public Enemy(Vector2 loc, Texture sprites, Bounds2 path, float speed) : base(loc, sprites)
     {
         this.path = path;
+        this.speed = speed;
     }
 
-    public void jump()
-    {
-        if (onGround)
-        {
-            this.vel = this.vel + jumpImpulseMag * Game.map.getNormalVector(loc);
-        }
 
+    public Bounds2 getPath()
+    {
+        return path;
     }
 
-    public void setAcceleration(Key key)
+    public float getSpeed()
     {
-        Vector2 tempLoc = this.getBotPoint();
-        if (key == Key.D)
-        {
-            this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(90);
-        }
-        else if (key == Key.A)
-        {
-            this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(270);
-        }
-        else
-        {
-            if (Game.map.onGround(tempLoc))
-                this.acc = vel.Normalized() * (-1) * brakeAccMag;
-            else
-                this.acc = Vector2.Zero;
-        }
-
-        if (Game.map.inAir(loc))
-        {
-            acc.X *= accelerationBoostFactor;
-        }
-
-        this.acc += Physics.getPhysicsAcceleration(tempLoc, this.vel);
-
-        System.Diagnostics.Debug.WriteLine(this.acc.ToString());
-        //account for weird floating point errors
-        this.acc.round(2);
+        return speed;
     }
 }
 

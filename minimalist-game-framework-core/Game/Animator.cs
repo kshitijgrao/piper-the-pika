@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 
 /**
  *   Animator is a static class that handles all character animation
- *   (including Piper, Hawk, and the enemies)
+ *   (including Piper and the enemies)
  */
 internal static class Animator
 {
@@ -51,23 +52,46 @@ internal static class Animator
             piper.changeLocked(false);
         }
         
-        return changeFrame(piper, position);
+        return changeFrame(piper, position, 4);
     }
 
-    public static void animateEnemy(Enemy enemy, Vector2 position, Key key)
+    public static float animateEnemy(Enemy enemy, Vector2 position)
     {
-        enemy.draw(new Bounds2(new Vector2(0, 0), new Vector2(40, 34)), position);
+        Vector2 maxPosition = enemy.getPath().Size;
+        Vector2 minPosition = enemy.getPath().Position;
+        if (!enemy.isLeft()) // CURRENTLY BROKEN. IF ENEMY "IS LEFT" THEY ARE ACTUALLY FACING RIGHT. THIS WILL BE FIXED LATER
+        {
+            if (enemy.loc.X > minPosition.X)
+            {
+                enemy.setVelocity(new Vector2(-enemy.getSpeed(), 0));
+            } else
+            {
+                enemy.turn();
+            }
+        }
+        else
+        {
+            if (enemy.loc.X < maxPosition.X)
+            {
+                enemy.setVelocity(new Vector2(enemy.getSpeed(), 0));
+            }
+            else
+            {
+                enemy.turn();
+            }
+        }
+        return changeFrame(enemy, position, 5);
     }
 
-    private static float changeFrame(Sprite sprite, Vector2 position)
+    private static float changeFrame(Sprite sprite, Vector2 position, int totalFrames)
     {
         // find frame
-        sprite.setFrameIndex((sprite.getFrameIndex() + Engine.TimeDelta * Framerate) % 4.0f);
+        sprite.setFrameIndex((sprite.getFrameIndex() + Engine.TimeDelta * Framerate) % (float)totalFrames);
         float frameIndex = sprite.getFrameIndex();
 
         // find bounds on spritemap and draw
-        Vector2 piperFrameStart = new Vector2((int)frameIndex * 24, sprite.getState() * 24);
-        Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, new Vector2(24, 24));
+        Vector2 piperFrameStart = new Vector2((int)frameIndex * sprite.getHitboxNoCalc().X, sprite.getState() * sprite.getHitboxNoCalc().Y);
+        Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, sprite.getHitboxNoCalc());
         sprite.draw(piperFrameBounds, position);
 
         // return current frame
