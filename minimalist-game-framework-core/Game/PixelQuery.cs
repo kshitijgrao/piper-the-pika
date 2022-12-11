@@ -28,6 +28,7 @@ unsafe class Map {
 
     public Map(String loc)
     {
+        //getting the memory location of the collision map
         pixelMap = (SDL.SDL_Surface*) SDL.SDL_LoadBMP(Engine.GetAssetPath(loc));
 
         SDL.SDL_LockSurface((IntPtr) pixelMap);
@@ -47,14 +48,15 @@ unsafe class Map {
         int bpp = 4;
         byte* pixelsImg = (byte*)(*pixelMap).pixels;
 
-
+        //looping through all the pixels
         for (int x = 0; x < pixels.GetLength(0); x++)
         {
             for (int y = 0; y < pixels.GetLength(1); y++)
             {
                 pixels[x, y] = *(pixelsImg + pitch * y + bpp * x) + *(pixelsImg + pitch * y + bpp * x + 2);
-                // rings: 255, 0, 245
-                //Console.WriteLine(*(pixelsImg + pitch * y + bpp * x + 2));
+                
+
+                //checking for rings
                 Vector2 locVect = new Vector2(x, y);
                 if (pixels[x, y] == (245 + 255))
                 {
@@ -62,6 +64,8 @@ unsafe class Map {
                     pixels[x, y] = AIR_CODE;
                 }
 
+
+                //checking for enemies
                 Bounds2 testPath = new Bounds2(new Vector2(locVect.X - 100, 0), new Vector2(locVect.X + 100, 0));
                 if (pixels[x, y] == 5)
                 {
@@ -69,12 +73,14 @@ unsafe class Map {
                     pixels[x, y] = AIR_CODE;
                 }
 
+                //checking for flying enemies
                 if (pixels[x, y] == 25)
                 {
                     Game.enemies.Add(new Enemy(locVect, testPath, true));
                     pixels[x, y] = AIR_CODE;
                 }
 
+                //looking for air to ground transitions
                 if (y > 0 && pixels[x, y] != pixels[x, y - 1])
                 {
                     if (pixels[x, y - 1] == AIR_CODE)
@@ -121,75 +127,14 @@ unsafe class Map {
         return getPixelType(coord) == PASS_THROUGH_CODE;
     }
 
+    //checking if it's coming in from the top for the light red collisions
     public bool closeToSurface(Vector2 coord)
     {
         return Math.Abs(getSurfaceY(coord) - coord.Y) < CLOSE_THRESHOLD;
     }
 
-    //getting slope angle
+    //getting normal vectors
     // TODO: remember to account for cases where the ground is above or below and just general edge cases like vert
-    public double getSlopeAngle(Vector2 coord)
-    {
-        if(getPixelType(coord) == AIR_CODE)
-        {
-            return 0;
-        }
-
-        Vector2 leftShift = new Vector2(-2, 0);
-        Vector2 rightShift = new Vector2(2, 0);
-
-        if (coord.X >= 2)
-        {
-            
-            int currType = getPixelType(coord + leftShift);
-            for(int i = 0; i < 2 * SLOPE_MAX_COUNT; i++)
-            {
-                leftShift.Y = (i + 2) / 2 * (1 - 2 * (i % 2));
-                if (getPixelType(leftShift + coord) != currType)
-                {
-                    break;
-                }
-            }
-        }
-        else
-        {
-            leftShift.Y = -1234;
-            leftShift.X = 0;
-        }
-
-        if(coord.X < w - 2)
-        {
-            int currType = getPixelType(coord + rightShift);
-            for (int i = 0; i < 2 * SLOPE_MAX_COUNT; i++)
-            {
-                rightShift.Y = (i + 2) / 2 * (1 - 2 * (i % 2));
-                if (getPixelType(rightShift + coord) != currType)
-                {
-                    break;
-                }
-            }
-        }
-        else
-        {
-            rightShift.Y = 1234;
-            rightShift.X = 0;
-        }
-
-        if(rightShift.Y - leftShift.Y > SLOPE_MAX_COUNT * 2)
-        {
-            if(getPixelType(coord - new Vector2(1,0)) == AIR_CODE)
-            {
-                return Math.PI / 2;
-            }
-            return 3 * Math.PI / 2;
-        }
-
-        return Math.Atan((double) (rightShift.Y - leftShift.Y) / (rightShift.X - leftShift.X));
-
-
-    }
-
-
     //need to fix for LOTS of edge cases
     public Vector2 getNormalVector(Vector2 pos)
     {
@@ -202,6 +147,7 @@ unsafe class Map {
         return new Vector2(0, -1);
     }
 
+    //need to implement -- something along th elines of the commented out code
     public float getSurfaceRadius(Vector2 pos)
     {
         return -1;
@@ -245,28 +191,5 @@ unsafe class Map {
             }
         }
         return -1;
-
-
-
-        /*
-        if(currTransitions.Count == 1)
-        {
-            return currTransitions[0];
-        }
-
-        int i = 1;
-        while(i < currTransitions.Count && currTransitions[i] <= pos.Y)
-        {
-            i += 2;
-        }
-        if (i >= 2 && i >= currTransitions.Count)
-        {
-            return currTransitions[i - 2];
-        }
-        if (currTransitions[i] <= pos.Y)
-        {
-            return currTransitions[i];
-        }
-        return currTransitions[Math.Max(0,i - 2)];*/
     }
 }

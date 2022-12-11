@@ -83,7 +83,7 @@ class Sprite {
     {
         if (!invisible) {
             TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
-            Engine.DrawTexture(spritemap, position, source: bounds, mirror: mirror);
+            Engine.DrawTexture(spritemap, position - hitbox / 2, source: bounds, mirror: mirror);
         }
     }
 
