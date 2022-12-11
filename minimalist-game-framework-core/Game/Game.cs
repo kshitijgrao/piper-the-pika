@@ -39,7 +39,7 @@ class Game
     {
         //scene control
         startScene = 1;
-        endScene = true;
+        endScene = false;
 
 
 
