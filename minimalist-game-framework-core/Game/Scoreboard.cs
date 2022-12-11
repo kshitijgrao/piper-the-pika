@@ -4,8 +4,8 @@ public class Scoreboard
 {
     static int score;
     static float time;
-    static int flowers;
-    static int lives;
+    public static int flowers;
+    public static int lives;
     static int oneUps;
 
     Texture pikaPlaceholder = Engine.LoadTexture("pikaPlaceholder.png");

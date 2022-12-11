@@ -39,9 +39,10 @@ class Game
     Vector2 pos;
     Key currentKey = Key.Q; // defaults to unused key "Q"
 
-    public static int gameDifficulty = 1;
+    public static int gameDifficulty = 0;
 
-    public static readonly int HARD = 1;
+    public static readonly int HARD = 2;
+    public static readonly int MEDIUM = 1;
     public static readonly int EASY = 0;
 
     public Game()
