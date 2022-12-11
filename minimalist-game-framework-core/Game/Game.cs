@@ -10,9 +10,12 @@ class Game
     //public static List<Vector2> enemyCoords = new List<Vector2>();
     public static Map map;
     public int startScene; //0 = false, 1 = true, 2 = instructions
-    public Boolean endScene;
+    public static Boolean endScene;
     public static List<Flower> flowers = new List<Flower>();
     public static List<Enemy> enemies = new List<Enemy>();
+
+    public static Flower[] flowerArr;
+    public static Enemy[] enemyArr;
 
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
@@ -36,30 +39,29 @@ class Game
     Vector2 pos;
     Key currentKey = Key.Q; // defaults to unused key "Q"
 
+    public static int gameDifficulty = 1;
+
+    public static readonly int HARD = 1;
+    public static readonly int EASY = 0;
+
     public Game()
     {
         //scene control
         startScene = 1;
         endScene = false;
 
-
-
         //scoreboard
         sb = new Scoreboard();
 
         //create map
         map = new Map("RingEnemyMap5.bmp");
+        enemyArr = enemies.ToArray();
+        flowerArr = flowers.ToArray();
 
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = piper;
-        //sprites.Add(piper);
 
-        // TESTING ENEMIES
-        //wolf.setState(1);
-        //hawk.setState(1);
-        //enemiesOnScreen.Add(wolf);
-        //enemiesOnScreen.Add(hawk);
         render = new Rendering("NewTestMap.png", new Bounds2(3 * Game.Resolution.X / 8, Game.Resolution.Y / 4, Game.Resolution.X / 4, Game.Resolution.Y / 2));
     }
 
@@ -78,10 +80,14 @@ class Game
             
             
             //collision detection
+            //ground and walls
             Physics.detectGround(piper);
             Physics.detectUnpenetrable(piper);
-            //ground
-            Physics.detectCollisions(flowers);
+            
+            //other sprites
+            Physics.detectCollisions(piper, flowerArr);
+            Physics.detectCollisions(piper, enemyArr);
+
 
             //update acceleration
             piper.setAcceleration(currentKey);
@@ -95,9 +101,9 @@ class Game
             foreach (Enemy enemy in enemiesOnScreen)
             {
                 enemy.updateState();
-                enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc - new Vector2(12, 13)));
+                enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc));
             };
-            piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc - new Vector2(12, 12), currentKey));
+            piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
             if (piper.loc.X >= 6125)

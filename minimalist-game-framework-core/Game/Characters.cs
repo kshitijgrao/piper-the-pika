@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 class Sonic : PhysicsSprite
@@ -9,7 +10,7 @@ class Sonic : PhysicsSprite
     public static readonly float maxHorVelBoost = 2;
     public static readonly float jumpImpulseMag = 30;
     public static readonly float accelerationMag = 30;
-    public static readonly float brakeAccMag = 20;
+    public static readonly float brakeAccMag = 10;
     public static readonly float accelerationBoostFactor = (float) 2;
     
 
@@ -63,7 +64,6 @@ class Sonic : PhysicsSprite
 
         this.acc += Physics.getPhysicsAcceleration(tempLoc, this.vel);
 
-        System.Diagnostics.Debug.WriteLine(this.acc.ToString());
         //account for weird floating point errors
         this.acc.round(2);
     }
@@ -90,7 +90,9 @@ class Enemy : PhysicsSprite
     public static readonly Vector2 wolfHit = new Vector2(40, 34);
     public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
-    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
+    public static readonly float killSpeed = 5;
+
+    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc + (flying ? hawkHit : wolfHit) / 2, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
     {
         this.path = path;
     }
@@ -115,13 +117,29 @@ class Enemy : PhysicsSprite
     {
         return speed;
     }
+
+    public override void collide(Sprite other)
+    {
+        if (other is PhysicsSprite) {
+            if (((PhysicsSprite)other).vel.Length() > killSpeed)
+            {
+                Game.sb.enemyKilled(1);
+                base.collide(other);
+            }
+            else if (Game.gameDifficulty == Game.HARD)
+            {
+                Game.endScene = true;
+            }
+
+        }
+    }
 }
 
 class Flower : Sprite
 {
     public static readonly Vector2 defaultFlowerHitbox = new Vector2(13, 14);
     public static readonly Texture defaultFlower = Engine.LoadTexture("flower.png");
-    public Flower(Vector2 loc) : base(loc, defaultFlower, defaultFlowerHitbox)
+    public Flower(Vector2 loc) : base(loc + defaultFlowerHitbox / 2, defaultFlower, defaultFlowerHitbox)
     {
 
     }
