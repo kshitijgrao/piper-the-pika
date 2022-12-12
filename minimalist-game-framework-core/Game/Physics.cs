@@ -12,6 +12,7 @@ class Physics
 {
     public static readonly Vector2 g = new Vector2(0,40);
     public static readonly int collisionSteps = 5;
+    public static readonly float coeffRestitution = 0.5f;
 
     //detect collisions for things that are within the window
     public static void detectCollisions(List<Flower> flowers)
@@ -100,7 +101,15 @@ class Physics
 
         if(tExit >= 0 && tExit <= Engine.TimeDelta)
         {
-            obj2.collide(obj1);
+            if(obj2 is Enemy && ((PhysicsSprite) obj2).mass > 0)
+            {
+                
+                obj2.collide(obj1, Math.Max(0, tExit));
+            }
+            else
+            {
+                obj2.collide(obj1);
+            }            
         }
     }
 
