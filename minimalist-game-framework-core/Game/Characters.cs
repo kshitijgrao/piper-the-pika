@@ -115,7 +115,7 @@ class Enemy : PhysicsSprite
     public static readonly Vector2 wolfHit = new Vector2(40, 34);
     public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
-    public static readonly float killSpeed = 20;
+    public static readonly float killSpeed = 60;
 
     public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
     {
