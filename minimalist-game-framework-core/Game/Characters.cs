@@ -156,40 +156,26 @@ class Enemy : PhysicsSprite
                 other.loc += other.vel * (Engine.TimeDelta - timeLeft);
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
 
+                Animator.animatePiperTakingDamage(Game.piper);
+
                 if (Game.gameDifficulty == Game.EASY)
                 {
-                    if (Scoreboard.lives == 0)
+                    if (Scoreboard.flowers > 0)
                     {
-                        Game.endScene = true;
-                    }
-                    else
-                    {
-
-                        if (Scoreboard.flowers > 0)
-                        {
-                            Scoreboard.flowers = 0;
-                        }
-                        else
-                        {
-                            Scoreboard.lives--;
-                        }
-                    }
-
-                }
-                else if (Game.gameDifficulty == Game.MEDIUM)
-                {
-                    if (Scoreboard.lives == 0)
-                    {
-                        Game.endScene = true;
+                        Scoreboard.flowers = 0;
                     }
                     else
                     {
                         Scoreboard.lives--;
                     }
                 }
+                else if (Game.gameDifficulty == Game.MEDIUM)
+                {
+                    Scoreboard.lives--;
+                }
                 else if (Game.gameDifficulty == Game.HARD)
                 {
-                    Game.endScene = true;
+                    Scoreboard.lives = 0;
                 }
 
                 base.collide(other, timeLeft);
