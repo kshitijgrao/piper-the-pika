@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using System.Diagnostics;
+using System.Net.Http;
 
 class Game
 {
@@ -11,6 +12,7 @@ class Game
     public static Map map;
     public int startScene; //0 = false, 1 = true, 2 = instructions
     public static Boolean endScene;
+    public static String message = "PASSED";
     public static List<Flower> flowers = new List<Flower>();
     public static List<Enemy> enemies = new List<Enemy>();
 
@@ -74,7 +76,7 @@ class Game
             startScene = Scenes.instructionsScene();
         }
         else if (startScene==1) { startScene = Scenes.titleScene(); }
-        else if (endScene) {Scenes.endScene(); }
+        else if (endScene) {Scenes.endScene(message); }
         else
         {
             currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));

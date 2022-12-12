@@ -41,6 +41,7 @@ public class Scoreboard
         if(lives <= 0)
         {
             Game.endScene = true;
+            Game.message = "FAILED";
         }
     }
 

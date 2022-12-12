@@ -67,7 +67,7 @@ public class Scenes
 
 
         //End Scene
-		public static void endScene()
+		public static void endScene(String message)
 
 		{
 			//exit game
@@ -112,7 +112,7 @@ public class Scenes
 
 			//draw text
 			Engine.DrawString("PIPER  HAS", new Vector2(line1X, 50), Color.White, h2); //100, 50
-			Engine.DrawString("PASSED", new Vector2(line2X, 75), Color.White, h2); //15 , 75
+			Engine.DrawString(message, new Vector2(line2X, 75), Color.White, h2); //15 , 75
 			Engine.DrawString("Act", new Vector2(line3X + 5, 97), Color.Orange, h3); //170, 97
 			Engine.DrawString("1", new Vector2(line3X + 30, 72), Color.Yellow, h1) ; //200, 72
 
@@ -123,10 +123,12 @@ public class Scenes
 			}
 
 			//draw score
-			Engine.DrawString("SCORE", new Vector2(line4x+5, 125), Color.Yellow, h3); //75, 125
-			Engine.DrawString(Scoreboard.getScore() + "", new Vector2(line4x+140, 125), Color.White, h3); //210, 125
-			Engine.DrawString("TIME BONUS", new Vector2(line4x+5, 145), Color.Yellow, h3); //75, 145
-			Engine.DrawString("" + bonus, new Vector2(line4x+140, 145), Color.White, h3); //210, 145
+			if (message.Equals("PASSED")) {
+				Engine.DrawString("SCORE", new Vector2(line4x + 5, 125), Color.Yellow, h3); //75, 125
+				Engine.DrawString(Scoreboard.getScore() + "", new Vector2(line4x + 140, 125), Color.White, h3); //210, 125
+				Engine.DrawString("TIME BONUS", new Vector2(line4x + 5, 145), Color.Yellow, h3); //75, 145
+				Engine.DrawString("" + bonus, new Vector2(line4x + 140, 145), Color.White, h3); //210, 145
+			}
 
 		}
 	
