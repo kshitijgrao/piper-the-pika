@@ -142,7 +142,7 @@ class PhysicsSprite : Sprite
         if (onGround)
         {
             float shift = (Game.map.getSurfaceY(pos) - pos.Y);
-            if (shift > 10)
+            if (Math.Abs(shift) > 10)
                 return;
             this.loc.Y += shift;
         }

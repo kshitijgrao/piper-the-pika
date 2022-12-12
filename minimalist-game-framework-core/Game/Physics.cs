@@ -122,11 +122,16 @@ class Physics
 
         if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel,Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
         {
+            System.Diagnostics.Debug.WriteLine("bruh: " + pos.ToString() + " to:" + finalPos.ToString());
             Vector2 diff = finalPos - pos;
             while (!(Game.map.onGround(pos) || Game.map.throughThrough(finalPos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
                 pos += diff / collisionSteps;
 
             obj.loc += diff - (finalPos - pos);
+            if(Math.Abs(Game.map.getSurfaceY(pos) - pos.Y) > 10)
+            {
+                return;
+            }
             obj.loc.Y += (Game.map.getSurfaceY(pos) - pos.Y);
 
             Vector2 posNew = obj.getBotPoint();
