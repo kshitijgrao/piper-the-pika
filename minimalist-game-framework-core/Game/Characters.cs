@@ -6,15 +6,14 @@ using System.Text;
 
 class Sonic : PhysicsSprite
 {
-    public static readonly int boostFrameTime = 100;
+    public static readonly int boostFrameTime = 200;
+    public static readonly float maxHorVel = 100;
+    public static readonly float maxHorVelBoost = 800;
     public static readonly float jumpImpulseMag = 70;
     public static readonly float accelerationMag = 30;
     public static readonly float brakeAccMag = 10;
     public static readonly float accelerationBoostFactor = (float) 1.3;
-    public static readonly float flowerAccBoost = (float)2.5;
-    public static float maxHorVel = 200;
-    public static float maxHorVelWithFlow = 300;
-    public static float maxHorVelBoost = 300;
+    public static readonly float flowerAccBoost = (float) 20;
 
     public static readonly float sonicMass = 2;
     
@@ -81,7 +80,7 @@ class Sonic : PhysicsSprite
     public override void updateState()
     {
         base.updateState();
-        //Debug.WriteLine(this.vel.X);
+        Debug.WriteLine(this.vel.X);
         
         float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
 
@@ -94,6 +93,7 @@ class Sonic : PhysicsSprite
             this.vel.X = Math.Max(this.vel.X, -1 * horVelCap);
         }
 
+       
 
         if(flows > 0)
            flows -= 1 / ((float) boostFrameTime);
@@ -104,12 +104,6 @@ class Sonic : PhysicsSprite
         flows += 1;
     }
 
-    public void changeVelocity(float velocity)
-    {
-        maxHorVel += velocity;
-        maxHorVelWithFlow += velocity;
-        maxHorVelBoost += velocity;
-    }
 }
 
 class Enemy : PhysicsSprite
