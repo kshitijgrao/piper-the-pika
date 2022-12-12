@@ -7,17 +7,17 @@ internal static class InputHandler
     public static Key getPlayerInput(Sonic piper, Vector2 position)
     {
         Key k = Key.Q; // defaults to unused key "Q"
-        if (Engine.GetKeyDown(Key.Space)) 
+        if (Engine.GetKeyDown(Key.Space) || Engine.GetKeyDown(Key.Up)) 
         {
             k = Key.Space;
             piper.jump();
         }
-        else if (Engine.GetKeyHeld(Key.A))
+        else if (Engine.GetKeyHeld(Key.A) || Engine.GetKeyHeld(Key.Left))
         {
             k = Key.A;
             Animator.checkPiperTurn(piper);
         }
-        else if (Engine.GetKeyHeld(Key.D))
+        else if (Engine.GetKeyHeld(Key.D) || Engine.GetKeyHeld(Key.Right))
         {
             k = Key.D;
             Animator.checkPiperTurn(piper);
