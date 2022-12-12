@@ -59,6 +59,11 @@ class Sprite {
         invisible = true;
     }
 
+    public virtual void collide(PhysicsSprite other, float timeLeft)
+    {
+
+    }
+
     public void move(Vector2 v)
     {
         loc += v;
@@ -111,7 +116,7 @@ class Sprite {
     {
         if (frameIndex == 0)
         {
-            Debug.WriteLine("Resetting frame index");
+           // Debug.WriteLine("Resetting frame index");
         }
         this.frameIndex = frameIndex;
     }

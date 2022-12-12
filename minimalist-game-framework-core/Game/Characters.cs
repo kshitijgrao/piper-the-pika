@@ -9,11 +9,13 @@ class Sonic : PhysicsSprite
     public static readonly int boostFrameTime = 10;
     public static readonly float maxHorVel = 200;
     public static readonly float maxHorVelBoost = 300;
-    public static readonly float jumpImpulseMag = 30;
+    public static readonly float jumpImpulseMag = 70;
     public static readonly float accelerationMag = 30;
     public static readonly float brakeAccMag = 10;
     public static readonly float accelerationBoostFactor = (float) 1.3;
     public static readonly float flowerAccBoost = (float)2.5;
+
+    public static readonly float sonicMass = 2;
     
 
 
@@ -23,12 +25,13 @@ class Sonic : PhysicsSprite
     public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes)
     {
         flows = 0;
-        
+        this.mass = sonicMass;
     }
     public Sonic(Vector2 loc, Texture sprites) : base(loc, sprites)
     {
         flows = 0;
         onGround = Game.map.onGround(this.getBotPoint());
+        this.mass = sonicMass;
     }
 
     public void jump()
@@ -77,7 +80,7 @@ class Sonic : PhysicsSprite
     public override void updateState()
     {
         base.updateState();
-        Debug.WriteLine(this.vel.X);
+        //Debug.WriteLine(this.vel.X);
         
         float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
 
@@ -110,11 +113,12 @@ class Enemy : PhysicsSprite
     public static readonly Vector2 wolfHit = new Vector2(40, 34);
     public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
-    public static readonly float killSpeed = 5;
+    public static readonly float killSpeed = 20;
 
     public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
     {
         this.path = path;
+        this.mass = 10;
     }
 
     //public Enemy(Vector2 loc, Texture sprites, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, false)
@@ -138,47 +142,58 @@ class Enemy : PhysicsSprite
         return speed;
     }
 
-    public override void collide(Sprite other)
+    public override void collide(PhysicsSprite other, float timeLeft)
     {
+        Debug.WriteLine("collided");
         if (other is PhysicsSprite) {
             if (((PhysicsSprite)other).vel.Length() > killSpeed)
             {
                 Game.sb.enemyKilled(1);
                 base.collide(other);
             }
-            else if (Game.gameDifficulty == Game.EASY)
+            else
             {
-                if (Scoreboard.lives == 0)
-                {
-                    Game.endScene = true;
-                }
-                else
-                {
+                other.loc += other.vel * (Engine.TimeDelta - timeLeft);
+                other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
 
-                    if (Scoreboard.flowers > 0)
+                if (Game.gameDifficulty == Game.EASY)
+                {
+                    if (Scoreboard.lives == 0)
                     {
-                        Scoreboard.flowers = 0;
+                        Game.endScene = true;
+                    }
+                    else
+                    {
+
+                        if (Scoreboard.flowers > 0)
+                        {
+                            Scoreboard.flowers = 0;
+                        }
+                        else
+                        {
+                            Scoreboard.lives--;
+                        }
+                    }
+
+                }
+                else if (Game.gameDifficulty == Game.MEDIUM)
+                {
+                    if (Scoreboard.lives == 0)
+                    {
+                        Game.endScene = true;
                     }
                     else
                     {
                         Scoreboard.lives--;
                     }
                 }
-
-            } else if (Game.gameDifficulty == Game.MEDIUM)
-            {
-                if (Scoreboard.lives == 0)
+                else if (Game.gameDifficulty == Game.HARD)
                 {
                     Game.endScene = true;
                 }
-                else
-                {
-                    Scoreboard.lives--;
-                }
-            }
-            else if (Game.gameDifficulty == Game.HARD)
-            {
-                Game.endScene = true;
+
+                base.collide(other, timeLeft);
+
             }
 
         }

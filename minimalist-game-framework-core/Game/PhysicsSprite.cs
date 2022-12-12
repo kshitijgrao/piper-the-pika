@@ -111,11 +111,19 @@ class PhysicsSprite : Sprite
         base.collide(other);
     }
 
+    public override void collide(PhysicsSprite other, float timeLeft)
+    {
+        collided = true;
+        this.timeLeft = timeLeft;
+    }
+
     public void collideGround(float timeLeft)
     {
         onGround = true;
         this.setState(Sprite.landState);
+
         collideWall(timeLeft);
+
         if (airTime > 50)
         {
             Animator.animatePiperLanding(this);
