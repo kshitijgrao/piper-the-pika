@@ -67,7 +67,7 @@ unsafe class Map {
 
 
                 //checking for enemies
-                Bounds2 testPath = new Bounds2(new Vector2(locVect.X - 100, 0), new Vector2(locVect.X + 100, 0));
+                Bounds2 testPath = new Bounds2(new Vector2(locVect.X - 50, 0), new Vector2(locVect.X + 50, 0));
                 if (pixels[x, y] == 5)
                 {
                     enemyToAdd = new Enemy(locVect, testPath, false);
