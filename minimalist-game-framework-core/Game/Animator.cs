@@ -92,6 +92,7 @@ internal static class Animator
                 enemy.turn();
             }
         }
+
         return changeFrame(enemy, position, 5);
     }
 

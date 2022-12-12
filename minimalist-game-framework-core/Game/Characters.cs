@@ -6,14 +6,15 @@ using System.Text;
 
 class Sonic : PhysicsSprite
 {
-    public static readonly int boostFrameTime = 10;
-    public static readonly float maxHorVel = 200;
-    public static readonly float maxHorVelBoost = 300;
+    public static readonly int boostFrameTime = 100;
     public static readonly float jumpImpulseMag = 70;
     public static readonly float accelerationMag = 30;
     public static readonly float brakeAccMag = 10;
     public static readonly float accelerationBoostFactor = (float) 1.3;
     public static readonly float flowerAccBoost = (float)2.5;
+    public static float maxHorVel = 200;
+    public static float maxHorVelWithFlow = 300;
+    public static float maxHorVelBoost = 300;
 
     public static readonly float sonicMass = 2;
     
@@ -101,6 +102,13 @@ class Sonic : PhysicsSprite
     public void addFlower()
     {
         flows += 1;
+    }
+
+    public void changeVelocity(float velocity)
+    {
+        maxHorVel += velocity;
+        maxHorVelWithFlow += velocity;
+        maxHorVelBoost += velocity;
     }
 }
 
@@ -198,8 +206,18 @@ class Flower : Sprite
     public override void collide(Sprite mainCharacter)
     {
         Game.sb.addFlower();
-        if(mainCharacter is Sonic)
+        if (mainCharacter is Sonic)
+        {
             ((Sonic)mainCharacter).addFlower();
+            if (mainCharacter.isLeft())
+            {
+                ((Sonic)mainCharacter).vel += new Vector2(-50, 0);
+            }
+            else
+            {
+                ((Sonic)mainCharacter).vel += new Vector2(50, 0);
+            }
+        }
         ((Sonic) mainCharacter).addFlower();
         base.collide(mainCharacter);
     }
