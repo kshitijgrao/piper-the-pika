@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 class Sprite {
@@ -14,7 +15,7 @@ class Sprite {
 
     private bool invisible;
 
-    public static readonly int landState = 6;
+    public static readonly int landState = 5;
 
     public Sprite(Vector2 loc, Texture spritemap)
     {
@@ -43,9 +44,24 @@ class Sprite {
         
     }
 
+    public Boolean isInvisible()
+    {
+        return invisible;
+    }
+
+    public Vector2 getHitboxNoCalc()
+    {
+        return hitbox;
+    }
+
     public virtual void collide(Sprite other)
     {
         invisible = true;
+    }
+
+    public virtual void collide(PhysicsSprite other, float timeLeft)
+    {
+
     }
 
     public void move(Vector2 v)
@@ -72,7 +88,7 @@ class Sprite {
     {
         if (!invisible) {
             TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
-            Engine.DrawTexture(spritemap, position, source: bounds, mirror: mirror);
+            Engine.DrawTexture(spritemap, position - hitbox / 2, source: bounds, mirror: mirror);
         }
     }
 
@@ -98,6 +114,10 @@ class Sprite {
 
     public void setFrameIndex(float frameIndex)
     {
+        if (frameIndex == 0)
+        {
+           // Debug.WriteLine("Resetting frame index");
+        }
         this.frameIndex = frameIndex;
     }
 
@@ -122,9 +142,13 @@ class Sprite {
     }
 
 
-    public Vector2 getBotPoint()
+    public Vector2 getBotPoint() { return getPoint(new Vector2(0, 1)); }
+    public Vector2 getRightPoint() { return getPoint(new Vector2(1, 0)); }
+    public Vector2 getLeftPoint() { return getPoint(new Vector2(-1, 0)); }
+
+    public Vector2 getPoint(Vector2 direc)
     {
-        return loc + hitbox / 2;
+        return loc + hitbox.X / 2 * direc;
     }
 
     public bool notCollidable()

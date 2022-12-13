@@ -4,11 +4,12 @@ using System.Text;
 
 class PhysicsSprite : Sprite
 {
-    internal readonly float sprintSpeed = 30;
+    internal readonly float sprintSpeed = 80;
 
     public float mass;
     public Vector2 vel;
     public Vector2 acc;
+    public float airTime;
 
     private bool collided;
     private float timeLeft;
@@ -20,7 +21,17 @@ class PhysicsSprite : Sprite
         acc = new Vector2(0, 0);
         collided = false;
         timeLeft = 0;
+        airTime = 0;
         onGround = Game.map.onGround(this.getBotPoint());
+    }
+
+    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, bool onGround) : base(loc, sprites, hitboxes)
+    {
+        vel = new Vector2(0, 0);
+        acc = new Vector2(0, 0);
+        collided = false;
+        timeLeft = 0;
+        this.onGround = false;
     }
 
     public PhysicsSprite(Vector2 loc, Texture sprites) : base(loc, sprites)
@@ -29,6 +40,7 @@ class PhysicsSprite : Sprite
         acc = new Vector2(0, 0);
         collided = false;
         timeLeft = 0;
+        airTime = 0;
         onGround = Game.map.onGround(this.getBotPoint());
     }
 
@@ -42,16 +54,25 @@ class PhysicsSprite : Sprite
         this.acc = acc;
     }
 
+    public float getAirTime()
+    {
+        return airTime;
+    }
+
+    public void addAirTime(float time)
+    {
+        airTime+= time;
+    }
+
     public void setAccelerationDirect(Vector2 acc)
     {
         this.acc = acc;
     }
 
     //visualization method
-    public void drawVectors()
+    public void drawVectors(Vector2 start)
     {
-        Engine.DrawLine(loc, loc + vel, Color.White);
-        Engine.DrawLine(loc, loc + acc, Color.Blue);
+        Engine.DrawLine(start, start + vel, Color.Black);
     }
 
     public override void updateState()
@@ -67,6 +88,11 @@ class PhysicsSprite : Sprite
             loc = loc + vel * Engine.TimeDelta;
             vel += acc * Engine.TimeDelta;
         }
+        if (onGround && Game.map.inAir(getBotPoint()))
+        {
+            onGround = false;
+        }
+
 
         // sprint if moving fast enough
         if (vel.Length() > sprintSpeed)
@@ -82,22 +108,43 @@ class PhysicsSprite : Sprite
 
     public override void collide(Sprite other)
     {
+        base.collide(other);
+    }
 
+    public override void collide(PhysicsSprite other, float timeLeft)
+    {
+        collided = true;
+        this.timeLeft = timeLeft;
     }
 
     public void collideGround(float timeLeft)
     {
         onGround = true;
-        Animator.animatePiperLanding(this);
+        this.setState(Sprite.landState);
+
+        collideWall(timeLeft);
+
+        if (airTime > 50)
+        {
+            Animator.animatePiperLanding(this);
+        }
+    }
+
+    public void collideWall(float timeLeft)
+    {
+        collided = true;
         this.timeLeft = timeLeft;
     }
 
     public void keepOnSurface()
     {
         Vector2 pos = this.getBotPoint();
-        if (Game.map.onGround(pos))
+        if (onGround)
         {
-            this.loc.Y += (Game.map.getSurfaceY(pos) - pos.Y);
+            float shift = (Game.map.getSurfaceY(pos) - pos.Y);
+            if (Math.Abs(shift) > 10)
+                return;
+            this.loc.Y += shift;
         }
     }
 

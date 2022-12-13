@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 
 /**
  *   Animator is a static class that handles all character animation
- *   (including Piper, Hawk, and the enemies)
+ *   (including Piper and the enemies)
  */
 internal static class Animator
 {
@@ -29,7 +30,7 @@ internal static class Animator
                 piper.setFrameIndex(0);
                 piper.changeLocked(true);
             }
-            else if ((int)Math.Abs(piper.vel.X) == 0)
+            else if ((int)Math.Abs(piper.vel.X) == 0 && !key.Equals(Key.A) && !key.Equals(Key.D))
             {
                 piper.setState(0);
             }
@@ -50,20 +51,61 @@ internal static class Animator
         {
             piper.changeLocked(false);
         }
-        
-        return changeFrame(piper, position);
+        if (!piper.onGround)
+        {
+            piper.addAirTime(1);
+            if (piper.getAirTime() > 50)
+            {
+                piper.setState(4);
+            }
+        }
+        else
+        {
+            piper.addAirTime(-piper.getAirTime());
+        }
+
+        return changeFrame(piper, position, 4);
     }
 
-    private static float changeFrame(Sprite piper, Vector2 position)
+    public static float animateEnemy(Enemy enemy, Vector2 position)
+    {
+        Vector2 maxPosition = enemy.getPath().Size;
+        Vector2 minPosition = enemy.getPath().Position;
+        if (!enemy.isLeft()) // CURRENTLY INCORRECT. IF ENEMY "IS LEFT" THEY ARE ACTUALLY FACING RIGHT. THIS WILL BE FIXED LATER
+        {
+            if (enemy.loc.X > minPosition.X)
+            {
+                enemy.setVelocity(new Vector2(-enemy.getSpeed(), 0));
+            } else
+            {
+                enemy.turn();
+            }
+        }
+        else
+        {
+            if (enemy.loc.X < maxPosition.X)
+            {
+                enemy.setVelocity(new Vector2(enemy.getSpeed(), 0));
+            }
+            else
+            {
+                enemy.turn();
+            }
+        }
+
+        return changeFrame(enemy, position, 5);
+    }
+
+    private static float changeFrame(Sprite sprite, Vector2 position, int totalFrames)
     {
         // find frame
-        piper.setFrameIndex((piper.getFrameIndex() + Engine.TimeDelta * Framerate) % 4.0f);
-        float frameIndex = piper.getFrameIndex();
+        sprite.setFrameIndex((sprite.getFrameIndex() + Engine.TimeDelta * Framerate) % (float)totalFrames);
+        float frameIndex = sprite.getFrameIndex();
 
         // find bounds on spritemap and draw
-        Vector2 piperFrameStart = new Vector2((int)frameIndex * 24, piper.getState() * 24);
-        Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, new Vector2(24, 24));
-        piper.draw(piperFrameBounds, position);
+        Vector2 piperFrameStart = new Vector2((int)frameIndex * sprite.getHitboxNoCalc().X, sprite.getState() * sprite.getHitboxNoCalc().Y);
+        Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, sprite.getHitboxNoCalc());
+        sprite.draw(piperFrameBounds, position);
 
         // return current frame
         return frameIndex;
