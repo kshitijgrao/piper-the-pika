@@ -6,7 +6,7 @@ using System.Text;
 
 class Sonic : PhysicsSprite
 {
-    public static readonly float jumpHeight = 200;
+    public static readonly float jumpHeight = 50;
     public static readonly int boostFrameTime = 200;
     public static readonly float maxHorVel = 100;
     public static readonly float maxHorVelBoost = 50;
@@ -41,6 +41,7 @@ class Sonic : PhysicsSprite
         {
             this.vel = this.vel + jumpImpulseMag * Game.map.getNormalVector(loc);
         }
+        Console.Write("jumping bruh");
         
     }
 
@@ -102,9 +103,7 @@ class Sonic : PhysicsSprite
         {
             this.vel.X = Math.Max(this.vel.X, -1 * horVelCap);
         }
-
-        vel.round(0);
-        Console.WriteLine("Acceleration: " + acc.ToString());
+        Console.WriteLine(this.loc.Y);
 
        
 
