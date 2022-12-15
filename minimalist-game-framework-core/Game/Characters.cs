@@ -6,17 +6,15 @@ using System.Text;
 
 class Sonic : PhysicsSprite
 {
-    public static readonly int boostFrameTime = 200;
-    public static readonly float maxHorVel = 100;
-    public static readonly float maxHorVelBoost = 250;
-    public static readonly float horVelBoost = 20;
-    public static readonly float jumpImpulseMag = 70;
-    public static readonly float accelerationMag = 500;
-    public static readonly float brakeAccMag = 1000;
+    public static readonly float jumpHeight = 50;
+    public static readonly int boostFrameTime = 250;
+    public static readonly float maxHorVel = 250;
+    public static readonly float maxHorVelBoost = 100;
+    public static readonly float jumpImpulseMag = (float) Math.Sqrt(2.0 * Physics.g.Length() * jumpHeight);
+    public static readonly float accelerationMag = 300;
+    public static readonly float brakeAccMag = 150;
     public static readonly float accelerationBoostFactor = (float) 1.3;
     public static readonly float flowerAccBoost = (float) 1.5;
-
-    public static readonly float flowerVelBoost = 1.3f;
 
     public static readonly float sonicMass = 2;
     
@@ -51,11 +49,17 @@ class Sonic : PhysicsSprite
         Vector2 tempLoc = this.getBotPoint();
         if(key == Key.D)
         {
-            this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(90);
+            if (onGround)
+                this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(90);
+            else
+                this.acc = accelerationMag * (new Vector2(1, 0));
         }
         else if(key == Key.A)
         {
-            this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(270);
+            if(onGround)
+               this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(270);
+            else
+                this.acc = accelerationMag * (new Vector2(-1, 0));
         }
         else
         {

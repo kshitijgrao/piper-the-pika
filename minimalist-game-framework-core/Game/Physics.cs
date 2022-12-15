@@ -10,7 +10,7 @@ using System.Text;
 //TODO: this class + subclasses for different shaped hitboxes
 class Physics
 {
-    public static readonly Vector2 g = new Vector2(0,40);
+    public static readonly Vector2 g = new Vector2(0,600);
     public static readonly int collisionSteps = 5;
     public static readonly float coeffRestitution = 0.5f;
 
