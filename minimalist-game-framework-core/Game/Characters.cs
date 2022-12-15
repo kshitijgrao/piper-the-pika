@@ -8,12 +8,15 @@ class Sonic : PhysicsSprite
 {
     public static readonly int boostFrameTime = 200;
     public static readonly float maxHorVel = 100;
-    public static readonly float maxHorVelBoost = 800;
+    public static readonly float maxHorVelBoost = 250;
+    public static readonly float horVelBoost = 20;
     public static readonly float jumpImpulseMag = 70;
-    public static readonly float accelerationMag = 30;
-    public static readonly float brakeAccMag = 10;
+    public static readonly float accelerationMag = 500;
+    public static readonly float brakeAccMag = 1000;
     public static readonly float accelerationBoostFactor = (float) 1.3;
-    public static readonly float flowerAccBoost = (float) 20;
+    public static readonly float flowerAccBoost = (float) 1.5;
+
+    public static readonly float flowerVelBoost = 1.3f;
 
     public static readonly float sonicMass = 2;
     
@@ -57,9 +60,13 @@ class Sonic : PhysicsSprite
         else
         {
             if (Game.map.onGround(tempLoc))
-                this.acc = vel.Normalized() * (-1) * brakeAccMag;
+            {
+                this.acc = vel.Normalized() * (-1) * Math.Min(brakeAccMag, vel.Length() / Engine.TimeDelta);
+            }
             else
+            {
                 this.acc = Vector2.Zero;
+            }
         }
         if(flows > 0)
         {
@@ -79,12 +86,9 @@ class Sonic : PhysicsSprite
 
     public override void updateState()
     {
-        base.updateState();
-        Debug.WriteLine(this.vel.X);
-        
         float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
 
-        if(this.vel.X >= 0)
+        if (this.vel.X >= 0)
         {
             this.vel.X = Math.Min(this.vel.X, horVelCap);
         }
@@ -92,9 +96,9 @@ class Sonic : PhysicsSprite
         {
             this.vel.X = Math.Max(this.vel.X, -1 * horVelCap);
         }
-
-       
-
+        Debug.WriteLine("Vel: " + vel.ToString());
+        base.updateState();
+        
         if(flows > 0)
            flows -= 1 / ((float) boostFrameTime);
     }
@@ -103,7 +107,6 @@ class Sonic : PhysicsSprite
     {
         flows += 1;
     }
-
 }
 
 class Enemy : PhysicsSprite
@@ -203,16 +206,7 @@ class Flower : Sprite
         if (mainCharacter is Sonic)
         {
             ((Sonic)mainCharacter).addFlower();
-            if (mainCharacter.isLeft())
-            {
-                ((Sonic)mainCharacter).vel += new Vector2(-50, 0);
-            }
-            else
-            {
-                ((Sonic)mainCharacter).vel += new Vector2(50, 0);
-            }
-        }
-        ((Sonic) mainCharacter).addFlower();
+        }        
         base.collide(mainCharacter);
     }
 }
