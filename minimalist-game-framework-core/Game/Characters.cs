@@ -65,11 +65,12 @@ class Sonic : PhysicsSprite
         {
             if (Game.map.onGround(tempLoc))
             {
-                this.acc = vel.Normalized() * (-1) * brakeAccMag;
+                this.acc = vel.Normalized() * (-1) * Math.Min(brakeAccMag, vel.Length() / Engine.TimeDelta);
             }
-                
             else
+            {
                 this.acc = Vector2.Zero;
+            }
         }
         if(flows > 0)
         {
@@ -89,12 +90,9 @@ class Sonic : PhysicsSprite
 
     public override void updateState()
     {
-        base.updateState();
-        Debug.WriteLine(this.vel.X);
-        
         float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
 
-        if(this.vel.X >= 0)
+        if (this.vel.X >= 0)
         {
             this.vel.X = Math.Min(this.vel.X, horVelCap);
         }
@@ -102,9 +100,9 @@ class Sonic : PhysicsSprite
         {
             this.vel.X = Math.Max(this.vel.X, -1 * horVelCap);
         }
-
-       
-
+        Debug.WriteLine("Vel: " + vel.ToString());
+        base.updateState();
+        
         if(flows > 0)
            flows -= 1 / ((float) boostFrameTime);
     }
@@ -113,7 +111,6 @@ class Sonic : PhysicsSprite
     {
         flows += 1;
     }
-
 }
 
 class Enemy : PhysicsSprite
@@ -213,16 +210,7 @@ class Flower : Sprite
         if (mainCharacter is Sonic)
         {
             ((Sonic)mainCharacter).addFlower();
-            if (mainCharacter.isLeft())
-            {
-                ((Sonic)mainCharacter).vel += new Vector2(-50, 0);
-            }
-            else
-            {
-                ((Sonic)mainCharacter).vel += new Vector2(50, 0);
-            }
-        }
-        ((Sonic) mainCharacter).addFlower();
+        }        
         base.collide(mainCharacter);
     }
 }
