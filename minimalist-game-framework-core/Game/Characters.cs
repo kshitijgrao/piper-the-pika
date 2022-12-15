@@ -9,7 +9,7 @@ class Sonic : PhysicsSprite
     public static readonly float jumpHeight = 50;
     public static readonly int boostFrameTime = 250;
     public static readonly float maxHorVel = 250;
-    public static readonly float maxHorVelBoost = 50;
+    public static readonly float maxHorVelBoost = 100;
     public static readonly float jumpImpulseMag = (float) Math.Sqrt(2.0 * Physics.g.Length() * jumpHeight);
     public static readonly float accelerationMag = 300;
     public static readonly float brakeAccMag = 150;
