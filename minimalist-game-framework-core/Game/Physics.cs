@@ -11,7 +11,7 @@ using System.Text;
 class Physics
 {
     public static readonly Vector2 g = new Vector2(0,600);
-    public static readonly int collisionSteps = 5;
+    public static readonly int collisionSteps = 10;
     public static readonly float coeffRestitution = 0.5f;
 
     //detect collisions for things that are within the window
@@ -113,34 +113,55 @@ class Physics
         }
     }
 
-    //detecting ground
 
+
+    //detecting ground
     public static void detectGround(PhysicsSprite obj)
     {
         Vector2 pos = obj.getBotPoint();
-        Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
+        Vector2 finalPos = pos + obj.vel * Engine.TimeDelta / collisionSteps;
 
-        if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel,Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
+        for (int i = 0; i < collisionSteps; i++)
+        {
+            if (Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel, Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
+            {
+                Vector2 diff = finalPos - pos;
+
+                
+                obj.loc += diff - (finalPos - pos);
+                if (Math.Abs(Game.map.getSurfaceY(pos) - pos.Y) > 10)
+                {
+                    return;
+                }
+                obj.loc.Y += (Game.map.getSurfaceY(pos) - pos.Y);
+
+                Vector2 posNew = obj.getBotPoint();
+
+                obj.vel = obj.vel - Game.map.getNormalVector(posNew) * Vector2.Dot(Game.map.getNormalVector(posNew), obj.vel);
+
+                //might have to check for some 0 cases with the dividing here
+                obj.collideGround((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
+                break;
+                
+            }
+            pos = finalPos;
+            finalPos += obj.vel * Engine.TimeDelta / collisionSteps;
+
+        }
+
+        
+
+       /* if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel,Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
         {
             System.Diagnostics.Debug.WriteLine("bruh: " + pos.ToString() + " to:" + finalPos.ToString());
-            Vector2 diff = finalPos - pos;
+            
             while (!(Game.map.onGround(pos) || Game.map.throughThrough(finalPos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
                 pos += diff / collisionSteps;
 
-            obj.loc += diff - (finalPos - pos);
-            if(Math.Abs(Game.map.getSurfaceY(pos) - pos.Y) > 10)
-            {
-                return;
-            }
-            obj.loc.Y += (Game.map.getSurfaceY(pos) - pos.Y);
-
-            Vector2 posNew = obj.getBotPoint();
             
-            obj.vel = obj.vel - Game.map.getNormalVector(posNew) * Vector2.Dot(Game.map.getNormalVector(posNew), obj.vel);
+        }*/
+        
 
-            //might have to check for some 0 cases with the dividing here
-            obj.collideGround((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
-        }
     }
 
     //detecting unpenetrable thingies
