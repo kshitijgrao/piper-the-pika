@@ -23,7 +23,7 @@ unsafe class Map {
 
     private static readonly int SLOPE_MAX_COUNT = 15;
 
-    public static readonly int CLOSE_THRESHOLD = 5;
+    public static readonly int CLOSE_THRESHOLD = 10;
 
 
     public Map(String loc)
