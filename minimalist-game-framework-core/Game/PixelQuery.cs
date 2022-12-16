@@ -96,7 +96,7 @@ unsafe class Map {
                 {
                     if (pixels[x, y - 1] == AIR_CODE)
                         transitions[x].Add(y);
-                    else
+                    else if (pixels[x, y] == AIR_CODE)
                         transitions[x].Add(y - 1);
                 }
             }

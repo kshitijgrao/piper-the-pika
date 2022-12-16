@@ -6,7 +6,7 @@ using System.Text;
 
 class Sonic : PhysicsSprite
 {
-    public static readonly float jumpHeight = 70;
+    public static readonly float jumpHeight = 100;
     public static readonly int boostFrameTime = 250;
     public static readonly float maxHorVel = 250;
     public static readonly float maxHorVelBoost = 100;
@@ -92,6 +92,8 @@ class Sonic : PhysicsSprite
     {
         float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
 
+        
+
         if (this.vel.X >= 0)
         {
             this.vel.X = Math.Min(this.vel.X, horVelCap);
@@ -100,7 +102,6 @@ class Sonic : PhysicsSprite
         {
             this.vel.X = Math.Max(this.vel.X, -1 * horVelCap);
         }
-        Debug.WriteLine("Vel: " + vel.ToString());
         base.updateState();
         
         if(flows > 0)
@@ -153,7 +154,6 @@ class Enemy : PhysicsSprite
 
     public override void collide(PhysicsSprite other, float timeLeft)
     {
-        Debug.WriteLine("collided");
         if (other is PhysicsSprite) {
             if (((PhysicsSprite)other).vel.Length() > killSpeed)
             {
