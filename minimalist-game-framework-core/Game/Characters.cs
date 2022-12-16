@@ -6,7 +6,7 @@ using System.Text;
 
 class Sonic : PhysicsSprite
 {
-    public static readonly float jumpHeight = 50;
+    public static readonly float jumpHeight = 70;
     public static readonly int boostFrameTime = 250;
     public static readonly float maxHorVel = 250;
     public static readonly float maxHorVelBoost = 100;
