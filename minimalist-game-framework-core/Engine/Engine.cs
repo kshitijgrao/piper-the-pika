@@ -139,10 +139,22 @@ static partial class Engine
             PollEvents();
 
             // Toggle between windowed and fullscreen mode when Alt+Enter is pressed:
-            if (GetKeyDown(Key.Return) && (GetKeyHeld(Key.LeftAlt) || GetKeyHeld(Key.RightAlt)))
+            if (GetKeyDown(Key.Escape))
             {
-                Fullscreen = !Fullscreen;
-                SDL.SDL_SetWindowFullscreen(Window, Fullscreen ? (uint)SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+                if (Fullscreen)
+                {
+                    Fullscreen = !Fullscreen;
+                    SDL.SDL_SetWindowFullscreen(Window, Fullscreen ? (uint)SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+                }
+                
+            }
+            if (GetKeyDown(Key.F))
+            {
+                if (!Fullscreen)
+                {
+                    Fullscreen = !Fullscreen;
+                    SDL.SDL_SetWindowFullscreen(Window, Fullscreen ? (uint)SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+                }
             }
 
             // Clear and start drawing into the render target:
