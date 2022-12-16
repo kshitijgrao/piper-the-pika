@@ -145,6 +145,18 @@ class PhysicsSprite : Sprite
             if (Math.Abs(shift) > 10)
                 return;
             this.loc.Y += shift;
+
+            vel = vel - Game.map.getNormalVector(getBotPoint()) * Vector2.Dot(vel, Game.map.getNormalVector(getBotPoint()));
+
+        }
+        else if (Game.map.onGround(pos))
+        {
+            float shift = (Game.map.getSurfaceY(pos) - pos.Y);
+            if (Math.Abs(shift) > 13)
+                return;
+            this.loc.Y += shift;
+
+            vel = vel - Game.map.getNormalVector(getBotPoint()) * Vector2.Dot(vel, Game.map.getNormalVector(getBotPoint()));
         }
     }
 
