@@ -11,7 +11,7 @@ using System.Text;
 class Physics
 {
     public static readonly Vector2 g = new Vector2(0,600);
-    public static readonly int collisionSteps = 10;
+    public static readonly int collisionSteps = 100;
     public static readonly float coeffRestitution = 0.5f;
 
     //detect collisions for things that are within the window
