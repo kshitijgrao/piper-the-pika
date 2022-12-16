@@ -6,7 +6,7 @@ using System.Text;
 
 class Sonic : PhysicsSprite
 {
-    public static readonly float jumpHeight = 100;
+    public static readonly float jumpHeight = 70;
     public static readonly int boostFrameTime = 250;
     public static readonly float maxHorVel = 250;
     public static readonly float maxHorVelBoost = 100;
@@ -123,7 +123,7 @@ class Enemy : PhysicsSprite
     public static readonly Vector2 wolfHit = new Vector2(40, 34);
     public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
-    public static readonly float killSpeed = 60;
+    public static readonly float killSpeed = 200;
 
     public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
     {
@@ -154,9 +154,12 @@ class Enemy : PhysicsSprite
 
     public override void collide(PhysicsSprite other, float timeLeft)
     {
+        Debug.WriteLine("inside");
         if (other is PhysicsSprite) {
+            Debug.WriteLine("helloasdf");
             if (((PhysicsSprite)other).vel.Length() > killSpeed)
             {
+                Debug.WriteLine("asdl;fjaifjweaoiwaej");
                 Game.sb.enemyKilled(1);
                 base.collide(other);
             }

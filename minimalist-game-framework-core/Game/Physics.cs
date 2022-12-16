@@ -12,7 +12,7 @@ class Physics
 {
     public static readonly Vector2 g = new Vector2(0,600);
     public static readonly int collisionSteps = 100;
-    public static readonly float coeffRestitution = 0.5f;
+    public static readonly float coeffRestitution = 3.5f;
 
     //detect collisions for things that are within the window
     public static void detectCollisions(List<Flower> flowers)
@@ -38,11 +38,6 @@ class Physics
         }
         Bounds2 b1 = obj1.getHitbox();
         Bounds2 b2 = obj2.getHitbox();
-        if (b1.Overlaps(b2))
-        {
-            obj2.collide(obj1);
-            return;
-        }
         bool secondPhysics = obj2 is PhysicsSprite;
 
         //check for tunneling
@@ -103,7 +98,7 @@ class Physics
         {
             if(obj2 is Enemy && ((PhysicsSprite) obj2).mass > 0)
             {
-                
+                System.Diagnostics.Debug.WriteLine("asdf");
                 obj2.collide(obj1, Math.Max(0, tExit));
             }
             else
