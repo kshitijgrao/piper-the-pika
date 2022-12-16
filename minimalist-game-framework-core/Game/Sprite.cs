@@ -95,6 +95,14 @@ class Sprite {
     public void setState(State state)
     {
         this.state = state;
+        if (state == State.Spinning)
+        {
+            Animator.changeFramerate(10);
+        }
+        else if (state == State.Landing)
+        {
+            Animator.changeFramerate(5);
+        }
     }
 
     public State getState()
