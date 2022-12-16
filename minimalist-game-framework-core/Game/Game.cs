@@ -23,7 +23,7 @@ class Game
     public static readonly string LEFT = "left";
 
     
-    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
+    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-2.png");
     readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
     readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
 

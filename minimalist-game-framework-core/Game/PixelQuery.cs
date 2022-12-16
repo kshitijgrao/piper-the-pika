@@ -15,11 +15,12 @@ unsafe class Map {
     private int w;
     private int h;
 
-    //TODO: come up with color key for waht the different types of blocks represent
+    //TODO: come up with color key for what the different types of blocks represent
     public static readonly int AIR_CODE = 255+255;
     public static readonly int GROUND_CODE = 113;
     public static readonly int PASS_THROUGH_CODE = 255;
     public static readonly int SOLID_CODE = 255 + 199;
+    //public static readonly int TUNNEL_CODE = 
 
     private static readonly int SLOPE_MAX_COUNT = 15;
 
@@ -65,13 +66,18 @@ unsafe class Map {
                     pixels[x, y] = AIR_CODE;
                 }
 
+                // checking for tunnel
+                //if (pixels[x, y] == (TUNNEL_CODE))
+                //{
+
+                //}
 
                 //checking for enemies
                 Bounds2 testPath = new Bounds2(new Vector2(locVect.X - 50, 0), new Vector2(locVect.X + 50, 0));
                 if (pixels[x, y] == 5)
                 {
                     enemyToAdd = new Enemy(locVect, testPath, false);
-                    enemyToAdd.setState(1);
+                    enemyToAdd.setState(State.Walk);
                     Game.enemies.Add(enemyToAdd);
                     pixels[x, y] = AIR_CODE;
                 }
@@ -80,7 +86,7 @@ unsafe class Map {
                 if (pixels[x, y] == 25)
                 {
                     enemyToAdd = new Enemy(locVect, testPath, true);
-                    enemyToAdd.setState(1);
+                    enemyToAdd.setState(State.Walk);
                     Game.enemies.Add(enemyToAdd);
                     pixels[x, y] = AIR_CODE;
                 }
