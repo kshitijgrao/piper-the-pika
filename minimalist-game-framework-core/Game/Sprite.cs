@@ -8,14 +8,14 @@ class Sprite {
     public Vector2 loc;
     private Texture spritemap;
     private float frameIndex;
-    private protected int state;
+    private protected State state;
     private Boolean spriteFaceLeft;
     private Boolean AnimationLocked; // a sprite is locked if stuck finishing an animation
     private protected Vector2 hitbox;
 
     private bool invisible;
 
-    public static readonly int landState = 5;
+    public static readonly State landState = State.Landing;
 
     public Sprite(Vector2 loc, Texture spritemap)
     {
@@ -92,19 +92,19 @@ class Sprite {
         }
     }
 
-    public void setState(int state)
+    public void setState(State state)
     {
         this.state = state;
     }
 
-    public int getState()
+    public State getState()
     {
         return state;
     }
 
     public virtual void updateState()
     {
-        state = (state + 1) % 5;
+        state = (State)(((int)state + 1) % 5);
     }
 
     public float getFrameIndex()
@@ -156,5 +156,17 @@ class Sprite {
         return invisible;
     }
 
+}
+
+enum State
+{
+    // states --> idle 0, walk 1, sprint 2, starting jump 3, spining 4, landing 5, damage 6
+    Idle,
+    Walk,
+    Sprint,
+    StartingJump,
+    Spinning,
+    Landing,
+    Damage
 }
 

@@ -10,23 +10,22 @@ using System.Text;
  */
 internal static class Animator
 {
-    // animation constants
-    static readonly float Framerate = 5;
+    // animation speed
+    static float Framerate = 5;
 
     // variables
-    static int movementState = 1;
+    static State movementState = State.Walk;
 
     public static float animatePiper(Sonic piper, Vector2 position, Key key)
     {
         float currentFrame = piper.getFrameIndex();
 
         // only changes state if piper if not spinning or taking damage (aka not locked)
-        // states --> idle 0, walk 1, sprint 2, starting jump 3, spining 4, landing 5, damage 6
         if (!piper.animationIsLocked())
         {
             if (key.Equals(Key.Space))
             {
-                piper.setState(3);
+                piper.setState(State.StartingJump);
                 piper.setFrameIndex(0);
                 piper.changeLocked(true);
             }
@@ -39,15 +38,15 @@ internal static class Animator
                 piper.setState(movementState);
             }
         } 
-        else if (piper.getState() == 3 && (int)currentFrame == 3) // spin starts on frame 3
+        else if (piper.getState() == State.StartingJump && (int)currentFrame == 3) // spin starts on frame 3
         {
-            piper.setState(4);
+            piper.setState(State.Spinning);
         } 
-        else if (piper.getState() == 6 && (int)currentFrame == 2) // damage lasts 2 frames 
+        else if (piper.getState() == State.Damage && (int)currentFrame == 2) // damage lasts 2 frames 
         {
             piper.changeLocked(false);
         } 
-        else if (piper.getState() == 5 && (int)currentFrame == 1) // landing lasts 1 frames
+        else if (piper.getState() == State.Landing && (int)currentFrame == 1) // landing lasts 1 frames
         {
             piper.changeLocked(false);
         }
@@ -56,7 +55,7 @@ internal static class Animator
             piper.addAirTime(1);
             if (piper.getAirTime() > 50)
             {
-                piper.setState(4);
+                piper.setState(State.Spinning);
             }
         }
         else
@@ -71,7 +70,7 @@ internal static class Animator
     {
         Vector2 maxPosition = enemy.getPath().Size;
         Vector2 minPosition = enemy.getPath().Position;
-        if (!enemy.isLeft()) // CURRENTLY INCORRECT. IF ENEMY "IS LEFT" THEY ARE ACTUALLY FACING RIGHT. THIS WILL BE FIXED LATER
+        if (!enemy.isLeft()) // TODO: CURRENTLY INCORRECT. IF ENEMY "IS LEFT" THEY ARE ACTUALLY FACING RIGHT. THIS WILL BE FIXED LATER
         {
             if (enemy.loc.X > minPosition.X)
             {
@@ -103,7 +102,7 @@ internal static class Animator
         float frameIndex = sprite.getFrameIndex();
 
         // find bounds on spritemap and draw
-        Vector2 piperFrameStart = new Vector2((int)frameIndex * sprite.getHitboxNoCalc().X, sprite.getState() * sprite.getHitboxNoCalc().Y);
+        Vector2 piperFrameStart = new Vector2((int)frameIndex * sprite.getHitboxNoCalc().X, (int)sprite.getState() * sprite.getHitboxNoCalc().Y);
         Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, sprite.getHitboxNoCalc());
         sprite.draw(piperFrameBounds, position);
 
@@ -113,13 +112,13 @@ internal static class Animator
 
     public static void animatePiperLanding(Sprite piper)
     {
-        piper.setState(5);
+        piper.setState(State.Landing);
         piper.setFrameIndex(0);
     }
 
     public static void animatePiperTakingDamage(Sprite piper)
     {
-        piper.setState(6);
+        piper.setState(State.Damage);
         piper.setFrameIndex(0);
         piper.changeLocked(true);
     }
@@ -128,24 +127,23 @@ internal static class Animator
     {
         if (isSprinting)
         {
-            movementState = 2;
+            movementState = State.Sprint;
         } 
         else
         {
-            movementState = 1;
+            movementState = State.Walk;
         }
     }
     public static void setPiperSpinning(Boolean isSpinning, Sprite piper)
     {
         if (isSpinning)
         {
-            piper.setState(4);
+            piper.setState(State.Spinning);
             piper.changeLocked(true);
         }
         else
         {
-            piper.setState(5);
-            //piper.changeLocked(false);
+            piper.setState(State.Landing);
         }
     }
 
