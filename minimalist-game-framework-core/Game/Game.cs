@@ -80,12 +80,13 @@ class Game
         else
         {
             currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));
-            
-            
+
+
             //collision detection
             //ground and walls
-            Physics.detectGround(piper);
-            Physics.detectUnpenetrable(piper);
+            Physics.detectSolid(piper);
+            //Physics.detectGround(piper);
+            //Physics.detectUnpenetrable(piper);
             
             //other sprites
             Physics.detectCollisions(piper, flowerArr);
@@ -107,12 +108,15 @@ class Game
                 enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc));
             };
             piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));
+            piper.drawVectors(render.pos + piper.loc);
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
             if (piper.loc.X >= 6125)
             {
                 endScene = true;
             }
+
+            Engine.DrawString("onGround? " + piper.onGround, Resolution / 2, Color.Black, arial);
         }
     }
 }

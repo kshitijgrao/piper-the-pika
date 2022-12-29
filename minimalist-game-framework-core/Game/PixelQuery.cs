@@ -123,7 +123,7 @@ unsafe class Map {
         return getPixelType(coord) == GROUND_CODE || getPixelType(coord) == SOLID_CODE;
     }
 
-    public bool impenetrable(Vector2 coord)
+    public bool onSolid(Vector2 coord)
     {
         return getPixelType(coord) == GROUND_CODE || getPixelType(coord) == SOLID_CODE;
     }
@@ -143,6 +143,25 @@ unsafe class Map {
     {
         return Math.Abs(getSurfaceY(coord) - coord.Y) < CLOSE_THRESHOLD;
     }
+
+    public bool passingSolid(Vector2 initial, Vector2 final)
+    {
+        if(inAir(initial) && onSolid(final))
+        {
+            return true;
+        }
+
+        if (inAir(initial) && throughThrough(final))
+        {
+            if (Vector2.Dot((final-initial),getNormalVector(final)) < 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     //getting normal vectors
     // TODO: remember to account for cases where the ground is above or below and just general edge cases like vert
@@ -174,6 +193,15 @@ unsafe class Map {
         return (x1 - x2).Length() / angle;*/
     }
 
+
+    //returns the nearest surface point either moving horizontally or vertically
+    //TODO: actually implementing this method, this one is just going straight up to surface
+    public Vector2 getNearestSurfacePoint(Vector2 pos)
+    {
+        return new Vector2(pos.X, getSurfaceY(pos));
+    }
+
+    //getting sruface Y
     public int getSurfaceY(Vector2 pos)
     {
         List<int> currTransitions = transitions[(int) pos.X];

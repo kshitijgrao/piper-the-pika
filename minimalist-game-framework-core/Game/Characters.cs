@@ -63,6 +63,7 @@ class Sonic : PhysicsSprite
         }
         else
         {
+            //change this to just check onGround?
             if (Game.map.onGround(tempLoc))
             {
                 this.acc = vel.Normalized() * (-1) * Math.Min(brakeAccMag, vel.Length() / Engine.TimeDelta);
@@ -82,7 +83,7 @@ class Sonic : PhysicsSprite
             acc.X *= accelerationBoostFactor;
         }
 
-        this.acc += Physics.getPhysicsAcceleration(tempLoc, this.vel);
+        this.acc += Physics.getPhysicsAcceleration(this.loc, this.vel);
 
         //account for weird floating point errors
         this.acc.round(2);

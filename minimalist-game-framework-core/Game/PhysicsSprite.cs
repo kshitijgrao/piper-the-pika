@@ -88,7 +88,7 @@ class PhysicsSprite : Sprite
             loc = loc + vel * Engine.TimeDelta;
             vel += acc * Engine.TimeDelta;
         }
-        if (onGround && Game.map.inAir(getBotPoint()))
+        if (onGround && Game.map.inAir(loc))
         {
             onGround = false;
         }
@@ -119,10 +119,12 @@ class PhysicsSprite : Sprite
 
     public void collideGround(float timeLeft)
     {
+        collideSolid(timeLeft);
+
         onGround = true;
         this.setState(Sprite.landState);
 
-        collideWall(timeLeft);
+        
 
         if (airTime > 50)
         {
@@ -130,15 +132,17 @@ class PhysicsSprite : Sprite
         }
     }
 
-    public void collideWall(float timeLeft)
+    public void collideSolid(float timeLeft)
     {
+        vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(Game.map.getNormalVector(loc), vel);
         collided = true;
         this.timeLeft = timeLeft;
     }
 
+    //holy cow clean up the spaghetti code here
     public void keepOnSurface()
     {
-        Vector2 pos = this.getBotPoint();
+        Vector2 pos = this.loc;
         if (onGround)
         {
             float shift = (Game.map.getSurfaceY(pos) - pos.Y);
@@ -146,17 +150,17 @@ class PhysicsSprite : Sprite
                 return;
             this.loc.Y += shift;
 
-            vel = vel - Game.map.getNormalVector(getBotPoint()) * Vector2.Dot(vel, Game.map.getNormalVector(getBotPoint()));
+            vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
 
         }
         else if (Game.map.onGround(pos))
         {
             float shift = (Game.map.getSurfaceY(pos) - pos.Y);
-            if (Math.Abs(shift) > 13)
+            if (Math.Abs(shift) > 10)
                 return;
             this.loc.Y += shift;
 
-            vel = vel - Game.map.getNormalVector(getBotPoint()) * Vector2.Dot(vel, Game.map.getNormalVector(getBotPoint()));
+            vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
         }
     }
 

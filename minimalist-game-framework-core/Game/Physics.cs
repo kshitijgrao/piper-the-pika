@@ -12,6 +12,7 @@ class Physics
 {
     public static readonly Vector2 g = new Vector2(0,600);
     public static readonly int collisionSteps = 100;
+    public static readonly int collisionPixelThresh = 3;
     public static readonly float coeffRestitution = 0.5f;
 
     //detect collisions for things that are within the window
@@ -113,6 +114,30 @@ class Physics
         }
     }
 
+    //possibly implement case where onGround = false but loc is onGround? I don't see how that would happen, but it's an edge case
+    public static void detectSolid(PhysicsSprite obj)
+    {
+        int steps = (int) Math.Ceiling(obj.vel.Length() * Engine.TimeDelta / collisionPixelThresh);
+        Vector2 pos = obj.loc;
+        Vector2 diff = obj.vel * Engine.TimeDelta / steps;
+        Vector2 finalPos = pos + diff;
+
+        for (int i = 0; i < steps; i++)
+        {
+            if (Game.map.passingSolid(pos, finalPos))
+            {
+                
+                obj.loc = Game.map.getNearestSurfacePoint(finalPos);
+
+                obj.collideGround((steps - i) * Engine.TimeDelta / steps);
+                break;
+
+            }
+            pos = finalPos;
+            finalPos += diff;
+        }
+    }
+
 
 
     //detecting ground
@@ -171,7 +196,7 @@ class Physics
 
         Vector2 pos = obj.getPoint(direc);
 
-        if (Game.map.impenetrable(pos))
+        if (Game.map.onSolid(pos))
         {
             obj.vel = obj.vel - (new Vector2(-1, 0)) * Math.Min(0,Vector2.Dot(new Vector2(-1, 0), obj.vel));
             obj.acc = obj.acc - (new Vector2(-1, 0)) * Math.Min(0,Vector2.Dot(new Vector2(-1, 0), obj.acc));
@@ -179,16 +204,16 @@ class Physics
         
         Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
 
-        if (Game.map.inAir(pos) && Game.map.impenetrable(finalPos))
+        if (Game.map.inAir(pos) && Game.map.onSolid(finalPos))
         {
             Vector2 diff = finalPos - pos;
-            while (!(Game.map.impenetrable(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
+            while (!(Game.map.onSolid(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
                 pos += diff / collisionSteps;
             obj.loc += diff - (finalPos - pos);
 
             obj.vel = obj.vel - (new Vector2 (-1,0)) * Vector2.Dot(new Vector2(-1, 0), obj.vel);
 
-            obj.collideWall((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
+            obj.collideSolid((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
 
         }
 
@@ -203,7 +228,7 @@ class Physics
         //not allowing futher movement within
         //NOTE:This is SLIGHTLY broken and gets stuck within wall until we implement full bottom layer collision
         //detection or switch to an SVG encoding of the map
-        if (Game.map.impenetrable(pos))
+        if (Game.map.onSolid(pos))
         {
             obj.vel = obj.vel - (new Vector2(-1, 0)) * Math.Min(0, Vector2.Dot(new Vector2(-1, 0), obj.vel));
             obj.acc = obj.acc - (new Vector2(-1, 0)) * Math.Min(0, Vector2.Dot(new Vector2(-1, 0), obj.acc));
@@ -211,16 +236,16 @@ class Physics
 
         Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
 
-        if (Game.map.inAir(pos) && Game.map.impenetrable(finalPos))
+        if (Game.map.inAir(pos) && Game.map.onSolid(finalPos))
         {
             Vector2 diff = finalPos - pos;
-            while (!(Game.map.impenetrable(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
+            while (!(Game.map.onSolid(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
                 pos += diff / collisionSteps;
             obj.loc += diff - (finalPos - pos);
 
             obj.vel = obj.vel - (new Vector2(-1, 0)) * Vector2.Dot(new Vector2(-1, 0), obj.vel);
 
-            obj.collideWall((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
+            obj.collideSolid((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
 
         }
 
