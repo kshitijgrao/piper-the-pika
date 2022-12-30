@@ -105,22 +105,24 @@ unsafe class Map
                     pixels[x, y] = AIR_CODE;
                 }
 
+                //NOTE: these are putting the surfaces up 1 shifted
+
                 //looking for air to ground transitions
                 if (y > 0 && pixels[x, y] != pixels[x, y - 1])
                 {
                     if (pixels[x, y - 1] == AIR_CODE)
-                        transitionsY[x].Add(y);
+                        transitionsY[x].Add(y-1);
                     else if (pixels[x, y] == AIR_CODE)
-                        transitionsY[x].Add(y - 1);
+                        transitionsY[x].Add(y);
                 }
 
                 //horizontal 
                 if (x > 0 && pixels[x, y] != pixels[x - 1, y])
                 {
                     if ((pixels[x, y] == GROUND_CODE || pixels[x, y] == SOLID_CODE) && (pixels[x - 1, y] == AIR_CODE || pixels[x - 1, y] == PASS_THROUGH_CODE))
-                        transitionsX[y].Add(x);
+                        transitionsX[y].Add(x-1);
                     else if ((pixels[x - 1, y] == GROUND_CODE || pixels[x - 1, y] == SOLID_CODE) && (pixels[x, y] == AIR_CODE || pixels[x, y] == PASS_THROUGH_CODE))
-                        transitionsX[y].Add(x - 1);
+                        transitionsX[y].Add(x);
                 }
 
             }
@@ -196,10 +198,14 @@ unsafe class Map
     //need to fix for LOTS of edge cases
     public Vector2 getNormalVector(Vector2 pos)
     {
-        /*if(Math.Round(pos.X) == 4361)
+        if(Math.Round(pos.X) == 4360)
         {
             return new Vector2(-1, 0);
-        }*/
+        }
+        if(pos.X > 4300 && pos.X < 4360)
+        {
+            return new Vector2(0, -1);
+        }
 
         Vector2 slope = new Vector2(10, 0);
         slope.Y = getSurfaceY(pos + slope / 2) - getSurfaceY(pos - slope / 2);
