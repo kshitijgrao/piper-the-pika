@@ -111,18 +111,18 @@ unsafe class Map
                 if (y > 0 && pixels[x, y] != pixels[x, y - 1])
                 {
                     if (pixels[x, y - 1] == AIR_CODE)
-                        transitionsY[x].Add(y-1);
-                    else if (pixels[x, y] == AIR_CODE)
                         transitionsY[x].Add(y);
+                    else if (pixels[x, y] == AIR_CODE)
+                        transitionsY[x].Add(y-1);
                 }
 
                 //horizontal 
                 if (x > 0 && pixels[x, y] != pixels[x - 1, y])
                 {
                     if ((pixels[x, y] == GROUND_CODE || pixels[x, y] == SOLID_CODE) && (pixels[x - 1, y] == AIR_CODE || pixels[x - 1, y] == PASS_THROUGH_CODE))
-                        transitionsX[y].Add(x-1);
-                    else if ((pixels[x - 1, y] == GROUND_CODE || pixels[x - 1, y] == SOLID_CODE) && (pixels[x, y] == AIR_CODE || pixels[x, y] == PASS_THROUGH_CODE))
                         transitionsX[y].Add(x);
+                    else if ((pixels[x - 1, y] == GROUND_CODE || pixels[x - 1, y] == SOLID_CODE) && (pixels[x, y] == AIR_CODE || pixels[x, y] == PASS_THROUGH_CODE))
+                        transitionsX[y].Add(x-1);
                 }
 
             }
@@ -198,11 +198,11 @@ unsafe class Map
     //need to fix for LOTS of edge cases
     public Vector2 getNormalVector(Vector2 pos)
     {
-        if(Math.Round(pos.X) == 4360)
+        if((int) pos.X == 4361)
         {
             return new Vector2(-1, 0);
         }
-        if(pos.X > 4300 && pos.X < 4360)
+        if(pos.X > 4300 && pos.X < 4361)
         {
             return new Vector2(0, -1);
         }
@@ -231,6 +231,15 @@ unsafe class Map
             return -1;
         return (x1 - x2).Length() / angle;*/
     }
+
+    //returns the point to put the sprite on when hovering over ground
+    public Vector2 getNearestHoveringPoint(Vector2 pos)
+    {
+        Vector2 surfacePoint = getNearestSurfacePoint(pos);
+        Vector2 norm = getNormalVector(surfacePoint);
+        return surfacePoint + norm;
+    }
+
 
 
     //returns the nearest surface point either moving horizontally or vertically

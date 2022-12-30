@@ -126,17 +126,24 @@ class PhysicsSprite : Sprite
 
         
 
-        if (airTime > 50)
-        {
-            Animator.animatePiperLanding(this);
-        }
+        
     }
 
     public void collideSolid(float timeLeft)
     {
-        vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(Game.map.getNormalVector(loc), vel);
+        
         collided = true;
         this.timeLeft = timeLeft;
+
+        if(Math.Round(Vector2.Dot(new Vector2(0,1),Game.map.getNormalVector(loc))) != 0)
+        {
+            onGround = true;
+            this.setState(Sprite.landState);
+            if (airTime > 50)
+            {
+                Animator.animatePiperLanding(this);
+            }
+        }
     }
 
     //holy cow clean up the spaghetti code here
@@ -145,7 +152,7 @@ class PhysicsSprite : Sprite
         Vector2 pos = this.loc;
         if (onGround)
         {
-            Vector2 newLoc = Game.map.getNearestSurfacePoint(pos);
+            Vector2 newLoc = Game.map.getNearestHoveringPoint(pos);
             if ((newLoc - pos).Length() > 10)
                 return;
             this.loc = newLoc;

@@ -126,10 +126,13 @@ class Physics
         {
             if (Game.map.passingSolid(pos, finalPos))
             {
-                
-                obj.loc = Game.map.getNearestSurfacePoint(finalPos);
+                System.Diagnostics.Debug.WriteLine("Colliding now: params: loc: " + obj.loc.ToString() + " vel: " + obj.vel.ToString());
+                System.Diagnostics.Debug.WriteLine("final Pos: " + finalPos + " norm: " + Game.map.getNormalVector(finalPos).ToString());
 
-                obj.collideGround((steps - i) * Engine.TimeDelta / steps);
+                obj.vel = obj.vel - Game.map.getNormalVector(finalPos) * Vector2.Dot(Game.map.getNormalVector(finalPos), obj.vel);
+                obj.loc = Game.map.getNearestHoveringPoint(finalPos);
+
+                obj.collideSolid((steps - i) * Engine.TimeDelta / steps);
                 break;
 
             }

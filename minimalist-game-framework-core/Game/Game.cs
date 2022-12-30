@@ -116,7 +116,7 @@ class Game
                 endScene = true;
             }
 
-            Engine.DrawString("onGround? " + piper.onGround, Resolution / 2, Color.Black, arial);
+            Engine.DrawString("onGround? " + piper.onGround + " at " + piper.loc.ToString(), Resolution / 2, Color.Black, arial);
         }
     }
 }
