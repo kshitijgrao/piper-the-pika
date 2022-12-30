@@ -7,19 +7,28 @@ using static SDL2.SDL;
 using System.Reflection;
 using System.Diagnostics;
 
-unsafe class Map {
+
+unsafe class Map
+{
 
     public int[,] pixels;
-    private List<int>[] transitions;
+    private List<int>[] transitionsY;
+    private List<int>[] transitionsX;
+    private Dictionary<CoordinateAxis, List<int>[]> transitions;
+    
+
     SDL.SDL_Surface* pixelMap;
     private int w;
     private int h;
 
     //TODO: come up with color key for what the different types of blocks represent
-    public static readonly int AIR_CODE = 255+255;
+    public static readonly int AIR_CODE = 255 + 255;
     public static readonly int GROUND_CODE = 113;
     public static readonly int PASS_THROUGH_CODE = 255;
     public static readonly int SOLID_CODE = 255 + 199;
+    public static readonly int ENEMY_WALKING = 5;
+    public static readonly int ENEMY_FLYING = 25;
+
     //public static readonly int TUNNEL_CODE = 
 
     private static readonly int SLOPE_MAX_COUNT = 15;
@@ -30,22 +39,27 @@ unsafe class Map {
     public Map(String loc)
     {
         //getting the memory location of the collision map
-        pixelMap = (SDL.SDL_Surface*) SDL.SDL_LoadBMP(Engine.GetAssetPath(loc));
+        pixelMap = (SDL.SDL_Surface*)SDL.SDL_LoadBMP(Engine.GetAssetPath(loc));
 
-        SDL.SDL_LockSurface((IntPtr) pixelMap);
+        SDL.SDL_LockSurface((IntPtr)pixelMap);
 
         int pitch = (*pixelMap).pitch;
 
         w = (*pixelMap).w;
         h = (*pixelMap).h;
 
-        pixels = new int[w,h];
-        transitions = new List<int>[w];
-        for(int i = 0; i < w; i++)
+        pixels = new int[w, h];
+        transitionsY = new List<int>[w];
+        transitionsX = new List<int>[h];
+        for (int i = 0; i < w; i++)
         {
-            transitions[i] = new List<int>();
+            transitionsY[i] = new List<int>();
         }
-        
+        for(int i = 0; i < h; i++)
+        {
+            transitionsX[i] = new List<int>();
+        }
+
         int bpp = 4;
         byte* pixelsImg = (byte*)(*pixelMap).pixels;
 
@@ -56,7 +70,7 @@ unsafe class Map {
             for (int y = 0; y < pixels.GetLength(1); y++)
             {
                 pixels[x, y] = *(pixelsImg + pitch * y + bpp * x) + *(pixelsImg + pitch * y + bpp * x + 2);
-                
+
 
                 //checking for rings
                 Vector2 locVect = new Vector2(x, y);
@@ -74,7 +88,7 @@ unsafe class Map {
 
                 //checking for enemies
                 Bounds2 testPath = new Bounds2(new Vector2(locVect.X - 50, 0), new Vector2(locVect.X + 50, 0));
-                if (pixels[x, y] == 5)
+                if (pixels[x, y] == ENEMY_WALKING)
                 {
                     enemyToAdd = new Enemy(locVect, testPath, false);
                     enemyToAdd.setState(State.Walk);
@@ -83,7 +97,7 @@ unsafe class Map {
                 }
 
                 //checking for flying enemies
-                if (pixels[x, y] == 25)
+                if (pixels[x, y] == ENEMY_FLYING)
                 {
                     enemyToAdd = new Enemy(locVect, testPath, true);
                     enemyToAdd.setState(State.Walk);
@@ -95,27 +109,41 @@ unsafe class Map {
                 if (y > 0 && pixels[x, y] != pixels[x, y - 1])
                 {
                     if (pixels[x, y - 1] == AIR_CODE)
-                        transitions[x].Add(y);
+                        transitionsY[x].Add(y);
                     else if (pixels[x, y] == AIR_CODE)
-                        transitions[x].Add(y - 1);
+                        transitionsY[x].Add(y - 1);
                 }
+
+                //horizontal 
+                if (x > 0 && pixels[x, y] != pixels[x - 1, y])
+                {
+                    if ((pixels[x, y] == GROUND_CODE || pixels[x, y] == SOLID_CODE) && (pixels[x - 1, y] == AIR_CODE || pixels[x - 1, y] == PASS_THROUGH_CODE))
+                        transitionsX[y].Add(x);
+                    else if ((pixels[x - 1, y] == GROUND_CODE || pixels[x - 1, y] == SOLID_CODE) && (pixels[x, y] == AIR_CODE || pixels[x, y] == PASS_THROUGH_CODE))
+                        transitionsX[y].Add(x - 1);
+                }
+
             }
         }
+        transitions = new Dictionary<CoordinateAxis,List<int>[]>();
+        transitions.Add(CoordinateAxis.X,transitionsX);
+        transitions.Add(CoordinateAxis.Y,transitionsY);
 
-        SDL.SDL_UnlockSurface((IntPtr) pixelMap);
-        SDL.SDL_FreeSurface((IntPtr) pixelMap);
+
+        SDL.SDL_UnlockSurface((IntPtr)pixelMap);
+        SDL.SDL_FreeSurface((IntPtr)pixelMap);
     }
 
     //gets the pixel type at the given coordinate
     public int getPixelType(Vector2 coord)
     {
-        int x = (int) Math.Round(coord.X);
-        int y = (int) Math.Round(coord.Y);
-        if(x >= w || x < 0 || y >= h || y < 0)
+        int x = (int)Math.Round(coord.X);
+        int y = (int)Math.Round(coord.Y);
+        if (x >= w || x < 0 || y >= h || y < 0)
         {
             return AIR_CODE;
         }
-        return pixels[x,y];
+        return pixels[x, y];
     }
 
     public bool onGround(Vector2 coord)
@@ -146,14 +174,14 @@ unsafe class Map {
 
     public bool passingSolid(Vector2 initial, Vector2 final)
     {
-        if(inAir(initial) && onSolid(final))
+        if (inAir(initial) && onSolid(final))
         {
             return true;
         }
 
         if (inAir(initial) && throughThrough(final))
         {
-            if (Vector2.Dot((final-initial),getNormalVector(final)) < 0)
+            if (Vector2.Dot((final - initial), getNormalVector(final)) < 0)
             {
                 return true;
             }
@@ -168,7 +196,12 @@ unsafe class Map {
     //need to fix for LOTS of edge cases
     public Vector2 getNormalVector(Vector2 pos)
     {
-        Vector2 slope = new Vector2(10,0);
+        /*if(Math.Round(pos.X) == 4361)
+        {
+            return new Vector2(-1, 0);
+        }*/
+
+        Vector2 slope = new Vector2(10, 0);
         slope.Y = getSurfaceY(pos + slope / 2) - getSurfaceY(pos - slope / 2);
 
         return slope.Rotated(270).Normalized();
@@ -196,39 +229,42 @@ unsafe class Map {
 
     //returns the nearest surface point either moving horizontally or vertically
     //TODO: actually implementing this method, this one is just going straight up to surface
+    //tiebreaker goes vertical?
     public Vector2 getNearestSurfacePoint(Vector2 pos)
     {
-        return new Vector2(pos.X, getSurfaceY(pos));
+        int xSurface = getSurfaceX(pos);
+        int ySurface = getSurfaceY(pos);
+
+        if(Math.Abs(xSurface - pos.X) < Math.Abs(ySurface - pos.Y))
+        {
+            return new Vector2(xSurface, pos.Y);
+        }
+        return new Vector2(pos.X, ySurface);
+
     }
 
-    //getting sruface Y
-    public int getSurfaceY(Vector2 pos)
+    public int getSurfaceAny(Vector2 pos, CoordinateAxis direc)
     {
-        List<int> currTransitions = transitions[(int) pos.X];
-
-        for (int i = 0; i < currTransitions.Count; i++)
+        List<int> currTransitions = transitions[direc][(int) Math.Round(pos.getComp(direc.Flip()))];
+        float criticalCoord = pos.getComp(direc);
+        for(int i = 0; i < currTransitions.Count; i++)
         {
-            if(i % 2 == 0)
+            //dividing off by halves and returning nearest one
+            if(i+1 >= currTransitions.Count || criticalCoord < (currTransitions[i] + currTransitions[i+1]) / 2)
             {
-                if (i + 1 >= currTransitions.Count || (pos.Y >= currTransitions[i] && pos.Y <( currTransitions[i] + currTransitions[i + 1]) / 2))
-                {
-                    return currTransitions[i];
-                }
-                //air case
-                if (currTransitions[i] > pos.Y)
-                {
-                    return currTransitions[i];
-                }
-            }
-            //upside down ground case
-            if(i % 2 != 0)
-            {
-                if(pos.Y  <= currTransitions[i] && pos.Y >= (currTransitions[i] + currTransitions[i-1]) / 2)
-                {
-                    return currTransitions[i];
-                }
+                return currTransitions[i];
             }
         }
         return -1;
+    }
+
+    public int getSurfaceX(Vector2 pos)
+    {
+        return getSurfaceAny(pos,CoordinateAxis.X);
+    }
+
+    public int getSurfaceY(Vector2 pos)
+    {
+        return getSurfaceAny(pos, CoordinateAxis.Y);
     }
 }

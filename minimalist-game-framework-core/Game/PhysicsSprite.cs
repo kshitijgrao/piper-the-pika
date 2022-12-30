@@ -153,6 +153,7 @@ class PhysicsSprite : Sprite
             vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
 
         }
+        /*
         else if (Game.map.onGround(pos))
         {
             float shift = (Game.map.getSurfaceY(pos) - pos.Y);
@@ -161,7 +162,7 @@ class PhysicsSprite : Sprite
             this.loc.Y += shift;
 
             vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
-        }
+        }*/
     }
 
 }

@@ -1,6 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 
+public enum CoordinateAxis
+{
+    X,
+    Y
+}
+public static class AxisExtension
+{
+    public static CoordinateAxis Flip(this CoordinateAxis a)
+    {
+        if(a == CoordinateAxis.X)
+        {
+            return CoordinateAxis.Y;
+        }
+        else
+        {
+            return CoordinateAxis.X;
+        }
+    }
+}
+
 struct Vector2
 {
     public float X, Y;
@@ -16,6 +36,19 @@ struct Vector2
     {
         X = x;
         Y = y;
+    }
+
+    public float getComp(CoordinateAxis axis)
+    {
+        if(axis == CoordinateAxis.X)
+        {
+            return X;
+        }
+        else if(axis == CoordinateAxis.Y)
+        {
+            return Y;
+        }
+        return -1;
     }
 
     public override string ToString()
