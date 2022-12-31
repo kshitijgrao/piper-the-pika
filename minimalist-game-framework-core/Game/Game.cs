@@ -118,5 +118,26 @@ class Game
 
             Engine.DrawString("onGround? " + piper.onGround + " at " + piper.loc.ToString(), Resolution / 2, Color.Black, arial);
         }
+
+        if (Engine.GetKeyDown(Key.R))
+        {
+            //scene control
+            startScene = 1;
+            endScene = false;
+
+            //scoreboard
+            sb = new Scoreboard();
+
+            //create map
+            map = new Map("RingEnemyMap5.bmp");
+            enemyArr = enemies.ToArray();
+            flowerArr = flowers.ToArray();
+
+            // create piper sprite
+            piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
+            sprites[0] = piper;
+
+            render = new Rendering("NewTestMap.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        }
     }
 }

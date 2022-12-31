@@ -41,7 +41,10 @@ class Physics
         Bounds2 b2 = obj2.getHitbox();
         if (b1.Overlaps(b2))
         {
-            obj2.collide(obj1);
+            if (obj2 is Enemy)
+                obj2.collide(obj1, Engine.TimeDelta);
+            else
+                obj2.collide(obj1);
             return;
         }
         bool secondPhysics = obj2 is PhysicsSprite;
@@ -90,9 +93,6 @@ class Physics
             maxYt = (b2.Max.Y - b1.Position.Y) / relvel.Y;
         }
 
-
-
-
         float tEnter = Math.Max(Math.Min(minXt, maxXt), Math.Min(minYt, maxYt));
         float tExit = Math.Min(Math.Max(minXt, maxXt), Math.Max(minYt, maxYt));
 
@@ -104,7 +104,6 @@ class Physics
         {
             if(obj2 is Enemy && ((PhysicsSprite) obj2).mass > 0)
             {
-                
                 obj2.collide(obj1, Math.Max(0, tExit));
             }
             else
@@ -126,8 +125,11 @@ class Physics
         {
             if (Game.map.passingSolid(pos, finalPos))
             {
-                System.Diagnostics.Debug.WriteLine("Colliding now: params: loc: " + obj.loc.ToString() + " vel: " + obj.vel.ToString());
-                System.Diagnostics.Debug.WriteLine("final Pos: " + finalPos + " norm: " + Game.map.getNormalVector(finalPos).ToString());
+                if (Engine.GetKeyHeld(Key.NumRow6))
+                {
+                    System.Diagnostics.Debug.WriteLine("Colliding now: params: loc: " + obj.loc.ToString() + " vel: " + obj.vel.ToString());
+                    System.Diagnostics.Debug.WriteLine("final Pos: " + finalPos + " norm: " + Game.map.getNormalVector(finalPos).ToString());
+                }
 
                 obj.vel = obj.vel - Game.map.getNormalVector(finalPos) * Vector2.Dot(Game.map.getNormalVector(finalPos), obj.vel);
                 obj.loc = Game.map.getNearestHoveringPoint(finalPos);

@@ -77,6 +77,7 @@ class PhysicsSprite : Sprite
 
     public override void updateState()
     {
+        Vector2 locOrig = loc;
         if (collided)
         {
             loc = loc + vel * timeLeft;
@@ -88,7 +89,7 @@ class PhysicsSprite : Sprite
             loc = loc + vel * Engine.TimeDelta;
             vel += acc * Engine.TimeDelta;
         }
-        if (onGround && Game.map.inAir(loc + new Vector2(0, 1)) && Game.map.inAir(loc + new Vector2(1,0)))
+        if (onGround && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
         {
             onGround = false;
         }
@@ -135,7 +136,7 @@ class PhysicsSprite : Sprite
         collided = true;
         this.timeLeft = timeLeft;
 
-        if(Math.Round(Vector2.Dot(new Vector2(0,1),Game.map.getNormalVector(loc))) != 0)
+        if(Game.map.getNormalVector(loc).Y != 0)
         {
             onGround = true;
             this.setState(Sprite.landState);
