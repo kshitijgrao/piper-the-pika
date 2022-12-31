@@ -192,9 +192,9 @@ unsafe class Map
         return false;
     }
 
-
     //getting normal vectors
     // TODO: remember to account for cases where the ground is above or below and just general edge cases like vert
+    // TODO: use svg to get exact normal vectors
     //need to fix for LOTS of edge cases
     public Vector2 getNormalVector(Vector2 pos)
     {
@@ -216,7 +216,8 @@ unsafe class Map
         return new Vector2(0, -1);
     }
 
-    //need to implement -- something along th elines of the commented out code
+    //TODO: need to implement -- something along th elines of the commented out code
+    //TODO: use svg to get exact curvatures
     public float getSurfaceRadius(Vector2 pos)
     {
         return -1;

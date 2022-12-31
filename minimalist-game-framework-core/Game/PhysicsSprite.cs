@@ -89,6 +89,8 @@ class PhysicsSprite : Sprite
             loc = loc + vel * Engine.TimeDelta;
             vel += acc * Engine.TimeDelta;
         }
+
+        //checks if its leaving the ground in some way--maybe this might not work in some edge cases... will have to rethink
         if (onGround && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
         {
             onGround = false;
