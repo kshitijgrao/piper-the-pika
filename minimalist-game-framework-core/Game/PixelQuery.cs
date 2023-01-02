@@ -15,7 +15,9 @@ unsafe class Map
     private List<int>[] transitionsY;
     private List<int>[] transitionsX;
     private Dictionary<CoordinateAxis, List<int>[]> transitions;
-    
+
+    private List<Curve> curves;
+
 
     SDL.SDL_Surface* pixelMap;
     private int w;
@@ -55,7 +57,7 @@ unsafe class Map
         {
             transitionsY[i] = new List<int>();
         }
-        for(int i = 0; i < h; i++)
+        for (int i = 0; i < h; i++)
         {
             transitionsX[i] = new List<int>();
         }
@@ -113,7 +115,7 @@ unsafe class Map
                     if (pixels[x, y - 1] == AIR_CODE)
                         transitionsY[x].Add(y);
                     else if (pixels[x, y] == AIR_CODE)
-                        transitionsY[x].Add(y-1);
+                        transitionsY[x].Add(y - 1);
                 }
 
                 //horizontal 
@@ -122,18 +124,27 @@ unsafe class Map
                     if ((pixels[x, y] == GROUND_CODE || pixels[x, y] == SOLID_CODE) && (pixels[x - 1, y] == AIR_CODE || pixels[x - 1, y] == PASS_THROUGH_CODE))
                         transitionsX[y].Add(x);
                     else if ((pixels[x - 1, y] == GROUND_CODE || pixels[x - 1, y] == SOLID_CODE) && (pixels[x, y] == AIR_CODE || pixels[x, y] == PASS_THROUGH_CODE))
-                        transitionsX[y].Add(x-1);
+                        transitionsX[y].Add(x - 1);
                 }
 
             }
         }
-        transitions = new Dictionary<CoordinateAxis,List<int>[]>();
-        transitions.Add(CoordinateAxis.X,transitionsX);
-        transitions.Add(CoordinateAxis.Y,transitionsY);
+        transitions = new Dictionary<CoordinateAxis, List<int>[]>();
+        transitions.Add(CoordinateAxis.X, transitionsX);
+        transitions.Add(CoordinateAxis.Y, transitionsY);
 
 
         SDL.SDL_UnlockSurface((IntPtr)pixelMap);
         SDL.SDL_FreeSurface((IntPtr)pixelMap);
+
+
+        curves = new List<Curve>();
+
+    }
+
+    public void addCurve(Curve c)
+    {
+        curves.Add(c);
     }
 
     //gets the pixel type at the given coordinate
@@ -181,7 +192,7 @@ unsafe class Map
             return true;
         }
 
-        if (inAir(initial) && throughThrough(final))
+        if (inAir(initial) && throughThrough(final) && closeToSurface(final))
         {
             if (Vector2.Dot((final - initial), getNormalVector(final)) < 0)
             {
@@ -196,13 +207,24 @@ unsafe class Map
     // TODO: remember to account for cases where the ground is above or below and just general edge cases like vert
     // TODO: use svg to get exact normal vectors
     //need to fix for LOTS of edge cases
+    // TODO: possibly change to hashmap system to decrease time complexity
     public Vector2 getNormalVector(Vector2 pos)
     {
-        if((int) pos.X == 4361)
+        Vector2 surfacePoint = getNearestSurfacePoint(pos);
+
+        foreach (Curve c in curves)
+        {
+            if (c.contains(surfacePoint))
+            {
+                return c.getNearestNormal(surfacePoint);
+            }
+        }
+
+        if ((int)pos.X == 4361)
         {
             return new Vector2(-1, 0);
         }
-        if(pos.X > 4300 && pos.X < 4361)
+        if (pos.X > 4300 && pos.X < 4361)
         {
             return new Vector2(0, -1);
         }
@@ -251,7 +273,7 @@ unsafe class Map
         int xSurface = getSurfaceX(pos);
         int ySurface = getSurfaceY(pos);
 
-        if(Math.Abs(xSurface - pos.X) < Math.Abs(ySurface - pos.Y))
+        if (Math.Abs(xSurface - pos.X) < Math.Abs(ySurface - pos.Y))
         {
             return new Vector2(xSurface, pos.Y);
         }
@@ -261,12 +283,12 @@ unsafe class Map
 
     public int getSurfaceAny(Vector2 pos, CoordinateAxis direc)
     {
-        List<int> currTransitions = transitions[direc][(int) Math.Round(pos.getComp(direc.Flip()))];
+        List<int> currTransitions = transitions[direc][(int)Math.Round(pos.getComp(direc.Flip()))];
         float criticalCoord = pos.getComp(direc);
-        for(int i = 0; i < currTransitions.Count; i++)
+        for (int i = 0; i < currTransitions.Count; i++)
         {
             //dividing off by halves and returning nearest one
-            if(i+1 >= currTransitions.Count || criticalCoord < (currTransitions[i] + currTransitions[i+1]) / 2)
+            if (i + 1 >= currTransitions.Count || criticalCoord < (currTransitions[i] + currTransitions[i + 1]) / 2)
             {
                 return currTransitions[i];
             }
@@ -276,7 +298,7 @@ unsafe class Map
 
     public int getSurfaceX(Vector2 pos)
     {
-        return getSurfaceAny(pos,CoordinateAxis.X);
+        return getSurfaceAny(pos, CoordinateAxis.X);
     }
 
     public int getSurfaceY(Vector2 pos)
@@ -284,3 +306,187 @@ unsafe class Map
         return getSurfaceAny(pos, CoordinateAxis.Y);
     }
 }
+/*
+class BezierCurve
+{
+    private Vector2 start;
+    private Vector2 startHandle;
+    private Vector2 end;
+    private Vector2 endHandle;
+
+    public BezierCurve(Vector2 start, Vector2 startHandle, Vector2 end, Vector2 endHandle)
+    {
+        this.start = start;
+        this.startHandle = startHandle;
+        this.end = end;
+        this.endHandle = endHandle;
+    }
+
+
+}*/
+
+
+interface Curve
+{
+    Vector2 getNearestNormal(Vector2 pos); //for getting normal vector generally
+    float getNearestCurvature(Vector2 pos); //for getting curvature
+    bool contains(Vector2 pos);
+}
+/*
+class CurveGroup
+{
+    private BezierCurve[] curves;
+
+    public CurveGroup(BezierCurve[] curves)
+    {
+        this.curves = curves;
+    }
+
+    public virtual Vector2 getNearestNormalVector(Vector2 pos)
+    {
+        return new Vector2(0, -1);
+    }
+
+}*/
+
+/*
+class BezierCurve : Curve
+{
+    private Dictionary<Vector2, Vector2> normalVectors;
+    private Dictionary<Vector2, float> curvature;
+
+    private Vector2 start;
+    private Vector2 startHandle;
+    private Vector2 end;
+    private Vector2 endHandle;
+    private float halfStroke;
+
+    public BezierCurve(Vector2 start, Vector2 startHandle, Vector2 end, Vector2 endHandle)
+    {
+        this.start = start;
+        this.startHandle = startHandle;
+        this.end = end;
+        this.endHandle = endHandle;
+
+        //getting normal vectors and curvature at points it crosses
+        //NOTE, however, this is an approximation, with the incrementing, but should work for all practical purposes
+        float t = 0;
+        Vector2 currVel = getVelocity(t);
+        Vector2 currLoc = getVelocity(0);
+        while (t < 1)
+        {
+            //have to decide if rounding is correct or not here
+            normalVectors.Add(currLoc.Rounded(0), currVel.Normalized().Rotated(270));
+
+            t += Math.Min(timeToNearest(currLoc, currVel, CoordinateAxis.X), timeToNearest(currLoc, currVel, CoordinateAxis.Y));
+            currVel = getVelocity(t);
+            currLoc = getLoc(t);
+
+        }
+
+
+    }
+
+    private float timeToNearest(Vector2 loc, Vector2 vel, CoordinateAxis direc)
+    {
+        float velComp = vel.getComp(direc);
+        float locComp = loc.getComp(direc);
+     
+       if (velComp == 0)
+        {
+            return float.MaxValue;
+        } 
+
+        return (float)(velComp > 0 ? (Math.Ceiling(locComp) - locComp) : (Math.Floor(locComp) - locComp)) / vel.Y;
+    }
+
+    //gets location at linearly interpolated time t
+    private Vector2 getLoc(float t)
+    {
+        return (float)Math.Pow(1 - t, 3) * start + 3 * (float)Math.Pow(1 - t, 2) * t * startHandle + 3 * (1 - t) * (float)Math.Pow(t, 2) * endHandle + (float)Math.Pow(t, 3) * end;
+    }
+
+    //gets velocity at linearly interpolated time t
+    private Vector2 getVelocity(float t)
+    {
+        return 3 * (float)Math.Pow(1 - t, 2) * (startHandle - start) + 6 * (1 - t) * t * (endHandle - startHandle) + 3 * (float)Math.Pow(t, 2) * (end - endHandle);
+    }
+
+    //gets acceleration at linearly interpolated time t
+    private Vector2 getAcc(float t)
+    {
+        return 6 * (1 - t) * (endHandle - 2 * startHandle + start) + 6 * t * (end - 2 * endHandle + startHandle);
+    }
+
+    private float getCurvature(float t)
+    {
+        return Vector2.Cross(getAcc(t), getVelocity(t)) / (float) Math.Pow(getVelocity(t).Length(), 3);
+    }
+
+
+}*/
+
+class Rect : Curve
+{
+    Bounds2 rect;
+    public Rect(Bounds2 rect)
+    {
+        this.rect = rect;
+    }
+
+    public Rect(string[] s)
+    {
+        rect = new Bounds2(0,0,0,0);
+        if(s.Length == 8)
+        {
+            rect.Position.X = (float)Math.Round(Double.Parse(s[6]));
+            rect.Position.Y = (float)Math.Round(Double.Parse(s[7]));
+            rect.Size.X = (float)Math.Round(Double.Parse(s[0])) - 1;
+            rect.Size.Y = (float)Math.Round(Double.Parse(s[1])) - 1;
+        }
+        else if(s.Length >= 4)
+        {
+            rect.Position.X = (float)Math.Round(Double.Parse(s[0]));
+            rect.Position.Y = (float)Math.Round(Double.Parse(s[1]));
+            rect.Size.X = (float)Math.Round(Double.Parse(s[2])) - 1;
+            rect.Size.Y = (float)Math.Round(Double.Parse(s[3])) - 1;
+        }
+    }
+
+    public Vector2 getNearestNormal(Vector2 pos)
+    {
+        if (!contains(pos))
+        {
+            return Vector2.UP;
+        }
+        if (pos.Y == rect.Min.Y)
+        {
+            return Vector2.UP;
+        }
+        else if (pos.Y == rect.Max.Y)
+        {
+            return Vector2.DOWN;
+        }
+        else if (pos.X == rect.Max.X)
+        {
+            return Vector2.RIGHT;
+        }
+        else if (pos.X == rect.Min.X)
+        {
+            return Vector2.LEFT;
+        }
+        return Vector2.UP;
+
+    }
+
+    public float getNearestCurvature(Vector2 pos)
+    {
+        return -1;
+    }
+
+    public bool contains(Vector2 pos)
+    {
+        return rect.Contains(pos);
+    }
+}
+

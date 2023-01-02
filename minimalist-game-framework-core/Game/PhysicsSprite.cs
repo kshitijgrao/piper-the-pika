@@ -126,10 +126,11 @@ class PhysicsSprite : Sprite
 
         onGround = true;
         this.setState(Sprite.landState);
+        if (airTime > 50)
+        {
+            Animator.animatePiperLanding(this);
+        }
 
-        
-
-        
     }
 
     public void collideSolid(float timeLeft)
@@ -137,16 +138,6 @@ class PhysicsSprite : Sprite
         
         collided = true;
         this.timeLeft = timeLeft;
-
-        if(Game.map.getNormalVector(loc).Y != 0)
-        {
-            onGround = true;
-            this.setState(Sprite.landState);
-            if (airTime > 50)
-            {
-                Animator.animatePiperLanding(this);
-            }
-        }
     }
 
     //holy cow clean up the spaghetti code here

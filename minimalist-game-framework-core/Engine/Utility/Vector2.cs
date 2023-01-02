@@ -26,6 +26,10 @@ struct Vector2
     public float X, Y;
 
     public static readonly Vector2 Zero = new Vector2(0, 0);
+    public static readonly Vector2 UP = new Vector2(0, -1);
+    public static readonly Vector2 DOWN = new Vector2(0, 1);
+    public static readonly Vector2 RIGHT = new Vector2(1, 0);
+    public static readonly Vector2 LEFT = new Vector2(-1, 0);
 
     /// <summary>
     /// Creates a new 2D vector.
@@ -60,6 +64,11 @@ struct Vector2
     {
         X = (float) Math.Round((float) X, numDec);
         Y = (float)Math.Round((float)Y, numDec);
+    }
+
+    public Vector2 Rounded(int numDec)
+    {
+        return new Vector2((float)Math.Round((float)X, numDec), (float)Math.Round((float)Y, numDec));
     }
 
     /// <summary>

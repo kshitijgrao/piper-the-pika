@@ -12,7 +12,7 @@ class Physics
 {
     public static readonly Vector2 g = new Vector2(0,600);
     public static readonly int collisionSteps = 100;
-    public static readonly int collisionPixelThresh = 3;
+    public static readonly int collisionPixelThresh = 2;
     public static readonly float coeffRestitution = 0.5f;
 
     //detect collisions for things that are within the window
@@ -125,16 +125,26 @@ class Physics
         {
             if (Game.map.passingSolid(pos, finalPos))
             {
+                Vector2 norm = Game.map.getNormalVector(finalPos);
                 if (Engine.GetKeyHeld(Key.NumRow6))
                 {
                     System.Diagnostics.Debug.WriteLine("Colliding now: params: loc: " + obj.loc.ToString() + " vel: " + obj.vel.ToString());
                     System.Diagnostics.Debug.WriteLine("final Pos: " + finalPos + " norm: " + Game.map.getNormalVector(finalPos).ToString());
                 }
 
-                obj.vel = obj.vel - Game.map.getNormalVector(finalPos) * Vector2.Dot(Game.map.getNormalVector(finalPos), obj.vel);
+                obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
                 obj.loc = Game.map.getNearestHoveringPoint(finalPos);
 
-                obj.collideSolid((steps - i) * Engine.TimeDelta / steps);
+                if(Math.Round(norm.Y,2) == 0)
+                {
+                    obj.collideSolid((steps - i) * Engine.TimeDelta / steps);
+                }
+                else
+                {
+                    obj.collideGround((steps - i) * Engine.TimeDelta / steps);
+                }
+
+                
                 break;
 
             }

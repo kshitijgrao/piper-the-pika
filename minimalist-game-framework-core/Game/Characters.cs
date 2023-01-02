@@ -46,25 +46,24 @@ class Sonic : PhysicsSprite
 
     public void setAcceleration(Key key)
     {
-        Vector2 tempLoc = this.getBotPoint();
         if(key == Key.D)
         {
             if (onGround)
-                this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(90);
+                this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(90);
             else
                 this.acc = accelerationMag * (new Vector2(1, 0));
         }
         else if(key == Key.A)
         {
             if(onGround)
-               this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(270);
+               this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(270);
             else
                 this.acc = accelerationMag * (new Vector2(-1, 0));
         }
         else
         {
             //change this to just check onGround?
-            if (Game.map.onGround(tempLoc))
+            if (onGround)
             {
                 this.acc = vel.Normalized() * (-1) * Math.Min(brakeAccMag, vel.Length() / Engine.TimeDelta);
             }

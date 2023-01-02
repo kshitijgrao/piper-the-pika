@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.IO;
 using System.Diagnostics;
 using System.Net.Http;
 
@@ -22,7 +23,7 @@ class Game
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
 
-    
+
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-2.png");
     readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
     readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
@@ -66,17 +67,42 @@ class Game
         sprites[0] = piper;
 
         render = new Rendering("NewTestMap.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+
+        //using svg to get normal vectors
+        string[] lines = File.ReadAllLines("C:/Users/evane/source/repos/recreate-a-classic-game-sonic-yeer/minimalist-game-framework-core/Assets/map_svg_form.txt");
+        foreach (string line in lines)
+        {
+            if (line.Length > 16)
+            {
+                if (line.Substring(0, 5) == "<rect" && (line.Substring(line.Length - 16) == "fill=\"#710000\"/>" || line.Substring(line.Length - 16) == "fill=\"#FF0000\"/>"))
+                {
+                    if (line.Contains("y"))
+                    {
+                        string bruh = line.Substring(9, line.Length - 18 - 9).Replace("=", "").Replace("width", "").Replace("height", "").Replace("y", "").Replace("\"\"", "\"").Replace(" ", "");
+                        string[] rectVals = line.Substring(9, line.Length - 18 - 9).Replace("=", "").Replace("width", "").Replace("height", "").Replace("y", "").Replace(" ", "").Replace("\"\"", "\"").Split('\"');
+                        map.addCurve(new Rect(rectVals));
+                    }
+                    else if (line.Contains("transform"))
+                    {
+                        string[] rectVals = line.Substring(13, line.Length - 19 - 13).Replace("transform=\"matrix(", "").Replace("height=", "").Replace("\"", "").Split(' ');
+                        map.addCurve(new Rect(rectVals));
+                    }
+                }
+            }
+        }
+
     }
 
     public void Update()
     {
+        Debug.WriteLine(map.getNormalVector(new Vector2(2118,774)).ToString());
         //scene control
-        if (startScene==2)
+        if (startScene == 2)
         {
             startScene = Scenes.instructionsScene();
         }
-        else if (startScene==1) { startScene = Scenes.titleScene(); }
-        else if (endScene) {Scenes.endScene(message); }
+        else if (startScene == 1) { startScene = Scenes.titleScene(); }
+        else if (endScene) { Scenes.endScene(message); }
         else
         {
             currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));
@@ -87,7 +113,7 @@ class Game
             Physics.detectSolid(piper);
             //Physics.detectGround(piper);
             //Physics.detectUnpenetrable(piper);
-            
+
             //other sprites
             Physics.detectCollisions(piper, flowerArr);
             Physics.detectCollisions(piper, enemyArr);
@@ -100,7 +126,7 @@ class Game
             Physics.updatePhysics(sprites);
 
             // collect input and draw frame
-            
+
             render.scrollingMotion();
             foreach (Enemy enemy in enemiesOnScreen)
             {
