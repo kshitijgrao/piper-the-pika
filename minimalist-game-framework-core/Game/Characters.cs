@@ -86,6 +86,7 @@ class Sonic : PhysicsSprite
 
         //account for weird floating point errors
         this.acc.round(2);
+
     }
 
     public override void updateState()

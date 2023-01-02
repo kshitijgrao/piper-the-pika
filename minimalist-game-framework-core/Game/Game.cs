@@ -4,6 +4,7 @@ using System.Collections;
 using System.IO;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Net.Http.Headers;
 
 class Game
 {
@@ -48,6 +49,7 @@ class Game
     public static readonly int MEDIUM = 1;
     public static readonly int EASY = 0;
 
+    bool debugToggle = false;
     public Game()
     {
         //scene control
@@ -80,12 +82,12 @@ class Game
                     {
                         string bruh = line.Substring(9, line.Length - 18 - 9).Replace("=", "").Replace("width", "").Replace("height", "").Replace("y", "").Replace("\"\"", "\"").Replace(" ", "");
                         string[] rectVals = line.Substring(9, line.Length - 18 - 9).Replace("=", "").Replace("width", "").Replace("height", "").Replace("y", "").Replace(" ", "").Replace("\"\"", "\"").Split('\"');
-                        map.addCurve(new Rect(rectVals));
+                        map.addCurve(new Rect(rectVals, line.Substring(line.Length - 9, 6)));
                     }
                     else if (line.Contains("transform"))
                     {
                         string[] rectVals = line.Substring(13, line.Length - 19 - 13).Replace("transform=\"matrix(", "").Replace("height=", "").Replace("\"", "").Split(' ');
-                        map.addCurve(new Rect(rectVals));
+                        map.addCurve(new Rect(rectVals, line.Substring(line.Length - 9, 6)));
                     }
                 }
             }
@@ -134,15 +136,25 @@ class Game
                 enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc));
             };
             piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));
-            piper.drawVectors(render.pos + piper.loc);
+            
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
             if (piper.loc.X >= 6125)
             {
                 endScene = true;
             }
+            if (Engine.GetKeyDown(Key.F3))
+            {
+                debugToggle = !debugToggle;
+            }
+            if (debugToggle)
+            {
+                Engine.DrawRectSolid(new Bounds2(render.pos + piper.loc - new Vector2(1, 1), new Vector2(3, 3)), Color.Red);
+                piper.drawVectors(render.pos + piper.loc);
 
-            Engine.DrawString("onGround? " + piper.onGround + " at " + piper.loc.ToString(), Resolution / 2, Color.Black, arial);
+                Engine.DrawString("onGround? " + piper.onGround + " at " + piper.loc.Rounded(2).ToString(), new Vector2(Resolution. X - 12,12), Color.Black, arial,TextAlignment.Right);
+                Engine.DrawString("current normal: " + map.getNormalVector(piper.loc).ToString(), new Vector2(Resolution.X - 12, 24), Color.Black, arial,TextAlignment.Right);
+            }
         }
 
         if (Engine.GetKeyDown(Key.R))

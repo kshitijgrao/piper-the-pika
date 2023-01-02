@@ -7,7 +7,6 @@ using static SDL2.SDL;
 using System.Reflection;
 using System.Diagnostics;
 
-
 unsafe class Map
 {
 
@@ -219,16 +218,6 @@ unsafe class Map
                 return c.getNearestNormal(surfacePoint);
             }
         }
-
-        if ((int)pos.X == 4361)
-        {
-            return new Vector2(-1, 0);
-        }
-        if (pos.X > 4300 && pos.X < 4361)
-        {
-            return new Vector2(0, -1);
-        }
-
         Vector2 slope = new Vector2(10, 0);
         slope.Y = getSurfaceY(pos + slope / 2) - getSurfaceY(pos - slope / 2);
 
@@ -429,12 +418,14 @@ class BezierCurve : Curve
 class Rect : Curve
 {
     Bounds2 rect;
-    public Rect(Bounds2 rect)
+    string color;
+    public Rect(Bounds2 rect, string color)
     {
         this.rect = rect;
+        this.color = color;
     }
 
-    public Rect(string[] s)
+    public Rect(string[] s, string color)
     {
         rect = new Bounds2(0,0,0,0);
         if(s.Length == 8)
@@ -451,6 +442,7 @@ class Rect : Curve
             rect.Size.X = (float)Math.Round(Double.Parse(s[2])) - 1;
             rect.Size.Y = (float)Math.Round(Double.Parse(s[3])) - 1;
         }
+        this.color = color;
     }
 
     public Vector2 getNearestNormal(Vector2 pos)
@@ -459,13 +451,13 @@ class Rect : Curve
         {
             return Vector2.UP;
         }
-        if (pos.Y == rect.Min.Y)
+        if(color == "FF0000")
         {
             return Vector2.UP;
         }
-        else if (pos.Y == rect.Max.Y)
+        if (pos.Y == rect.Min.Y)
         {
-            return Vector2.DOWN;
+            return Vector2.UP;
         }
         else if (pos.X == rect.Max.X)
         {
@@ -474,6 +466,10 @@ class Rect : Curve
         else if (pos.X == rect.Min.X)
         {
             return Vector2.LEFT;
+        }
+        else if (pos.Y == rect.Max.Y)
+        {
+            return Vector2.DOWN;
         }
         return Vector2.UP;
 
