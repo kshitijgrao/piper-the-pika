@@ -60,7 +60,7 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("RingEnemyMap5.bmp");
+        map = new Map("RingEnemyMapWithStroke.bmp");
         enemyArr = enemies.ToArray();
         flowerArr = flowers.ToArray();
 
@@ -68,10 +68,10 @@ class Game
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = piper;
 
-        render = new Rendering("NewTestMap.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
-        string[] lines = File.ReadAllLines("C:/Users/evane/source/repos/recreate-a-classic-game-sonic-yeer/minimalist-game-framework-core/Assets/map_svg_form.txt");
+        string[] lines = File.ReadAllLines("Assets/map_svg_form.txt");
         foreach (string line in lines)
         {
             if (line.Length > 16)
@@ -166,16 +166,11 @@ class Game
             //scoreboard
             sb = new Scoreboard();
 
-            //create map
-            map = new Map("RingEnemyMap5.bmp");
-            enemyArr = enemies.ToArray();
-            flowerArr = flowers.ToArray();
-
             // create piper sprite
             piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
             sprites[0] = piper;
 
-            render = new Rendering("NewTestMap.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+            render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
         }
     }
 }
