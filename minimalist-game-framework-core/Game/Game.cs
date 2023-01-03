@@ -166,11 +166,39 @@ class Game
             //scoreboard
             sb = new Scoreboard();
 
+            //create map
+            map = new Map("RingEnemyMapWithStroke.bmp");
+            enemyArr = enemies.ToArray();
+            flowerArr = flowers.ToArray();
+
             // create piper sprite
             piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
             sprites[0] = piper;
 
             render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+
+            //using svg to get normal vectors
+            string[] lines = File.ReadAllLines("Assets/map_svg_form.txt");
+            foreach (string line in lines)
+            {
+                if (line.Length > 16)
+                {
+                    if (line.Substring(0, 5) == "<rect" && (line.Substring(line.Length - 16) == "fill=\"#710000\"/>" || line.Substring(line.Length - 16) == "fill=\"#FF0000\"/>"))
+                    {
+                        if (line.Contains("y"))
+                        {
+                            string bruh = line.Substring(9, line.Length - 18 - 9).Replace("=", "").Replace("width", "").Replace("height", "").Replace("y", "").Replace("\"\"", "\"").Replace(" ", "");
+                            string[] rectVals = line.Substring(9, line.Length - 18 - 9).Replace("=", "").Replace("width", "").Replace("height", "").Replace("y", "").Replace(" ", "").Replace("\"\"", "\"").Split('\"');
+                            map.addCurve(new Rect(rectVals, line.Substring(line.Length - 9, 6)));
+                        }
+                        else if (line.Contains("transform"))
+                        {
+                            string[] rectVals = line.Substring(13, line.Length - 19 - 13).Replace("transform=\"matrix(", "").Replace("height=", "").Replace("\"", "").Split(' ');
+                            map.addCurve(new Rect(rectVals, line.Substring(line.Length - 9, 6)));
+                        }
+                    }
+                }
+            }
         }
     }
 }

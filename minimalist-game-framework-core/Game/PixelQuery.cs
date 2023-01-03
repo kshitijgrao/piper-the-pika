@@ -181,7 +181,13 @@ unsafe class Map
     //checking if it's coming in from the top for the light red collisions
     public bool closeToSurface(Vector2 coord)
     {
-        return Math.Abs(getSurfaceY(coord) - coord.Y) < CLOSE_THRESHOLD;
+        int? surfaceY = getSurfaceY(coord);
+        if (!surfaceY.HasValue)
+        {
+            return false;
+        }
+
+        return Math.Abs(surfaceY.Value - coord.Y) < CLOSE_THRESHOLD;
     }
 
     public bool passingSolid(Vector2 initial, Vector2 final)
@@ -219,12 +225,15 @@ unsafe class Map
             }
         }
         Vector2 slope = new Vector2(10, 0);
-        slope.Y = getSurfaceY(pos + slope / 2) - getSurfaceY(pos - slope / 2);
+
+        if(!getSurfaceY(pos + slope / 2).HasValue || !getSurfaceY(pos - slope / 2).HasValue)
+        {
+            return Vector2.UP;
+        }
+
+        slope.Y = getSurfaceY(pos + slope / 2).Value - getSurfaceY(pos - slope / 2).Value;
 
         return slope.Rotated(270).Normalized();
-
-
-        return new Vector2(0, -1);
     }
 
     //TODO: need to implement -- something along th elines of the commented out code
@@ -259,18 +268,34 @@ unsafe class Map
     //tiebreaker goes vertical?
     public Vector2 getNearestSurfacePoint(Vector2 pos)
     {
-        int xSurface = getSurfaceX(pos);
-        int ySurface = getSurfaceY(pos);
+        int? xSurface = getSurfaceX(pos);
+        int? ySurface = getSurfaceY(pos);
 
-        if (Math.Abs(xSurface - pos.X) < Math.Abs(ySurface - pos.Y))
+        if (!xSurface.HasValue && ySurface.HasValue)
         {
-            return new Vector2(xSurface, pos.Y);
+            return new Vector2(pos.X,ySurface.Value);
         }
-        return new Vector2(pos.X, ySurface);
+        else if(xSurface.HasValue && !ySurface.HasValue)
+        {
+            return new Vector2(xSurface.Value, pos.Y);
+        }
+        else if(!xSurface.HasValue && !ySurface.HasValue)
+        {
+            return new Vector2(160, 960);
+        }
+
+
+        
+
+        if (Math.Abs(xSurface.Value - pos.X) < Math.Abs(ySurface.Value - pos.Y))
+        {
+            return new Vector2(xSurface.Value, pos.Y);
+        }
+        return new Vector2(pos.X, ySurface.Value);
 
     }
 
-    public int getSurfaceAny(Vector2 pos, CoordinateAxis direc)
+    public int? getSurfaceAny(Vector2 pos, CoordinateAxis direc)
     {
         List<int> currTransitions = transitions[direc][(int)Math.Round(pos.getComp(direc.Flip()))];
         float criticalCoord = pos.getComp(direc);
@@ -282,15 +307,15 @@ unsafe class Map
                 return currTransitions[i];
             }
         }
-        return -1;
+        return null;
     }
 
-    public int getSurfaceX(Vector2 pos)
+    public int? getSurfaceX(Vector2 pos)
     {
         return getSurfaceAny(pos, CoordinateAxis.X);
     }
 
-    public int getSurfaceY(Vector2 pos)
+    public int? getSurfaceY(Vector2 pos)
     {
         return getSurfaceAny(pos, CoordinateAxis.Y);
     }

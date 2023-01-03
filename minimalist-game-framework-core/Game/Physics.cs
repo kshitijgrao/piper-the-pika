@@ -169,11 +169,12 @@ class Physics
 
                 
                 obj.loc += diff - (finalPos - pos);
-                if (Math.Abs(Game.map.getSurfaceY(pos) - pos.Y) > 10)
+                int? surfaceY = Game.map.getSurfaceY(pos);
+                if (!surfaceY.HasValue || Math.Abs(surfaceY.Value - pos.Y) > 10)
                 {
                     return;
                 }
-                obj.loc.Y += (Game.map.getSurfaceY(pos) - pos.Y);
+                obj.loc.Y += (surfaceY.Value - pos.Y);
 
                 Vector2 posNew = obj.getBotPoint();
 
