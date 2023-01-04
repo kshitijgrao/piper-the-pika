@@ -7,6 +7,7 @@ public class Scoreboard
     public static int flowers;
     public static int lives;
     static int oneUps;
+    public Boolean instructions;
 
     Texture pikaPlaceholder = Engine.LoadTexture("pikaPlaceholder.png");
     Font arial = Engine.LoadFont("Arial.ttf", 10);
@@ -18,6 +19,7 @@ public class Scoreboard
         flowers = 0;
         lives = 3;
         oneUps = 0;
+        instructions = false;
 
     }
 
@@ -26,7 +28,31 @@ public class Scoreboard
         //check for game over
         if (lives > 0)
         {
-            renderScoreboard();
+            //instructions control
+            if (Engine.GetKeyDown(Key.I) || Engine.GetKeyDown(Key.Space))
+            {
+                if (instructions)
+                {
+                    instructions = false;
+                }
+                else if(Engine.GetKeyDown(Key.I))
+                {
+                    instructions = true;
+                }
+            }
+
+            //draw scoreboard if not on instructions
+            if (!instructions)
+            {
+                renderScoreboard();
+            }
+            else
+            {
+                Engine.DrawString("BACK", new Vector2(0, 0), Color.Black, arial);
+                Engine.DrawString("Press A and D to move", new Vector2(100, 30), Color.Black, arial);
+                Engine.DrawString("Press SPACE to jump", new Vector2(100, 60), Color.Black, arial);
+                Engine.DrawString("Collect rings for a speed boost", new Vector2(80, 90), Color.Black, arial);
+            }
 
             //check for oneUps
             if (oneUps < (score / 50000))
@@ -47,8 +73,8 @@ public class Scoreboard
 
     public void renderScoreboard()
         {
-            //topLeft scoreboard elements
-
+        //topLeft scoreboard elements
+            Engine.DrawString("Press I for Instructions", new Vector2(210, 0), Color.Black, arial);
             Engine.DrawString("SCORE", new Vector2(0, 0), Color.Black, arial); //yellow
             Engine.DrawString("" + score, new Vector2(40, 0), Color.Black, arial); //white
             Engine.DrawString("TIME", new Vector2(0, 15), Color.Black, arial); //yellow

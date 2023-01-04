@@ -24,11 +24,11 @@ public class Scenes
         //Title Scene
 		public static int titleScene()
 		{
-		if (Engine.GetKeyDown(Key.Space))
+		if (Engine.GetKeyDown(Key.I))
 		{
 			return 2;
 		}
-		if (Engine.GetMouseButtonDown(MouseButton.Left))
+		if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
 		{
 			return 0;
             frameCount = 0;
@@ -37,13 +37,13 @@ public class Scenes
         Engine.DrawTexture(piper, new Vector2(135, 50), size: new Vector2(50, 50));
         Engine.DrawString("PIPER", new Vector2(100, 100), Color.White, h1);
         Engine.DrawString("THE PIKA", new Vector2(115, 140), Color.White, h2);
-		Engine.DrawString("Press SPACE for Instructions", new Vector2(0, 0), Color.White, h3);
-		Engine.DrawString(">   Easy", new Vector2(267,5), Color.White, h3);
-		Engine.DrawString("Medium", new Vector2(273,25), Color.White, h3);
-		Engine.DrawString("Hard", new Vector2(280,45), Color.White, h3);
+		Engine.DrawString("Press I for Instructions", new Vector2(0, 0), Color.White, h3);
+		//Engine.DrawString(">   Easy", new Vector2(267,5), Color.White, h3);
+		//Engine.DrawString("Medium", new Vector2(273,25), Color.White, h3);
+		//Engine.DrawString("Hard", new Vector2(280,45), Color.White, h3);
 		if (frameCount%90<=45)
 		{
-			Engine.DrawString("Click to Start", new Vector2(125, 170), Color.Yellow, h3);
+			Engine.DrawString("SPACE to Start", new Vector2(125, 170), Color.Yellow, h3);
 		}
 
 		frameCount++;
@@ -54,7 +54,7 @@ public class Scenes
 		//Instructions Scene
 		public static int instructionsScene()
 		{
-		if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
+		if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space) || Engine.GetKeyDown(Key.I))
 		{ 
 			return 1;
 		}
@@ -68,10 +68,9 @@ public class Scenes
 
         //End Scene
 		public static void endScene(String message)
-
 		{
 			//exit game
-			if (Engine.GetMouseButtonDown(MouseButton.Left))
+			if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
 			{
 				Environment.Exit(0);
             }
