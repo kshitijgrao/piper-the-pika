@@ -62,6 +62,7 @@ public class Scenes
 		Engine.DrawString("Press A and D to move", new Vector2(100,60), Color.White, h3);
 		Engine.DrawString("Press SPACE to jump", new Vector2(100, 90), Color.White, h3);
         Engine.DrawString("Collect rings for a speed boost", new Vector2(80, 120), Color.White, h3);
+		Engine.DrawString("Press escape to fullscreen", new Vector2(90, 150), Color.White, h3);
         return 2;
 		}
 
