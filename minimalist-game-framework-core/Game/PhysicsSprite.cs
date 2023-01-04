@@ -4,7 +4,7 @@ using System.Text;
 
 class PhysicsSprite : Sprite
 {
-    internal readonly float sprintSpeed = 80;
+    internal readonly float sprintSpeed = 200;
 
     public float mass;
     public Vector2 vel;
@@ -77,6 +77,7 @@ class PhysicsSprite : Sprite
 
     public override void updateState()
     {
+        Vector2 locOrig = loc;
         if (collided)
         {
             loc = loc + vel * timeLeft;
@@ -88,7 +89,9 @@ class PhysicsSprite : Sprite
             loc = loc + vel * Engine.TimeDelta;
             vel += acc * Engine.TimeDelta;
         }
-        if (onGround && Game.map.inAir(getBotPoint()))
+
+        //checks if its leaving the ground in some way--maybe this might not work in some edge cases... will have to rethink
+        if (onGround && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
         {
             onGround = false;
         }
@@ -119,33 +122,48 @@ class PhysicsSprite : Sprite
 
     public void collideGround(float timeLeft)
     {
+        collideSolid(timeLeft);
+
         onGround = true;
         this.setState(Sprite.landState);
-
-        collideWall(timeLeft);
-
         if (airTime > 50)
         {
             Animator.animatePiperLanding(this);
         }
+
     }
 
-    public void collideWall(float timeLeft)
+    public void collideSolid(float timeLeft)
     {
+        
         collided = true;
         this.timeLeft = timeLeft;
     }
 
+    //holy cow clean up the spaghetti code here
     public void keepOnSurface()
     {
-        Vector2 pos = this.getBotPoint();
+        Vector2 pos = this.loc;
         if (onGround)
+        {
+            Vector2 newLoc = Game.map.getNearestHoveringPoint(pos);
+            if ((newLoc - pos).Length() > 10)
+                return;
+            this.loc = newLoc;
+
+            vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
+
+        }
+        /*
+        else if (Game.map.onGround(pos))
         {
             float shift = (Game.map.getSurfaceY(pos) - pos.Y);
             if (Math.Abs(shift) > 10)
                 return;
             this.loc.Y += shift;
-        }
+
+            vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
+        }*/
     }
 
 }

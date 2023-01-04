@@ -6,7 +6,7 @@ using System.Text;
 
 class Sonic : PhysicsSprite
 {
-    public static readonly float jumpHeight = 50;
+    public static readonly float jumpHeight = 100;
     public static readonly int boostFrameTime = 250;
     public static readonly float maxHorVel = 250;
     public static readonly float maxHorVelBoost = 100;
@@ -46,24 +46,24 @@ class Sonic : PhysicsSprite
 
     public void setAcceleration(Key key)
     {
-        Vector2 tempLoc = this.getBotPoint();
         if(key == Key.D)
         {
             if (onGround)
-                this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(90);
+                this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(90);
             else
                 this.acc = accelerationMag * (new Vector2(1, 0));
         }
         else if(key == Key.A)
         {
             if(onGround)
-               this.acc = accelerationMag * Game.map.getNormalVector(tempLoc).Rotated(270);
+               this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(270);
             else
                 this.acc = accelerationMag * (new Vector2(-1, 0));
         }
         else
         {
-            if (Game.map.onGround(tempLoc))
+            //change this to just check onGround?
+            if (onGround)
             {
                 this.acc = vel.Normalized() * (-1) * Math.Min(brakeAccMag, vel.Length() / Engine.TimeDelta);
             }
@@ -82,15 +82,18 @@ class Sonic : PhysicsSprite
             acc.X *= accelerationBoostFactor;
         }
 
-        this.acc += Physics.getPhysicsAcceleration(tempLoc, this.vel);
+        this.acc += Physics.getPhysicsAcceleration(this.loc, this.vel);
 
         //account for weird floating point errors
         this.acc.round(2);
+
     }
 
     public override void updateState()
     {
         float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
+
+        
 
         if (this.vel.X >= 0)
         {
@@ -100,7 +103,6 @@ class Sonic : PhysicsSprite
         {
             this.vel.X = Math.Max(this.vel.X, -1 * horVelCap);
         }
-        Debug.WriteLine("Vel: " + vel.ToString());
         base.updateState();
         
         if(flows > 0)
@@ -122,7 +124,7 @@ class Enemy : PhysicsSprite
     public static readonly Vector2 wolfHit = new Vector2(40, 34);
     public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
-    public static readonly float killSpeed = 60;
+    public static readonly float killSpeed = 150;
 
     public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
     {
@@ -153,7 +155,6 @@ class Enemy : PhysicsSprite
 
     public override void collide(PhysicsSprite other, float timeLeft)
     {
-        Debug.WriteLine("collided");
         if (other is PhysicsSprite) {
             if (((PhysicsSprite)other).vel.Length() > killSpeed)
             {
