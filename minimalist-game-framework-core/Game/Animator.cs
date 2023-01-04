@@ -158,6 +158,6 @@ internal static class Animator
 
     public static void changeFramerate(float framerate)
     {
-        Framerate = framerate;
+        Framerate = 5;
     }
 }

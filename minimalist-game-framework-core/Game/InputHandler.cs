@@ -24,7 +24,7 @@ internal static class InputHandler
         }
 
         // TESTING
-        else if (Engine.GetKeyHeld(Key.LeftAlt) && Engine.GetKeyHeld(Key.F))
+        else if (Engine.GetKeyHeld(Key.LeftAlt) && Engine.GetKeyHeld(Key.L))
         {
             Animator.animatePiperLanding(piper);
         }
