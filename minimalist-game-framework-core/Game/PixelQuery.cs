@@ -363,7 +363,7 @@ class CurveGroup
 
 }*/
 
-/*
+
 class BezierCurve : Curve
 {
     private Dictionary<Vector2, Vector2> normalVectors;
@@ -375,22 +375,47 @@ class BezierCurve : Curve
     private Vector2 endHandle;
     private float halfStroke;
 
-    public BezierCurve(Vector2 start, Vector2 startHandle, Vector2 end, Vector2 endHandle)
+    Polynomial posX, posY, velX, velY, accX, accY;
+
+
+
+    public BezierCurve(Vector2 start, Vector2 startHandle, Vector2 end, Vector2 endHandle, float stroke)
     {
         this.start = start;
         this.startHandle = startHandle;
         this.end = end;
         this.endHandle = endHandle;
+        this.halfStroke = stroke;
+
+        normalVectors = new Dictionary<Vector2, Vector2>();
+        curvature = new Dictionary<Vector2, float>();
+
+        Polynomial centerX = new Polynomial(new float[] { start.X, -3 * start.X + 3 * startHandle.X, 3 * start.X - 6 * startHandle.X + 3 * end.X, -1 * start.X + 3 * startHandle.X - 3 * endHandle.X + end.X });
+        Polynomial centerY = new Polynomial(new float[] { start.Y, -3 * start.Y + 3 * startHandle.Y, 3 * start.Y - 6 * startHandle.Y + 3 * end.Y, -1 * start.Y + 3 * startHandle.Y - 3 * endHandle.Y + end.Y });
+
+        
+        
+        posX = centerX + (halfStroke * -1) * centerY.differentiate();
+        posY = centerY + (halfStroke) * centerX.differentiate();
+        velX = posX.differentiate();
+        velY = posY.differentiate();
+        accX = velX.differentiate();
+        accY = velY.differentiate();
 
         //getting normal vectors and curvature at points it crosses
         //NOTE, however, this is an approximation, with the incrementing, but should work for all practical purposes
         float t = 0;
         Vector2 currVel = getVelocity(t);
-        Vector2 currLoc = getVelocity(0);
+        Vector2 currLoc = getVelocity(t);
         while (t < 1)
         {
+            Debug.WriteLine(currLoc.Rounded(0));
             //have to decide if rounding is correct or not here
-            normalVectors.Add(currLoc.Rounded(0), currVel.Normalized().Rotated(270));
+            if (!normalVectors.ContainsKey(currLoc.Rounded(0)))
+            {
+                normalVectors.Add(currLoc.Rounded(0), currVel.Normalized().Rotated(270));
+            }
+
 
             t += Math.Min(timeToNearest(currLoc, currVel, CoordinateAxis.X), timeToNearest(currLoc, currVel, CoordinateAxis.Y));
             currVel = getVelocity(t);
@@ -399,6 +424,19 @@ class BezierCurve : Curve
         }
 
 
+    }
+
+    public Vector2 getNearestNormal(Vector2 pos)
+    {
+        return Vector2.Zero;
+    } //for getting normal vector generally
+    public float getNearestCurvature(Vector2 pos)
+    {
+        return 0;
+    }//for getting curvature
+    public bool contains(Vector2 pos)
+    {
+        return true;
     }
 
     private float timeToNearest(Vector2 loc, Vector2 vel, CoordinateAxis direc)
@@ -417,19 +455,19 @@ class BezierCurve : Curve
     //gets location at linearly interpolated time t
     private Vector2 getLoc(float t)
     {
-        return (float)Math.Pow(1 - t, 3) * start + 3 * (float)Math.Pow(1 - t, 2) * t * startHandle + 3 * (1 - t) * (float)Math.Pow(t, 2) * endHandle + (float)Math.Pow(t, 3) * end;
+        return new Vector2(posX.evaluateAt(t),posY.evaluateAt(t));
     }
 
     //gets velocity at linearly interpolated time t
     private Vector2 getVelocity(float t)
     {
-        return 3 * (float)Math.Pow(1 - t, 2) * (startHandle - start) + 6 * (1 - t) * t * (endHandle - startHandle) + 3 * (float)Math.Pow(t, 2) * (end - endHandle);
+        return new Vector2(velX.evaluateAt(t), velY.evaluateAt(t));
     }
 
     //gets acceleration at linearly interpolated time t
     private Vector2 getAcc(float t)
     {
-        return 6 * (1 - t) * (endHandle - 2 * startHandle + start) + 6 * t * (end - 2 * endHandle + startHandle);
+        return new Vector2(accX.evaluateAt(t), accY.evaluateAt(t));
     }
 
     private float getCurvature(float t)
@@ -438,7 +476,7 @@ class BezierCurve : Curve
     }
 
 
-}*/
+}
 
 class Rect : Curve
 {

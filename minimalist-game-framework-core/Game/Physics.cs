@@ -116,6 +116,21 @@ class Physics
     //possibly implement case where onGround = false but loc is onGround? I don't see how that would happen, but it's an edge case
     public static void detectSolid(PhysicsSprite obj)
     {
+        if(!obj.onGround && Game.map.onSolid(obj.loc))
+        {
+            Vector2 norm = Game.map.getNormalVector(obj.loc);
+            obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
+
+            if (Math.Round(norm.Y, 2) == 0)
+            {
+                obj.collideSolid(Engine.TimeDelta);
+            }
+            else
+            {
+                obj.collideGround(Engine.TimeDelta);
+            }
+        }
+
         int steps = (int) Math.Ceiling(obj.vel.Length() * Engine.TimeDelta / collisionPixelThresh);
         Vector2 pos = obj.loc;
         Vector2 diff = obj.vel * Engine.TimeDelta / steps;
@@ -126,7 +141,7 @@ class Physics
             if (Game.map.passingSolid(pos, finalPos))
             {
                 Vector2 norm = Game.map.getNormalVector(finalPos);
-                if (Engine.GetKeyHeld(Key.NumRow6))
+                if (Game.debugToggle)
                 {
                     System.Diagnostics.Debug.WriteLine("Colliding now: params: loc: " + obj.loc.ToString() + " vel: " + obj.vel.ToString());
                     System.Diagnostics.Debug.WriteLine("final Pos: " + finalPos + " norm: " + Game.map.getNormalVector(finalPos).ToString());

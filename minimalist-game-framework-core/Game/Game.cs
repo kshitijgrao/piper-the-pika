@@ -49,7 +49,7 @@ class Game
     public static readonly int MEDIUM = 1;
     public static readonly int EASY = 0;
 
-    bool debugToggle = false;
+    public static bool debugToggle = false;
     public Game()
     {
         //scene control
@@ -92,12 +92,12 @@ class Game
                 }
             }
         }
+        //BezierCurve test = new BezierCurve(new Vector2(640.584f, 995), new Vector2(734.484f, 1001), new Vector2(758.03f, 903), new Vector2(866,903),15);
 
     }
 
     public void Update()
     {
-        Debug.WriteLine(map.getNormalVector(new Vector2(2118,774)).ToString());
         //scene control
         if (startScene == 2)
         {
@@ -113,8 +113,6 @@ class Game
             //collision detection
             //ground and walls
             Physics.detectSolid(piper);
-            //Physics.detectGround(piper);
-            //Physics.detectUnpenetrable(piper);
 
             //other sprites
             Physics.detectCollisions(piper, flowerArr);
@@ -175,7 +173,7 @@ class Game
             piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
             sprites[0] = piper;
 
-            render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+            render = new Rendering("displaymap.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
             //using svg to get normal vectors
             string[] lines = File.ReadAllLines("Assets/map_svg_form.txt");
