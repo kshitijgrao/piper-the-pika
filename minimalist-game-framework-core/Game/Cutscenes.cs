@@ -52,18 +52,18 @@ public class Scenes
 		}
 
 		//Instructions Scene
-		public static int instructionsScene()
+		public static Scene instructionsScene()
 		{
 		if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space) || Engine.GetKeyDown(Key.I))
 		{ 
-			return 1;
+			return Scene.start;
 		}
 		Engine.DrawString("BACK", new Vector2(0, 0), Color.White, h3);
 		Engine.DrawString("Press A and D to move", new Vector2(100,60), Color.White, h3);
 		Engine.DrawString("Press SPACE to jump", new Vector2(100, 90), Color.White, h3);
         Engine.DrawString("Collect rings for a speed boost", new Vector2(80, 120), Color.White, h3);
 		Engine.DrawString("Press F to fullscreen", new Vector2(90, 150), Color.White, h3);
-        return 2;
+        return Scene.instructions;
 		}
 
 
