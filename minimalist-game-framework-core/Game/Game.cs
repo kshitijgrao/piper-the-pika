@@ -6,13 +6,19 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
+
+public enum Scene {game, start, instructions, end};
+
+
 class Game
 {
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
     //public static List<Vector2> enemyCoords = new List<Vector2>();
     public static Map map;
-    public int startScene; //0 = false, 1 = true, 2 = instructions
+    
+    public Scene currentScene;
+    public int startScene; //0 = false, 1 = true, 2 = instructions, 3 = endScene
     public static Boolean endScene;
     public static String message = "PASSED";
     public static List<Flower> flowers = new List<Flower>();
@@ -53,7 +59,7 @@ class Game
     public Game()
     {
         //scene control
-        startScene = 1;
+        currentScene= Scene.start;
         endScene = false;
 
         //scoreboard
@@ -99,9 +105,9 @@ class Game
     {
         Debug.WriteLine(map.getNormalVector(new Vector2(2118,774)).ToString());
         //scene control
-        if (startScene == 2)
+        if (currentScene == Scene.instructions)
         {
-            startScene = Scenes.instructionsScene();
+            currentScene = Scenes.instructionsScene();
         }
         else if (startScene == 1) { startScene = Scenes.titleScene(); }
         else if (endScene) { Scenes.endScene(message); }
