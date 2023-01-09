@@ -101,6 +101,7 @@ class Game
             //collision detection
             //ground and walls
             Physics.detectSolid(piper);
+            Physics.detectPath(piper);
             //Physics.detectGround(piper);
             //Physics.detectUnpenetrable(piper);
 
@@ -127,10 +128,6 @@ class Game
 
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
-            if (piper.loc.X >= 6134 && piper.loc.X < 6300 && !piper.onPath)
-            {
-                piper.onPath = true;
-            }
             if (piper.loc.X >= 8000)
             {
                 endScene = true;

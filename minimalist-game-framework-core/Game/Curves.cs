@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 /*
 class BezierCurve
@@ -41,6 +42,7 @@ static class SVGReader
             }
             else if (isPath(line))
             {
+                System.Diagnostics.Debug.WriteLine("asdf");
                 addPath(line, map);
             }
 
@@ -75,6 +77,7 @@ static class SVGReader
         {
             return false;
         }
+        bool hello = line.Contains(ColorTypes["path"]);
         return line.Substring(0, 5) == "<path" && line.Contains(ColorTypes["path"]);
     }
 

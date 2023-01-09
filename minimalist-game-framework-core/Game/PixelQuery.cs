@@ -151,7 +151,7 @@ unsafe class Map
 
     public void addPath(Path2 p)
     {
-
+        paths.Add(p);
     }
 
     //gets the pixel type at the given coordinate
@@ -283,7 +283,7 @@ unsafe class Map
                 return path;
             }
         }
-        return null;
+        return paths[0];
     }
 
 

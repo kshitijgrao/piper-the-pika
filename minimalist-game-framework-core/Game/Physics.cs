@@ -156,6 +156,10 @@ class Physics
     //TODO
     public static void detectPath(PhysicsSprite obj)
     {
+        if (obj.onPath)
+        {
+            return;
+        }
         int steps = (int)Math.Ceiling(obj.vel.Length() * Engine.TimeDelta / collisionPixelThresh);
         Vector2 pos = obj.loc;
         Vector2 diff = obj.vel * Engine.TimeDelta / steps;
