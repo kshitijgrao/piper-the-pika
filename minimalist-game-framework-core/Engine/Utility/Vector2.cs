@@ -1,11 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 
+public enum CoordinateAxis
+{
+    X,
+    Y
+}
+public static class AxisExtension
+{
+    public static CoordinateAxis Flip(this CoordinateAxis a)
+    {
+        if(a == CoordinateAxis.X)
+        {
+            return CoordinateAxis.Y;
+        }
+        else
+        {
+            return CoordinateAxis.X;
+        }
+    }
+}
+
 struct Vector2
 {
     public float X, Y;
 
     public static readonly Vector2 Zero = new Vector2(0, 0);
+    public static readonly Vector2 UP = new Vector2(0, -1);
+    public static readonly Vector2 DOWN = new Vector2(0, 1);
+    public static readonly Vector2 RIGHT = new Vector2(1, 0);
+    public static readonly Vector2 LEFT = new Vector2(-1, 0);
 
     /// <summary>
     /// Creates a new 2D vector.
@@ -18,6 +42,19 @@ struct Vector2
         Y = y;
     }
 
+    public float getComp(CoordinateAxis axis)
+    {
+        if(axis == CoordinateAxis.X)
+        {
+            return X;
+        }
+        else if(axis == CoordinateAxis.Y)
+        {
+            return Y;
+        }
+        return -1;
+    }
+
     public override string ToString()
     {
         return string.Format("({0}, {1})", X, Y);
@@ -27,6 +64,11 @@ struct Vector2
     {
         X = (float) Math.Round((float) X, numDec);
         Y = (float)Math.Round((float)Y, numDec);
+    }
+
+    public Vector2 Rounded(int numDec)
+    {
+        return new Vector2((float)Math.Round((float)X, numDec), (float)Math.Round((float)Y, numDec));
     }
 
     /// <summary>

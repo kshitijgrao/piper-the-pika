@@ -12,7 +12,8 @@ class Physics
 {
     public static readonly Vector2 g = new Vector2(0,600);
     public static readonly int collisionSteps = 100;
-    public static readonly float coeffRestitution = 3.5f;
+    public static readonly int collisionPixelThresh = 1;
+    public static readonly float coeffRestitution = 0.5f;
 
     //detect collisions for things that are within the window
     public static void detectCollisions(List<Flower> flowers)
@@ -38,6 +39,14 @@ class Physics
         }
         Bounds2 b1 = obj1.getHitbox();
         Bounds2 b2 = obj2.getHitbox();
+        if (b1.Overlaps(b2))
+        {
+            if (obj2 is Enemy)
+                obj2.collide(obj1, Engine.TimeDelta);
+            else
+                obj2.collide(obj1);
+            return;
+        }
         bool secondPhysics = obj2 is PhysicsSprite;
 
         //check for tunneling
@@ -84,9 +93,6 @@ class Physics
             maxYt = (b2.Max.Y - b1.Position.Y) / relvel.Y;
         }
 
-
-
-
         float tEnter = Math.Max(Math.Min(minXt, maxXt), Math.Min(minYt, maxYt));
         float tExit = Math.Min(Math.Max(minXt, maxXt), Math.Max(minYt, maxYt));
 
@@ -98,13 +104,52 @@ class Physics
         {
             if(obj2 is Enemy && ((PhysicsSprite) obj2).mass > 0)
             {
-                System.Diagnostics.Debug.WriteLine("asdf");
                 obj2.collide(obj1, Math.Max(0, tExit));
             }
             else
             {
                 obj2.collide(obj1);
             }            
+        }
+    }
+
+    //possibly implement case where onGround = false but loc is onGround? I don't see how that would happen, but it's an edge case
+    public static void detectSolid(PhysicsSprite obj)
+    {
+        int steps = (int) Math.Ceiling(obj.vel.Length() * Engine.TimeDelta / collisionPixelThresh);
+        Vector2 pos = obj.loc;
+        Vector2 diff = obj.vel * Engine.TimeDelta / steps;
+        Vector2 finalPos = pos + diff;
+
+        for (int i = 0; i < steps; i++)
+        {
+            if (Game.map.passingSolid(pos, finalPos))
+            {
+                Vector2 norm = Game.map.getNormalVector(finalPos);
+                if (Engine.GetKeyHeld(Key.NumRow6))
+                {
+                    System.Diagnostics.Debug.WriteLine("Colliding now: params: loc: " + obj.loc.ToString() + " vel: " + obj.vel.ToString());
+                    System.Diagnostics.Debug.WriteLine("final Pos: " + finalPos + " norm: " + Game.map.getNormalVector(finalPos).ToString());
+                }
+
+                obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
+                obj.loc = Game.map.getNearestHoveringPoint(finalPos);
+
+                if(Math.Round(norm.Y,2) == 0)
+                {
+                    obj.collideSolid((steps - i) * Engine.TimeDelta / steps);
+                }
+                else
+                {
+                    obj.collideGround((steps - i) * Engine.TimeDelta / steps);
+                }
+
+                
+                break;
+
+            }
+            pos = finalPos;
+            finalPos += diff;
         }
     }
 
@@ -124,11 +169,12 @@ class Physics
 
                 
                 obj.loc += diff - (finalPos - pos);
-                if (Math.Abs(Game.map.getSurfaceY(pos) - pos.Y) > 10)
+                int? surfaceY = Game.map.getSurfaceY(pos);
+                if (!surfaceY.HasValue || Math.Abs(surfaceY.Value - pos.Y) > 10)
                 {
                     return;
                 }
-                obj.loc.Y += (Game.map.getSurfaceY(pos) - pos.Y);
+                obj.loc.Y += (surfaceY.Value - pos.Y);
 
                 Vector2 posNew = obj.getBotPoint();
 
@@ -166,7 +212,7 @@ class Physics
 
         Vector2 pos = obj.getPoint(direc);
 
-        if (Game.map.impenetrable(pos))
+        if (Game.map.onSolid(pos))
         {
             obj.vel = obj.vel - (new Vector2(-1, 0)) * Math.Min(0,Vector2.Dot(new Vector2(-1, 0), obj.vel));
             obj.acc = obj.acc - (new Vector2(-1, 0)) * Math.Min(0,Vector2.Dot(new Vector2(-1, 0), obj.acc));
@@ -174,16 +220,16 @@ class Physics
         
         Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
 
-        if (Game.map.inAir(pos) && Game.map.impenetrable(finalPos))
+        if (Game.map.inAir(pos) && Game.map.onSolid(finalPos))
         {
             Vector2 diff = finalPos - pos;
-            while (!(Game.map.impenetrable(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
+            while (!(Game.map.onSolid(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
                 pos += diff / collisionSteps;
             obj.loc += diff - (finalPos - pos);
 
             obj.vel = obj.vel - (new Vector2 (-1,0)) * Vector2.Dot(new Vector2(-1, 0), obj.vel);
 
-            obj.collideWall((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
+            obj.collideSolid((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
 
         }
 
@@ -198,7 +244,7 @@ class Physics
         //not allowing futher movement within
         //NOTE:This is SLIGHTLY broken and gets stuck within wall until we implement full bottom layer collision
         //detection or switch to an SVG encoding of the map
-        if (Game.map.impenetrable(pos))
+        if (Game.map.onSolid(pos))
         {
             obj.vel = obj.vel - (new Vector2(-1, 0)) * Math.Min(0, Vector2.Dot(new Vector2(-1, 0), obj.vel));
             obj.acc = obj.acc - (new Vector2(-1, 0)) * Math.Min(0, Vector2.Dot(new Vector2(-1, 0), obj.acc));
@@ -206,16 +252,16 @@ class Physics
 
         Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
 
-        if (Game.map.inAir(pos) && Game.map.impenetrable(finalPos))
+        if (Game.map.inAir(pos) && Game.map.onSolid(finalPos))
         {
             Vector2 diff = finalPos - pos;
-            while (!(Game.map.impenetrable(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
+            while (!(Game.map.onSolid(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
                 pos += diff / collisionSteps;
             obj.loc += diff - (finalPos - pos);
 
             obj.vel = obj.vel - (new Vector2(-1, 0)) * Vector2.Dot(new Vector2(-1, 0), obj.vel);
 
-            obj.collideWall((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
+            obj.collideSolid((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
 
         }
 
