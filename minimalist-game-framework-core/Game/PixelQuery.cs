@@ -346,6 +346,121 @@ interface Curve
     float getNearestCurvature(Vector2 pos); //for getting curvature
     bool contains(Vector2 pos);
 }
+
+interface Path2
+{
+    Vector2 getPoint(float t);
+    Vector2 getTangent(float t);
+    float getCurvature(float t);
+    float getSpeed(float t);
+    float getNextFraction(float t, float arcLength);
+    float getBoost(float t, Key key);
+}
+
+
+class BezierGroup: Path2
+{
+    private BezierCurveNoStroke[] bezierCurves;
+
+    public BezierGroup(Vector2[] coordList)
+    {
+        bezierCurves = new BezierCurveNoStroke[(coordList.Length - 1) / 3];
+        for(int i = 0; i < bezierCurves.Length; i++)
+        {
+            bezierCurves[i] = new BezierCurveNoStroke(coordList[3 * i], coordList[3 * i + 1], coordList[3 * i + 2], coordList[3 * i + 3]);
+        }
+    }
+
+    public Vector2 getPoint(float t) { return bezierCurves[getIndex(t)].getPoint(convertTime(t)); }
+    public Vector2 getTangent(float t) { return bezierCurves[getIndex(t)].getTangent(convertTime(t)); }
+    public float getCurvature(float t) { return bezierCurves[getIndex(t)].getCurvature(convertTime(t)); }
+    public float getSpeed(float t) { return bezierCurves[getIndex(t)].getSpeed(convertTime(t)) * bezierCurves.Length; }
+    public float getNextFraction(float t, float arcLength) { return bezierCurves[getIndex(t)].getNextFraction(convertTime(t), arcLength) / bezierCurves.Length + ((float)getIndex(t)) / bezierCurves.Length; }
+    public float getBoost(float t, Key key) { return bezierCurves[getIndex(t)].getBoost(convertTime(t), key); }
+
+    private float convertTime(float t)
+    {
+        return (t - ((float) getIndex(t)) / bezierCurves.Length) * bezierCurves.Length;
+    }
+
+    private int getIndex(float t)
+    {
+        if(t == 1)
+        {
+            return bezierCurves.Length - 1;
+        }
+        return (int)Math.Floor(t * bezierCurves.Length);
+    }
+
+}
+
+class BezierCurveNoStroke :Path2
+{
+    private Vector2 start;
+    private Vector2 startHandle;
+    private Vector2 end;
+    private Vector2 endHandle;
+
+    public BezierCurveNoStroke(Vector2 start, Vector2 startHandle,  Vector2 endHandle, Vector2 end)
+    {
+        this.start = start;
+        this.startHandle = startHandle;
+        this.end = end;
+        this.endHandle = endHandle;
+    }
+
+    //gets location at linearly interpolated time t
+    public Vector2 getPoint(float t)
+    {
+        return (float)Math.Pow(1 - t, 3) * start + 3 * (float)Math.Pow(1 - t, 2) * t * startHandle + 3 * (1 - t) * (float)Math.Pow(t, 2) * endHandle + (float)Math.Pow(t, 3) * end;
+    }
+
+    //gets velocity at linearly interpolated time t
+    private Vector2 getVelocity(float t)
+    {
+        return 3 * (float)Math.Pow(1 - t, 2) * (startHandle - start) + 6 * (1 - t) * t * (endHandle - startHandle) + 3 * (float)Math.Pow(t, 2) * (end - endHandle);
+    }
+    public float getSpeed(float t) {
+        return getVelocity(t).Length();
+    }
+
+    public Vector2 getTangent(float t)
+    {
+        return getVelocity(t).Normalized();
+    }
+
+
+    //gets acceleration at linearly interpolated time t
+    private Vector2 getAcc(float t)
+    {
+        return 6 * (1 - t) * (endHandle - 2 * startHandle + start) + 6 * t * (end - 2 * endHandle + startHandle);
+    }
+
+    public float getCurvature(float t)
+    {
+        return Math.Abs(Vector2.Cross(getAcc(t), getVelocity(t))) / (float)Math.Pow(getVelocity(t).Length(), 3);
+    }
+
+    public float getNextFraction(float t, float arcLength)
+    {
+        return t + arcLength / getSpeed(t);
+    }
+
+    public virtual float getBoost(float t, Key key)
+    {
+        if(key == Key.A)
+        {
+            return 1;
+        }
+        if(key == Key.D)
+        {
+            return 1.5f;
+        }
+        return 0;
+    }
+}
+
+
 /*
 class CurveGroup
 {

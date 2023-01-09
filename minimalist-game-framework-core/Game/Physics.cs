@@ -268,12 +268,19 @@ class Physics
 
     }
 
-    public static Vector2 getPhysicsAcceleration(Vector2 loc, Vector2 vel)
+    public static Vector2 getPhysicsAcceleration(PhysicsSprite obj, Vector2 loc, Vector2 vel)
     {
         Vector2 norm = Game.map.getNormalVector(loc);
         float radius = Game.map.getSurfaceRadius(loc);
 
-        if (Game.piper.onGround)
+
+        //able to do fake physics on path because all the curvature stuff is taken care of
+        if (obj.onPath)
+        {
+            Vector2 tangent = obj.currPath.getTangent(obj.fractionOfPath);
+            return Vector2.RIGHT * Vector2.Dot(tangent, g);
+        }
+        else if (obj.onGround)
         {
             if(radius < 0)
             {

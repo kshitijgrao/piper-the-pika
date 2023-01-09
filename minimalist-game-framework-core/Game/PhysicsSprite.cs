@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 class PhysicsSprite : Sprite
@@ -14,6 +15,11 @@ class PhysicsSprite : Sprite
     private bool collided;
     private float timeLeft;
     internal bool onGround;
+    internal bool onPath;
+    internal Path2 currPath;
+    internal float fractionOfPath;
+    internal float velPath;
+    internal float accPath;
 
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes) : base(loc,sprites,hitboxes)
     {
@@ -23,6 +29,8 @@ class PhysicsSprite : Sprite
         timeLeft = 0;
         airTime = 0;
         onGround = Game.map.onGround(this.getBotPoint());
+        currPath = null;
+        fractionOfPath = 0;
     }
 
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, bool onGround) : base(loc, sprites, hitboxes)
@@ -32,6 +40,8 @@ class PhysicsSprite : Sprite
         collided = false;
         timeLeft = 0;
         this.onGround = false;
+        currPath = null;
+        fractionOfPath = 0;
     }
 
     public PhysicsSprite(Vector2 loc, Texture sprites) : base(loc, sprites)
@@ -42,6 +52,8 @@ class PhysicsSprite : Sprite
         timeLeft = 0;
         airTime = 0;
         onGround = Game.map.onGround(this.getBotPoint());
+        currPath = null;
+        fractionOfPath = 0;
     }
 
     public void setVelocity(Vector2 vel)
@@ -78,17 +90,57 @@ class PhysicsSprite : Sprite
     public override void updateState()
     {
         Vector2 locOrig = loc;
-        if (collided)
+        
+        //with this implementation one frame is kind of glitched
+        if (onPath)
         {
-            loc = loc + vel * timeLeft;
-            vel += acc * timeLeft;
-            collided = false;
+            fractionOfPath = currPath.getNextFraction(fractionOfPath, velPath * Engine.TimeDelta);
+
+            velPath += accPath * Engine.TimeDelta;
+
+
+            if(fractionOfPath > 1 || (fractionOfPath == 1 & velPath > 0))
+            {
+                fractionOfPath = 1;
+                onPath = false;
+            }
+            if(fractionOfPath < 0 || (fractionOfPath == 0 & velPath < 0))
+            {
+                fractionOfPath = 0;
+                onPath = false;
+            }
+
+
+            loc = currPath.getPoint(fractionOfPath);
+
+            Vector2 currTangent = currPath.getTangent(fractionOfPath);
+            float curvature = currPath.getCurvature(fractionOfPath);
+
+            vel = currTangent * velPath;
+            acc = currTangent * accPath + (currTangent).Rotated(270) * velPath * velPath * curvature;
+
+
+            if(velPath * velPath * curvature < Vector2.Dot(Physics.g, currTangent.Rotated(270)))
+            {
+                onPath = false;
+            }
+
         }
         else
         {
-            loc = loc + vel * Engine.TimeDelta;
-            vel += acc * Engine.TimeDelta;
+            if (collided)
+            {
+                loc = loc + vel * timeLeft;
+                vel += acc * timeLeft;
+                collided = false;
+            }
+            else
+            {
+                loc = loc + vel * Engine.TimeDelta;
+                vel += acc * Engine.TimeDelta;
+            }
         }
+        
 
         //checks if its leaving the ground in some way--maybe this might not work in some edge cases... will have to rethink
         if (onGround && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
