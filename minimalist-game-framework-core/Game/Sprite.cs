@@ -161,7 +161,7 @@ class Sprite {
         return loc + hitbox.X / 2 * direc;
     }
 
-    public bool notCollidable()
+    public virtual bool notCollidable()
     {
         return invisible;
     }

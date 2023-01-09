@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -13,7 +14,7 @@ class Physics
     public static readonly Vector2 g = new Vector2(0,600);
     public static readonly int collisionSteps = 100;
     public static readonly int collisionPixelThresh = 1;
-    public static readonly float coeffRestitution = 0.5f;
+    public static readonly float coeffRestitution = 12f;
 
     //detect collisions for things that are within the window
     public static void detectCollisions(List<Flower> flowers)
@@ -33,7 +34,7 @@ class Physics
     public static void detectCollision(PhysicsSprite obj1, Sprite obj2)
     {
         
-        if (obj2.notCollidable())
+        if (obj2.notCollidable() || obj1.notCollidable())
         {
             return;
         }
@@ -42,7 +43,11 @@ class Physics
         if (b1.Overlaps(b2))
         {
             if (obj2 is Enemy)
+            {
+                Debug.WriteLine("just got it straight up");
                 obj2.collide(obj1, Engine.TimeDelta);
+            }
+                
             else
                 obj2.collide(obj1);
             return;
@@ -104,6 +109,7 @@ class Physics
         {
             if(obj2 is Enemy && ((PhysicsSprite) obj2).mass > 0)
             {
+                Debug.WriteLine("here");
                 obj2.collide(obj1, Math.Max(0, tExit));
             }
             else

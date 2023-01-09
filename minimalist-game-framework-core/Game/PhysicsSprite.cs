@@ -14,6 +14,10 @@ class PhysicsSprite : Sprite
     private bool collided;
     private float timeLeft;
     internal bool onGround;
+    private int invincibleFramesLeft;
+
+    public static readonly float invincibleTime = 1;
+
 
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes) : base(loc,sprites,hitboxes)
     {
@@ -23,6 +27,7 @@ class PhysicsSprite : Sprite
         timeLeft = 0;
         airTime = 0;
         onGround = Game.map.onGround(this.getBotPoint());
+        
     }
 
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, bool onGround) : base(loc, sprites, hitboxes)
@@ -42,6 +47,11 @@ class PhysicsSprite : Sprite
         timeLeft = 0;
         airTime = 0;
         onGround = Game.map.onGround(this.getBotPoint());
+    }
+
+    public override bool notCollidable()
+    {
+        return (invincibleFramesLeft > 0) || base.notCollidable();
     }
 
     public void setVelocity(Vector2 vel)
@@ -64,6 +74,10 @@ class PhysicsSprite : Sprite
         airTime+= time;
     }
 
+    public void setInvincible()
+    {
+        invincibleFramesLeft = (int)Math.Round(invincibleTime / Engine.TimeDelta);
+    }
     public void setAccelerationDirect(Vector2 acc)
     {
         this.acc = acc;
@@ -106,6 +120,13 @@ class PhysicsSprite : Sprite
         {
             Animator.setPiperSprinting(false);
         }
+
+        //subtract invisible frames
+        if(invincibleFramesLeft > 0)
+        {
+            invincibleFramesLeft -= 1;
+        }
+
         keepOnSurface();
     }
 
