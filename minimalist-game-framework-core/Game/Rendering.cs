@@ -42,26 +42,26 @@ class Rendering
             }
         }
 
-        Vector2 onScreenCoord = Game.piper.loc + pos;
+        Vector2 onScreenCoord = Game.nextFrame.loc + pos;
 
-        if (onScreenCoord.X > window.Max.X && Game.piper.vel.X > 0)
+        if (onScreenCoord.X > window.Max.X && Game.nextFrame.vel.X > 0)
         {
-            pos.X -= Engine.TimeDelta * Game.piper.vel.X;
+            pos.X -= Engine.TimeDelta * Game.nextFrame.vel.X;
         }
         
-        if (onScreenCoord.X < window.Min.X && Game.piper.vel.X < 0)
+        if (onScreenCoord.X < window.Min.X && Game.nextFrame.vel.X < 0)
         {
-            pos.X -= Engine.TimeDelta * Game.piper.vel.X;
+            pos.X -= Engine.TimeDelta * Game.nextFrame.vel.X;
         }
 
-        if (onScreenCoord.Y < window.Min.Y && Game.piper.vel.Y < 0)
+        if (onScreenCoord.Y < window.Min.Y && Game.nextFrame.vel.Y < 0)
         {
-            pos.Y -= Engine.TimeDelta * Game.piper.vel.Y;
+            pos.Y -= Engine.TimeDelta * Game.nextFrame.vel.Y;
         }
 
-        if (onScreenCoord.Y > window.Max.Y && Game.piper.vel.Y > 0)
+        if (onScreenCoord.Y > window.Max.Y && Game.nextFrame.vel.Y > 0)
         {
-            pos.Y -= Engine.TimeDelta * Game.piper.vel.Y;
+            pos.Y -= Engine.TimeDelta * Game.nextFrame.vel.Y;
         }
     }
 

@@ -273,7 +273,7 @@ class Physics
         Vector2 norm = Game.map.getNormalVector(loc);
         float radius = Game.map.getSurfaceRadius(loc);
 
-        if (Game.piper.onGround)
+        if (Game.nextFrame.onGround)
         {
             if(radius < 0)
             {

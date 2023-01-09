@@ -30,7 +30,7 @@ class Game
     readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
 
     // sprites
-    public static Sonic piper;
+    public static Sonic nextFrame;
     public static Enemy wolf;
     public static Enemy hawk;
     Sprite[] sprites = new Sprite[1];
@@ -65,8 +65,8 @@ class Game
         flowerArr = flowers.ToArray();
 
         // create piper sprite
-        piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
-        sprites[0] = piper;
+        nextFrame = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
+        sprites[0] = nextFrame;
 
         render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
@@ -107,22 +107,22 @@ class Game
         else if (endScene) { Scenes.endScene(message); }
         else
         {
-            currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));
+            currentKey = InputHandler.getPlayerInput(nextFrame, render.pos + nextFrame.loc - new Vector2(12, 12));
 
 
             //collision detection
             //ground and walls
-            Physics.detectSolid(piper);
+            Physics.detectSolid(nextFrame);
             //Physics.detectGround(piper);
             //Physics.detectUnpenetrable(piper);
 
             //other sprites
-            Physics.detectCollisions(piper, flowerArr);
-            Physics.detectCollisions(piper, enemyArr);
+            Physics.detectCollisions(nextFrame, flowerArr);
+            Physics.detectCollisions(nextFrame, enemyArr);
 
 
             //update acceleration
-            piper.setAcceleration(currentKey);
+            nextFrame.setAcceleration(currentKey);
 
             //update overall physics
             Physics.updatePhysics(sprites);
@@ -135,11 +135,13 @@ class Game
                 enemy.updateState();
                 enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc));
             };
-            piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));
+
+            // draws current frame
+            //nextFrame.setFrameIndex(Animator.animatePiper(nextFrame, render.pos + nextFrame.loc, currentKey));
             
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
-            if (piper.loc.X >= 6125)
+            if (nextFrame.loc.X >= 6125)
             {
                 endScene = true;
             }
@@ -149,11 +151,14 @@ class Game
             }
             if (debugToggle)
             {
-                Engine.DrawRectSolid(new Bounds2(render.pos + piper.loc - new Vector2(1, 1), new Vector2(3, 3)), Color.Red);
-                piper.drawVectors(render.pos + piper.loc);
+                Engine.DrawRectSolid(new Bounds2(render.pos + nextFrame.loc - new Vector2(1, 1), new Vector2(3, 3)), Color.Red);
+                nextFrame.drawVectors(render.pos + nextFrame.loc);
 
-                Engine.DrawString("onGround? " + piper.onGround + " at " + piper.loc.Rounded(2).ToString(), new Vector2(Resolution. X - 12,12), Color.Black, arial,TextAlignment.Right);
-                Engine.DrawString("current normal: " + map.getNormalVector(piper.loc).ToString(), new Vector2(Resolution.X - 12, 24), Color.Black, arial,TextAlignment.Right);
+                Engine.DrawString("onGround? " + nextFrame.onGround + " at " + nextFrame.loc.Rounded(2).ToString(), new Vector2(Resolution. X - 12,12), Color.Black, arial,TextAlignment.Right);
+                Engine.DrawString("current normal: " + map.getNormalVector(nextFrame.loc).ToString(), new Vector2(Resolution.X - 12, 24), Color.Black, arial,TextAlignment.Right);
+
+                // draws next frame
+                nextFrame.setFrameIndex(Animator.animatePiper(nextFrame, render.pos + nextFrame.loc, currentKey));
             }
         }
 
@@ -172,8 +177,8 @@ class Game
             flowerArr = flowers.ToArray();
 
             // create piper sprite
-            piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
-            sprites[0] = piper;
+            nextFrame = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
+            sprites[0] = nextFrame;
 
             render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 

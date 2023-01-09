@@ -166,7 +166,7 @@ class Enemy : PhysicsSprite
                 other.loc += other.vel * (Engine.TimeDelta - timeLeft);
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
 
-                Animator.animatePiperTakingDamage(Game.piper);
+                Animator.animatePiperTakingDamage(Game.nextFrame);
 
                 if (Game.gameDifficulty == Game.EASY)
                 {
