@@ -4,7 +4,7 @@ using System.Text;
 
 class PhysicsSprite : Sprite
 {
-    internal readonly float sprintSpeed = 200;
+    internal readonly float sprintSpeed = 230;
 
     public float mass;
     public Vector2 vel;
@@ -12,6 +12,7 @@ class PhysicsSprite : Sprite
     public float airTime;
 
     private bool collided;
+    private bool canMove;
     private float timeLeft;
     internal bool onGround;
 
@@ -20,6 +21,7 @@ class PhysicsSprite : Sprite
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
         collided = false;
+        canMove = true;
         timeLeft = 0;
         airTime = 0;
         onGround = Game.map.onGround(this.getBotPoint());
@@ -30,6 +32,7 @@ class PhysicsSprite : Sprite
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
         collided = false;
+        canMove = true;
         timeLeft = 0;
         this.onGround = false;
     }
@@ -64,6 +67,11 @@ class PhysicsSprite : Sprite
         airTime+= time;
     }
 
+    public void setCanMove(bool canMove)
+    {
+        this.canMove = canMove;
+    }
+
     public void setAccelerationDirect(Vector2 acc)
     {
         this.acc = acc;
@@ -77,31 +85,34 @@ class PhysicsSprite : Sprite
 
     public override void updateState()
     {
-        if (collided)
+        if (canMove)
         {
-            loc = loc + vel * timeLeft;
-            vel += acc * timeLeft;
-            collided = false;
-        }
-        else
-        {
-            loc = loc + vel * Engine.TimeDelta;
-            vel += acc * Engine.TimeDelta;
-        }
-        if (onGround && Game.map.inAir(getBotPoint()))
-        {
-            onGround = false;
-        }
+            if (collided)
+            {
+                loc = loc + vel * timeLeft;
+                vel += acc * timeLeft;
+                collided = false;
+            }
+            else
+            {
+                loc = loc + vel * Engine.TimeDelta;
+                vel += acc * Engine.TimeDelta;
+            }
+            if (onGround && Game.map.inAir(getBotPoint()))
+            {
+                onGround = false;
+            }
 
 
-        // sprint if moving fast enough
-        if (vel.Length() > sprintSpeed)
-        {
-            Animator.setPiperSprinting(true);
-        } 
-        else
-        {
-            Animator.setPiperSprinting(false);
+            // sprint if moving fast enough
+            if (vel.Length() > sprintSpeed)
+            {
+                Animator.setPiperSprinting(true);
+            }
+            else
+            {
+                Animator.setPiperSprinting(false);
+            }
         }
         keepOnSurface();
     }

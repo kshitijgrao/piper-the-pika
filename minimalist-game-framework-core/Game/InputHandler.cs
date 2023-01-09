@@ -49,7 +49,6 @@ internal static class InputHandler
             Animator.setPiperSpinning(false, piper);
         }
 
-        
         return k;
     }
 }

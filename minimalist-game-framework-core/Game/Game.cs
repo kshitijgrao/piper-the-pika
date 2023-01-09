@@ -29,9 +29,10 @@ class Game
 
     // sprites
     public static Sonic piper;
+    public static Sonic piperNextFrame;
     public static Enemy wolf;
     public static Enemy hawk;
-    Sprite[] sprites = new Sprite[1];
+    Sprite[] sprites = new Sprite[2];
     public static ArrayList enemiesOnScreen = new ArrayList();
 
     public static Scoreboard sb;
@@ -40,6 +41,7 @@ class Game
     Rendering render;
     Vector2 pos;
     Key currentKey = Key.Q; // defaults to unused key "Q"
+    Key previousKey = Key.Q; 
 
     public static int gameDifficulty = 0;
 
@@ -63,7 +65,25 @@ class Game
 
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
+        piperNextFrame = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
+
+        // start next frame
+        //ground and walls
+        Physics.detectGround(piperNextFrame);
+        Physics.detectUnpenetrable(piperNextFrame);
+
+        //other sprites
+        Physics.detectCollisions(piperNextFrame, flowerArr);
+        Physics.detectCollisions(piperNextFrame, enemyArr);
+
+        //update acceleration
+        piperNextFrame.setAcceleration(currentKey);
+
+        //update overall physics
+        Physics.updatePhysics(piperNextFrame);
+
         sprites[0] = piper;
+        sprites[1] = piperNextFrame;
 
         render = new Rendering("NewTestMap.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
     }
@@ -79,34 +99,41 @@ class Game
         else if (endScene) {Scenes.endScene(message); }
         else
         {
-            currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));
+            previousKey = currentKey;
+            currentKey = InputHandler.getPlayerInput(piperNextFrame, render.pos + piperNextFrame.loc - new Vector2(12, 12));
             
             
             //collision detection
             //ground and walls
             Physics.detectGround(piper);
             Physics.detectUnpenetrable(piper);
-            
+            Physics.detectGround(piperNextFrame);
+            Physics.detectUnpenetrable(piperNextFrame);
+
             //other sprites
             Physics.detectCollisions(piper, flowerArr);
             Physics.detectCollisions(piper, enemyArr);
 
-
             //update acceleration
-            piper.setAcceleration(currentKey);
+            piper.setAcceleration(previousKey);
+            piperNextFrame.setAcceleration(currentKey);
 
             //update overall physics
             Physics.updatePhysics(sprites);
 
             // collect input and draw frame
-            
             render.scrollingMotion();
             foreach (Enemy enemy in enemiesOnScreen)
             {
                 enemy.updateState();
                 enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc));
             };
-            piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));
+            piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, previousKey));
+
+            // NEXT FRAME
+            piperNextFrame.setFrameIndex(Animator.animatePiper(piperNextFrame, render.pos + piperNextFrame.loc, currentKey));
+            Engine.DrawString("NEXT", render.pos + piperNextFrame.loc + new Vector2(-10, 0), Color.Purple, arial);
+
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
             if (piper.loc.X >= 6125)

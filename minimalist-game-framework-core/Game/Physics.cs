@@ -256,4 +256,10 @@ class Physics
             s.updateState();
         }
     }
+
+    // updates physics for one sprite
+    public static void updatePhysics(Sprite s)
+    {
+        s.updateState();
+    }
 }

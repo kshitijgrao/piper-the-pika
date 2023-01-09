@@ -54,7 +54,7 @@ internal static class Animator
         if (!piper.onGround)
         {
             piper.addAirTime(1);
-            if (piper.getAirTime() > 50)
+            if (piper.getAirTime() > 10)
             {
                 piper.setState(State.Spinning);
             }
@@ -156,8 +156,33 @@ internal static class Animator
         }
     }
 
-    public static void changeFramerate(float framerate)
+    public static void updateFramerate(PhysicsSprite piper)
     {
-        Framerate = 5;
+        float speed = piper.vel.X;
+        if (piper.getState() == State.Spinning)
+        {
+            speed = piper.vel.Y;
+        }
+
+        if (piper.getState() == State.Idle)
+        {
+            Framerate = 5;
+        }
+        else if (speed > piper.sprintSpeed)  
+        {
+            Framerate = 6;
+        }
+        else if (speed > piper.sprintSpeed / 2)
+        {
+            Framerate = 5;
+        }
+        else if (speed > piper.sprintSpeed / 5)
+        {
+            Framerate = 4;
+        }
+        else
+        {
+            Framerate = 3;
+        }
     }
 }
