@@ -16,6 +16,7 @@ unsafe class Map
     private Dictionary<CoordinateAxis, List<int>[]> transitions;
 
     private List<Curve> curves;
+    private List<Path2> paths;
 
 
     SDL.SDL_Surface* pixelMap;
@@ -29,6 +30,7 @@ unsafe class Map
     public static readonly int SOLID_CODE = 255 + 199;
     public static readonly int ENEMY_WALKING = 5;
     public static readonly int ENEMY_FLYING = 25;
+    public static readonly int PATH_CODE = 235;
 
     //public static readonly int TUNNEL_CODE = 
 
@@ -111,9 +113,9 @@ unsafe class Map
                 //looking for air to ground transitions
                 if (y > 0 && pixels[x, y] != pixels[x, y - 1])
                 {
-                    if (pixels[x, y - 1] == AIR_CODE)
+                    if (pixels[x, y - 1] == AIR_CODE && (pixels[x,y] == GROUND_CODE || pixels[x,y] == SOLID_CODE || pixels[x,y] == PASS_THROUGH_CODE))
                         transitionsY[x].Add(y);
-                    else if (pixels[x, y] == AIR_CODE)
+                    else if (pixels[x, y] == AIR_CODE && (pixels[x, y - 1] == GROUND_CODE || pixels[x, y - 1] == SOLID_CODE || pixels[x, y - 1] == PASS_THROUGH_CODE))
                         transitionsY[x].Add(y - 1);
                 }
 
@@ -138,12 +140,18 @@ unsafe class Map
 
 
         curves = new List<Curve>();
+        paths = new List<Path2>();
 
     }
 
     public void addCurve(Curve c)
     {
         curves.Add(c);
+    }
+
+    public void addPath(Path2 p)
+    {
+
     }
 
     //gets the pixel type at the given coordinate
@@ -161,6 +169,11 @@ unsafe class Map
     public bool onGround(Vector2 coord)
     {
         return getPixelType(coord) == GROUND_CODE || getPixelType(coord) == SOLID_CODE;
+    }
+
+    public bool onPath(Vector2 coord)
+    {
+        return getPixelType(coord) == PATH_CODE;
     }
 
     public bool onSolid(Vector2 coord)
@@ -261,6 +274,18 @@ unsafe class Map
         return surfacePoint + norm;
     }
 
+    public Path2 getPath(Vector2 pos)
+    {
+        foreach (Path2 path in paths)
+        {
+            if (path.contains(pos))
+            {
+                return path;
+            }
+        }
+        return null;
+    }
+
 
 
     //returns the nearest surface point either moving horizontally or vertically
@@ -320,309 +345,5 @@ unsafe class Map
         return getSurfaceAny(pos, CoordinateAxis.Y);
     }
 }
-/*
-class BezierCurve
-{
-    private Vector2 start;
-    private Vector2 startHandle;
-    private Vector2 end;
-    private Vector2 endHandle;
 
-    public BezierCurve(Vector2 start, Vector2 startHandle, Vector2 end, Vector2 endHandle)
-    {
-        this.start = start;
-        this.startHandle = startHandle;
-        this.end = end;
-        this.endHandle = endHandle;
-    }
-
-
-}*/
-
-
-interface Curve
-{
-    Vector2 getNearestNormal(Vector2 pos); //for getting normal vector generally
-    float getNearestCurvature(Vector2 pos); //for getting curvature
-    bool contains(Vector2 pos);
-}
-
-interface Path2
-{
-    Vector2 getPoint(float t);
-    Vector2 getTangent(float t);
-    float getCurvature(float t);
-    float getSpeed(float t);
-    float getNextFraction(float t, float arcLength);
-    float getBoost(float t, Key key);
-}
-
-
-class BezierGroup: Path2
-{
-    private BezierCurveNoStroke[] bezierCurves;
-
-    public BezierGroup(Vector2[] coordList)
-    {
-        bezierCurves = new BezierCurveNoStroke[(coordList.Length - 1) / 3];
-        for(int i = 0; i < bezierCurves.Length; i++)
-        {
-            bezierCurves[i] = new BezierCurveNoStroke(coordList[3 * i], coordList[3 * i + 1], coordList[3 * i + 2], coordList[3 * i + 3]);
-        }
-    }
-
-    public Vector2 getPoint(float t) { return bezierCurves[getIndex(t)].getPoint(convertTime(t)); }
-    public Vector2 getTangent(float t) { return bezierCurves[getIndex(t)].getTangent(convertTime(t)); }
-    public float getCurvature(float t) { return bezierCurves[getIndex(t)].getCurvature(convertTime(t)); }
-    public float getSpeed(float t) { return bezierCurves[getIndex(t)].getSpeed(convertTime(t)) * bezierCurves.Length; }
-    public float getNextFraction(float t, float arcLength) { return bezierCurves[getIndex(t)].getNextFraction(convertTime(t), arcLength) / bezierCurves.Length + ((float)getIndex(t)) / bezierCurves.Length; }
-    public float getBoost(float t, Key key) { return bezierCurves[getIndex(t)].getBoost(convertTime(t), key); }
-
-    private float convertTime(float t)
-    {
-        return (t - ((float) getIndex(t)) / bezierCurves.Length) * bezierCurves.Length;
-    }
-
-    private int getIndex(float t)
-    {
-        if(t == 1)
-        {
-            return bezierCurves.Length - 1;
-        }
-        return (int)Math.Floor(t * bezierCurves.Length);
-    }
-
-}
-
-class BezierCurveNoStroke :Path2
-{
-    private Vector2 start;
-    private Vector2 startHandle;
-    private Vector2 end;
-    private Vector2 endHandle;
-
-    public BezierCurveNoStroke(Vector2 start, Vector2 startHandle,  Vector2 endHandle, Vector2 end)
-    {
-        this.start = start;
-        this.startHandle = startHandle;
-        this.end = end;
-        this.endHandle = endHandle;
-    }
-
-    //gets location at linearly interpolated time t
-    public Vector2 getPoint(float t)
-    {
-        return (float)Math.Pow(1 - t, 3) * start + 3 * (float)Math.Pow(1 - t, 2) * t * startHandle + 3 * (1 - t) * (float)Math.Pow(t, 2) * endHandle + (float)Math.Pow(t, 3) * end;
-    }
-
-    //gets velocity at linearly interpolated time t
-    private Vector2 getVelocity(float t)
-    {
-        return 3 * (float)Math.Pow(1 - t, 2) * (startHandle - start) + 6 * (1 - t) * t * (endHandle - startHandle) + 3 * (float)Math.Pow(t, 2) * (end - endHandle);
-    }
-    public float getSpeed(float t) {
-        return getVelocity(t).Length();
-    }
-
-    public Vector2 getTangent(float t)
-    {
-        return getVelocity(t).Normalized();
-    }
-
-
-    //gets acceleration at linearly interpolated time t
-    private Vector2 getAcc(float t)
-    {
-        return 6 * (1 - t) * (endHandle - 2 * startHandle + start) + 6 * t * (end - 2 * endHandle + startHandle);
-    }
-
-    public float getCurvature(float t)
-    {
-        return Math.Abs(Vector2.Cross(getAcc(t), getVelocity(t))) / (float)Math.Pow(getVelocity(t).Length(), 3);
-    }
-
-    public float getNextFraction(float t, float arcLength)
-    {
-        return t + arcLength / getSpeed(t);
-    }
-
-    public virtual float getBoost(float t, Key key)
-    {
-        if(key == Key.A)
-        {
-            return 1;
-        }
-        if(key == Key.D)
-        {
-            return 1.5f;
-        }
-        return 0;
-    }
-}
-
-
-/*
-class CurveGroup
-{
-    private BezierCurve[] curves;
-
-    public CurveGroup(BezierCurve[] curves)
-    {
-        this.curves = curves;
-    }
-
-    public virtual Vector2 getNearestNormalVector(Vector2 pos)
-    {
-        return new Vector2(0, -1);
-    }
-
-}*/
-
-/*
-class BezierCurve : Curve
-{
-    private Dictionary<Vector2, Vector2> normalVectors;
-    private Dictionary<Vector2, float> curvature;
-
-    private Vector2 start;
-    private Vector2 startHandle;
-    private Vector2 end;
-    private Vector2 endHandle;
-    private float halfStroke;
-
-    public BezierCurve(Vector2 start, Vector2 startHandle, Vector2 end, Vector2 endHandle)
-    {
-        this.start = start;
-        this.startHandle = startHandle;
-        this.end = end;
-        this.endHandle = endHandle;
-
-        //getting normal vectors and curvature at points it crosses
-        //NOTE, however, this is an approximation, with the incrementing, but should work for all practical purposes
-        float t = 0;
-        Vector2 currVel = getVelocity(t);
-        Vector2 currLoc = getVelocity(0);
-        while (t < 1)
-        {
-            //have to decide if rounding is correct or not here
-            normalVectors.Add(currLoc.Rounded(0), currVel.Normalized().Rotated(270));
-
-            t += Math.Min(timeToNearest(currLoc, currVel, CoordinateAxis.X), timeToNearest(currLoc, currVel, CoordinateAxis.Y));
-            currVel = getVelocity(t);
-            currLoc = getLoc(t);
-
-        }
-
-
-    }
-
-    private float timeToNearest(Vector2 loc, Vector2 vel, CoordinateAxis direc)
-    {
-        float velComp = vel.getComp(direc);
-        float locComp = loc.getComp(direc);
-     
-       if (velComp == 0)
-        {
-            return float.MaxValue;
-        } 
-
-        return (float)(velComp > 0 ? (Math.Ceiling(locComp) - locComp) : (Math.Floor(locComp) - locComp)) / vel.Y;
-    }
-
-    //gets location at linearly interpolated time t
-    private Vector2 getLoc(float t)
-    {
-        return (float)Math.Pow(1 - t, 3) * start + 3 * (float)Math.Pow(1 - t, 2) * t * startHandle + 3 * (1 - t) * (float)Math.Pow(t, 2) * endHandle + (float)Math.Pow(t, 3) * end;
-    }
-
-    //gets velocity at linearly interpolated time t
-    private Vector2 getVelocity(float t)
-    {
-        return 3 * (float)Math.Pow(1 - t, 2) * (startHandle - start) + 6 * (1 - t) * t * (endHandle - startHandle) + 3 * (float)Math.Pow(t, 2) * (end - endHandle);
-    }
-
-    //gets acceleration at linearly interpolated time t
-    private Vector2 getAcc(float t)
-    {
-        return 6 * (1 - t) * (endHandle - 2 * startHandle + start) + 6 * t * (end - 2 * endHandle + startHandle);
-    }
-
-    private float getCurvature(float t)
-    {
-        return Vector2.Cross(getAcc(t), getVelocity(t)) / (float) Math.Pow(getVelocity(t).Length(), 3);
-    }
-
-
-}*/
-
-class Rect : Curve
-{
-    Bounds2 rect;
-    string color;
-    public Rect(Bounds2 rect, string color)
-    {
-        this.rect = rect;
-        this.color = color;
-    }
-
-    public Rect(string[] s, string color)
-    {
-        rect = new Bounds2(0,0,0,0);
-        if(s.Length == 8)
-        {
-            rect.Position.X = (float)Math.Round(Double.Parse(s[6]));
-            rect.Position.Y = (float)Math.Round(Double.Parse(s[7]));
-            rect.Size.X = (float)Math.Round(Double.Parse(s[0])) - 1;
-            rect.Size.Y = (float)Math.Round(Double.Parse(s[1])) - 1;
-        }
-        else if(s.Length >= 4)
-        {
-            rect.Position.X = (float)Math.Round(Double.Parse(s[0]));
-            rect.Position.Y = (float)Math.Round(Double.Parse(s[1]));
-            rect.Size.X = (float)Math.Round(Double.Parse(s[2])) - 1;
-            rect.Size.Y = (float)Math.Round(Double.Parse(s[3])) - 1;
-        }
-        this.color = color;
-    }
-
-    public Vector2 getNearestNormal(Vector2 pos)
-    {
-        if (!contains(pos))
-        {
-            return Vector2.UP;
-        }
-        if(color == "FF0000")
-        {
-            return Vector2.UP;
-        }
-        if (pos.Y == rect.Min.Y)
-        {
-            return Vector2.UP;
-        }
-        else if (pos.X == rect.Max.X)
-        {
-            return Vector2.RIGHT;
-        }
-        else if (pos.X == rect.Min.X)
-        {
-            return Vector2.LEFT;
-        }
-        else if (pos.Y == rect.Max.Y)
-        {
-            return Vector2.DOWN;
-        }
-        return Vector2.UP;
-
-    }
-
-    public float getNearestCurvature(Vector2 pos)
-    {
-        return -1;
-    }
-
-    public bool contains(Vector2 pos)
-    {
-        return rect.Contains(pos);
-    }
-}
 
