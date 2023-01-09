@@ -68,7 +68,7 @@ class Game
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = piper;
 
-        render = new Rendering("MapRenderNoBG.svg", "BackgroundParallaxTest.svg", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        render = new Rendering("transparentMap.svg", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
         string[] lines = File.ReadAllLines("Assets/map_svg_form.txt");
@@ -166,13 +166,9 @@ class Game
             //scoreboard
             sb = new Scoreboard();
 
-            Console.WriteLine(enemies.Count);
-            Console.WriteLine(flowers.Count);
             enemies.Clear();
             flowers.Clear();
             enemiesOnScreen.Clear();
-            Console.WriteLine(enemies.Count);
-            Console.WriteLine(flowers.Count);
             //create map
             map = new Map("RingEnemyMapWithStroke.bmp");
             enemyArr = enemies.ToArray();
@@ -182,7 +178,7 @@ class Game
             piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
             sprites[0] = piper;
 
-            render = new Rendering("MapRenderNoBG.svg", "BackgroundParallaxTest.svg", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+            render = new Rendering("transparentMap.svg", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
             //using svg to get normal vectors
             string[] lines = File.ReadAllLines("Assets/map_svg_form.txt");
