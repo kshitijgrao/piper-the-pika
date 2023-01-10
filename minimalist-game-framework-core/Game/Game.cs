@@ -49,7 +49,7 @@ class Game
     public static readonly int MEDIUM = 1;
     public static readonly int EASY = 0;
 
-    bool debugToggle = false;
+    public static bool debugToggle = false;
     public Game()
     {
         //scene control
@@ -154,6 +154,11 @@ class Game
 
                 Engine.DrawString("onGround? " + piper.onGround + " at " + piper.loc.Rounded(2).ToString(), new Vector2(Resolution. X - 12,12), Color.Black, arial,TextAlignment.Right);
                 Engine.DrawString("current normal: " + map.getNormalVector(piper.loc).ToString(), new Vector2(Resolution.X - 12, 24), Color.Black, arial,TextAlignment.Right);
+
+
+
+
+                Engine.DrawString("isSpinning? " + piper.isSpinning, new Vector2(Resolution.X - 12, 60), Color.Black, arial, TextAlignment.Right);
             }
         }
 

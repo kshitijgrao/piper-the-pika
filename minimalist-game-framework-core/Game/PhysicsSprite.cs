@@ -18,7 +18,10 @@ class PhysicsSprite : Sprite
 
     public static readonly float invincibleTime = 1;
 
+    internal bool isSpinning;
 
+
+    //TODO: clean up these constructors
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes) : base(loc,sprites,hitboxes)
     {
         vel = new Vector2(0, 0);
@@ -26,8 +29,8 @@ class PhysicsSprite : Sprite
         collided = false;
         timeLeft = 0;
         airTime = 0;
-        onGround = Game.map.onGround(this.getBotPoint());
-        
+        onGround = Game.map.onGround(loc);
+        isSpinning = false;
     }
 
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, bool onGround) : base(loc, sprites, hitboxes)
@@ -37,6 +40,7 @@ class PhysicsSprite : Sprite
         collided = false;
         timeLeft = 0;
         this.onGround = false;
+        isSpinning = false;
     }
 
     public PhysicsSprite(Vector2 loc, Texture sprites) : base(loc, sprites)
@@ -46,7 +50,8 @@ class PhysicsSprite : Sprite
         collided = false;
         timeLeft = 0;
         airTime = 0;
-        onGround = Game.map.onGround(this.getBotPoint());
+        onGround = Game.map.onGround(loc);
+        isSpinning = false;
     }
 
     public override bool notCollidable()
@@ -108,6 +113,7 @@ class PhysicsSprite : Sprite
         if (onGround && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
         {
             onGround = false;
+            isSpinning = true;
         }
 
 
@@ -146,6 +152,7 @@ class PhysicsSprite : Sprite
         collideSolid(timeLeft);
 
         onGround = true;
+        isSpinning = false;
         this.setState(Sprite.landState);
         if (airTime > 50)
         {

@@ -43,11 +43,7 @@ class Physics
         if (b1.Overlaps(b2))
         {
             if (obj2 is Enemy)
-            {
-                Debug.WriteLine("just got it straight up");
                 obj2.collide(obj1, Engine.TimeDelta);
-            }
-                
             else
                 obj2.collide(obj1);
             return;
@@ -63,7 +59,7 @@ class Physics
 
         if(relvel.X == 0)
         {
-            if (b2.Min.X <= b1.Position.X && b2.Max.X >= b1.Position.X)
+            if (b2.Min.X <= b1.Center.X && b2.Max.X >= b1.Center.X)
             {
                 minXt = 0;
                 maxXt = Engine.TimeDelta;
@@ -76,12 +72,12 @@ class Physics
         }
         else
         {
-            minXt = (b2.Min.X - b1.Position.X) / relvel.X;
-            maxXt = (b2.Max.X - b1.Position.X) / relvel.X;
+            minXt = (b2.Min.X - b1.Center.X) / relvel.X;
+            maxXt = (b2.Max.X - b1.Center.X) / relvel.X;
         }
         if (relvel.Y == 0)
         {
-            if (b2.Min.Y <= b1.Position.Y && b2.Max.Y >= b1.Position.Y)
+            if (b2.Min.Y <= b1.Center.Y && b2.Max.Y >= b1.Center.Y)
             {
                 minYt = 0;
                 maxYt = Engine.TimeDelta;
@@ -94,8 +90,8 @@ class Physics
         }
         else
         {
-            minYt = (b2.Min.Y - b1.Position.Y) / relvel.Y;
-            maxYt = (b2.Max.Y - b1.Position.Y) / relvel.Y;
+            minYt = (b2.Min.Y - b1.Center.Y) / relvel.Y;
+            maxYt = (b2.Max.Y - b1.Center.Y) / relvel.Y;
         }
 
         float tEnter = Math.Max(Math.Min(minXt, maxXt), Math.Min(minYt, maxYt));
@@ -109,7 +105,6 @@ class Physics
         {
             if(obj2 is Enemy && ((PhysicsSprite) obj2).mass > 0)
             {
-                Debug.WriteLine("here");
                 obj2.collide(obj1, Math.Max(0, tExit));
             }
             else
