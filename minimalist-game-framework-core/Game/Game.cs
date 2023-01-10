@@ -49,7 +49,7 @@ class Game
     public static readonly int MEDIUM = 1;
     public static readonly int EASY = 0;
 
-    bool debugToggle = false;
+    public static bool debugToggle = false;
     public Game()
     {
         //scene control
@@ -68,36 +68,23 @@ class Game
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = piper;
 
-        render = new Rendering("transparentMap.svg", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        piper.onPath = false;
+
+
+        Path2 tunnelTest = new BezierGroup(new Vector2[] { new Vector2(6134, 586), new Vector2(6395.19f, 586), new Vector2(6302.21f, 709.375f), new Vector2(6270.96f, 741), new Vector2(6239.71f, 772.625f), new Vector2(6230.88f, 896), new Vector2(6482, 896) });
+
+        piper.currPath = tunnelTest;
+        piper.fractionOfPath = 0;
+
+        render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
-        string[] lines = File.ReadAllLines("Assets/map_svg_form.txt");
-        foreach (string line in lines)
-        {
-            if (line.Length > 16)
-            {
-                if (line.Substring(0, 5) == "<rect" && (line.Substring(line.Length - 16) == "fill=\"#710000\"/>" || line.Substring(line.Length - 16) == "fill=\"#FF0000\"/>"))
-                {
-                    if (line.Contains("y"))
-                    {
-                        string bruh = line.Substring(9, line.Length - 18 - 9).Replace("=", "").Replace("width", "").Replace("height", "").Replace("y", "").Replace("\"\"", "\"").Replace(" ", "");
-                        string[] rectVals = line.Substring(9, line.Length - 18 - 9).Replace("=", "").Replace("width", "").Replace("height", "").Replace("y", "").Replace(" ", "").Replace("\"\"", "\"").Split('\"');
-                        map.addCurve(new Rect(rectVals, line.Substring(line.Length - 9, 6)));
-                    }
-                    else if (line.Contains("transform"))
-                    {
-                        string[] rectVals = line.Substring(13, line.Length - 19 - 13).Replace("transform=\"matrix(", "").Replace("height=", "").Replace("\"", "").Split(' ');
-                        map.addCurve(new Rect(rectVals, line.Substring(line.Length - 9, 6)));
-                    }
-                }
-            }
-        }
+        SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
 
     }
 
     public void Update()
     {
-        Debug.WriteLine(map.getNormalVector(new Vector2(2118,774)).ToString());
         //scene control
         if (startScene == 2)
         {
@@ -107,12 +94,14 @@ class Game
         else if (endScene) { Scenes.endScene(message); }
         else
         {
+
             currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));
 
 
             //collision detection
             //ground and walls
             Physics.detectSolid(piper);
+            Physics.detectPath(piper);
             //Physics.detectGround(piper);
             //Physics.detectUnpenetrable(piper);
 
@@ -136,13 +125,14 @@ class Game
                 enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc));
             };
             piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));
-            
+
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
-            if (piper.loc.X >= 6125)
+            if (piper.loc.X >= 8000)
             {
                 endScene = true;
             }
+
             if (Engine.GetKeyDown(Key.F3))
             {
                 debugToggle = !debugToggle;
@@ -152,55 +142,35 @@ class Game
                 Engine.DrawRectSolid(new Bounds2(render.pos + piper.loc - new Vector2(1, 1), new Vector2(3, 3)), Color.Red);
                 piper.drawVectors(render.pos + piper.loc);
 
-                Engine.DrawString("onGround? " + piper.onGround + " at " + piper.loc.Rounded(2).ToString(), new Vector2(Resolution. X - 12,12), Color.Black, arial,TextAlignment.Right);
-                Engine.DrawString("current normal: " + map.getNormalVector(piper.loc).ToString(), new Vector2(Resolution.X - 12, 24), Color.Black, arial,TextAlignment.Right);
+                Engine.DrawString("Pos: " + piper.loc.Rounded(2).ToString(), new Vector2(Resolution.X - 12, 2), Color.Black, arial, TextAlignment.Right);
+                Engine.DrawString("onGround? " + piper.onGround, new Vector2(Resolution.X - 12, 14), Color.Black, arial, TextAlignment.Right);
+                Engine.DrawString("onPath? " + piper.onPath + " with fraction: " + Math.Round(piper.fractionOfPath, 3), new Vector2(Resolution.X - 12, 26), Color.Black, arial, TextAlignment.Right);
+                Engine.DrawString("current normal: " + map.getNormalVector(piper.loc).ToString(), new Vector2(Resolution.X - 12, 38), Color.Black, arial, TextAlignment.Right);
+                Engine.DrawString("isSpinning? " + piper.isSpinning, new Vector2(Resolution.X - 12, 50), Color.Black, arial, TextAlignment.Right);
             }
-        }
 
-        if (Engine.GetKeyDown(Key.R))
-        {
-            //scene control
-            startScene = 1;
-            endScene = false;
-
-            //scoreboard
-            sb = new Scoreboard();
-
-            enemies.Clear();
-            flowers.Clear();
-            enemiesOnScreen.Clear();
-            //create map
-            map = new Map("RingEnemyMapWithStroke.bmp");
-            enemyArr = enemies.ToArray();
-            flowerArr = flowers.ToArray();
-
-            // create piper sprite
-            piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
-            sprites[0] = piper;
-
-            render = new Rendering("transparentMap.svg", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
-
-            //using svg to get normal vectors
-            string[] lines = File.ReadAllLines("Assets/map_svg_form.txt");
-            foreach (string line in lines)
+            if (Engine.GetKeyDown(Key.R))
             {
-                if (line.Length > 16)
-                {
-                    if (line.Substring(0, 5) == "<rect" && (line.Substring(line.Length - 16) == "fill=\"#710000\"/>" || line.Substring(line.Length - 16) == "fill=\"#FF0000\"/>"))
-                    {
-                        if (line.Contains("y"))
-                        {
-                            string bruh = line.Substring(9, line.Length - 18 - 9).Replace("=", "").Replace("width", "").Replace("height", "").Replace("y", "").Replace("\"\"", "\"").Replace(" ", "");
-                            string[] rectVals = line.Substring(9, line.Length - 18 - 9).Replace("=", "").Replace("width", "").Replace("height", "").Replace("y", "").Replace(" ", "").Replace("\"\"", "\"").Split('\"');
-                            map.addCurve(new Rect(rectVals, line.Substring(line.Length - 9, 6)));
-                        }
-                        else if (line.Contains("transform"))
-                        {
-                            string[] rectVals = line.Substring(13, line.Length - 19 - 13).Replace("transform=\"matrix(", "").Replace("height=", "").Replace("\"", "").Split(' ');
-                            map.addCurve(new Rect(rectVals, line.Substring(line.Length - 9, 6)));
-                        }
-                    }
-                }
+                //scene control
+                startScene = 1;
+                endScene = false;
+
+                //scoreboard
+                sb = new Scoreboard();
+
+                //create map
+                map = new Map("RingEnemyMapWithStroke.bmp");
+                enemyArr = enemies.ToArray();
+                flowerArr = flowers.ToArray();
+
+                // create piper sprite
+                piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
+                sprites[0] = piper;
+
+                render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+
+                //using svg to get normal vectors
+                SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
             }
         }
     }
