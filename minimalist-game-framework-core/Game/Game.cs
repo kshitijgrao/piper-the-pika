@@ -28,6 +28,7 @@ class Game
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-2.png");
     readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
     readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
+    readonly Music basicMusic = Engine.LoadMusic("emre_turkoglu_piper_basic_music.mp3");
 
     // sprites
     public static Sonic piper;
@@ -81,6 +82,8 @@ class Game
         //using svg to get normal vectors
         SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
 
+        // start music
+        Engine.PlayMusic(basicMusic);
     }
 
     public void Update()
@@ -90,8 +93,15 @@ class Game
         {
             startScene = Scenes.instructionsScene();
         }
-        else if (startScene == 1) { startScene = Scenes.titleScene(); }
-        else if (endScene) { Scenes.endScene(message); }
+        else if (startScene == 1) 
+        { 
+            startScene = Scenes.titleScene(); 
+        }
+        else if (endScene) 
+        {
+            Engine.StopMusic(5);
+            Scenes.endScene(message); 
+        }
         else
         {
 
