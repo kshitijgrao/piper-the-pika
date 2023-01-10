@@ -60,7 +60,7 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("RingEnemyMapWithStroke.bmp");
+        map = new Map("testingNewMap.png");
         enemyArr = enemies.ToArray();
         flowerArr = flowers.ToArray();
 
@@ -76,7 +76,7 @@ class Game
         piper.currPath = tunnelTest;
         piper.fractionOfPath = 0;
 
-        render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        render = new Rendering("displayMapNoBG.svg", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
         SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
@@ -167,7 +167,7 @@ class Game
                 piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
                 sprites[0] = piper;
 
-                render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+                render = new Rendering("displayMapNoBG.svg", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
                 //using svg to get normal vectors
                 SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
