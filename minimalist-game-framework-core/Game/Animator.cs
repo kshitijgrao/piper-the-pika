@@ -105,10 +105,18 @@ internal static class Animator
         // find bounds on spritemap and draw
         Vector2 piperFrameStart = new Vector2((int)frameIndex * sprite.getHitboxNoCalc().X, (int)sprite.getState() * sprite.getHitboxNoCalc().Y);
         Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, sprite.getHitboxNoCalc());
+        sprite.setFrame(piperFrameBounds);
         sprite.draw(piperFrameBounds, position);
 
         // return current frame
         return frameIndex;
+    }
+
+    public static void copyPiperFrame(Sprite piper, Sprite nextFrame)
+    {
+        piper.loc = nextFrame.loc;
+        piper.setFrame(nextFrame.getFrame());
+        piper.setLeft(nextFrame.isLeft());
     }
 
     public static void animatePiperLanding(Sprite piper)

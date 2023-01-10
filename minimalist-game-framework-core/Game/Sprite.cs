@@ -12,6 +12,7 @@ class Sprite {
     private Boolean spriteFaceLeft;
     private Boolean AnimationLocked; // a sprite is locked if stuck finishing an animation
     private protected Vector2 hitbox;
+    private Bounds2 currentFrame;
 
     private bool invisible;
 
@@ -27,6 +28,7 @@ class Sprite {
         AnimationLocked = false;
         state = 0;
         invisible = false;
+        currentFrame = new Bounds2(Vector2.Zero, new Vector2(24, 24));
     }
 
     public Sprite(Vector2 loc, Texture spritemap, Vector2 hitbox)
@@ -37,11 +39,22 @@ class Sprite {
         spriteFaceLeft = false;
         state = 0;
         invisible = false;
+        currentFrame = new Bounds2(Vector2.Zero, new Vector2(24, 24));
     }
 
     public Sprite(float x, float y, Texture sprites, Vector2 hitbox) : this(new Vector2(x, y), sprites, hitbox)
     {
         
+    }
+
+    public void setFrame(Bounds2 currentFrame)
+    {
+        this.currentFrame = currentFrame;
+    }
+
+    public Bounds2 getFrame()
+    {
+        return currentFrame;
     }
 
     public Boolean isInvisible()
@@ -67,6 +80,11 @@ class Sprite {
     public void move(Vector2 v)
     {
         loc += v;
+    }
+
+    public void setLeft(Boolean isLeft)
+    {
+        spriteFaceLeft = isLeft;
     }
 
     public void turn()

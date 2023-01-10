@@ -28,8 +28,10 @@ class Game
     readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap.png");
     readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
     readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
+    readonly Music basicMusic = Engine.LoadMusic("emre_turkoglu_piper_basic_music.mp3");
 
     // sprites
+    public static Sonic piper;
     public static Sonic nextFrame;
     public static Enemy wolf;
     public static Enemy hawk;
@@ -65,6 +67,9 @@ class Game
         flowerArr = flowers.ToArray();
 
         // create piper sprite
+        piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
+
+        // next frame
         nextFrame = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = nextFrame;
 
@@ -93,6 +98,9 @@ class Game
             }
         }
 
+        // start music
+        Engine.PlayMusic(basicMusic, true, 0);
+
     }
 
     public void Update()
@@ -103,18 +111,26 @@ class Game
         {
             startScene = Scenes.instructionsScene();
         }
-        else if (startScene == 1) { startScene = Scenes.titleScene(); }
-        else if (endScene) { Scenes.endScene(message); }
+        else if (startScene == 1) 
+        { 
+            startScene = Scenes.titleScene(); 
+        }
+        else if (endScene) 
+        {
+            Engine.StopMusic(0);
+            Scenes.endScene(message); 
+        }
         else
         {
+            Animator.animatePiper(nextFrame, render.pos + nextFrame.loc, currentKey);
             currentKey = InputHandler.getPlayerInput(nextFrame, render.pos + nextFrame.loc - new Vector2(12, 12));
 
+            // updates current frame based on calculated next frame
+            Animator.copyPiperFrame(piper, nextFrame);
 
             //collision detection
             //ground and walls
             Physics.detectSolid(nextFrame);
-            //Physics.detectGround(piper);
-            //Physics.detectUnpenetrable(piper);
 
             //other sprites
             Physics.detectCollisions(nextFrame, flowerArr);
@@ -122,6 +138,7 @@ class Game
 
 
             //update acceleration
+            piper.setAcceleration(currentKey);
             nextFrame.setAcceleration(currentKey);
 
             //update overall physics
@@ -135,12 +152,14 @@ class Game
                 enemy.updateState();
                 enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc));
             };
-
-            // draws current frame
-            //nextFrame.setFrameIndex(Animator.animatePiper(nextFrame, render.pos + nextFrame.loc, currentKey));
             
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
             sb.updateScoreboard();
+
+            // draws current frame
+            piper.draw(piper.getFrame(), render.pos + piper.loc);
+            System.Diagnostics.Debug.WriteLine(piper.getFrame() + " " + piper.loc);
+
             if (nextFrame.loc.X >= 6125)
             {
                 endScene = true;
@@ -159,6 +178,7 @@ class Game
 
                 // draws next frame
                 nextFrame.setFrameIndex(Animator.animatePiper(nextFrame, render.pos + nextFrame.loc, currentKey));
+                Engine.DrawString("next", render.pos + nextFrame.loc + new Vector2(-10, -10), Color.White, arial);
             }
         }
 
