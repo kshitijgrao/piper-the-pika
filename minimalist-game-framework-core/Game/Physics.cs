@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -13,7 +14,7 @@ class Physics
     public static readonly Vector2 g = new Vector2(0, 600);
     public static readonly int collisionSteps = 100;
     public static readonly int collisionPixelThresh = 1;
-    public static readonly float coeffRestitution = 0.5f;
+    public static readonly float coeffRestitution = 12f;
 
     //detect collisions for things that are within the window
     public static void detectCollisions(List<Flower> flowers)
@@ -32,8 +33,8 @@ class Physics
 
     public static void detectCollision(PhysicsSprite obj1, Sprite obj2)
     {
-
-        if (obj2.notCollidable())
+        
+        if (obj2.notCollidable() || obj1.notCollidable())
         {
             return;
         }
@@ -58,7 +59,7 @@ class Physics
 
         if (relvel.X == 0)
         {
-            if (b2.Min.X <= b1.Position.X && b2.Max.X >= b1.Position.X)
+            if (b2.Min.X <= b1.Center.X && b2.Max.X >= b1.Center.X)
             {
                 minXt = 0;
                 maxXt = Engine.TimeDelta;
@@ -71,12 +72,12 @@ class Physics
         }
         else
         {
-            minXt = (b2.Min.X - b1.Position.X) / relvel.X;
-            maxXt = (b2.Max.X - b1.Position.X) / relvel.X;
+            minXt = (b2.Min.X - b1.Center.X) / relvel.X;
+            maxXt = (b2.Max.X - b1.Center.X) / relvel.X;
         }
         if (relvel.Y == 0)
         {
-            if (b2.Min.Y <= b1.Position.Y && b2.Max.Y >= b1.Position.Y)
+            if (b2.Min.Y <= b1.Center.Y && b2.Max.Y >= b1.Center.Y)
             {
                 minYt = 0;
                 maxYt = Engine.TimeDelta;
@@ -89,8 +90,8 @@ class Physics
         }
         else
         {
-            minYt = (b2.Min.Y - b1.Position.Y) / relvel.Y;
-            maxYt = (b2.Max.Y - b1.Position.Y) / relvel.Y;
+            minYt = (b2.Min.Y - b1.Center.Y) / relvel.Y;
+            maxYt = (b2.Max.Y - b1.Center.Y) / relvel.Y;
         }
 
         float tEnter = Math.Max(Math.Min(minXt, maxXt), Math.Min(minYt, maxYt));

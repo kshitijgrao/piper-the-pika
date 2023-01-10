@@ -88,7 +88,14 @@ class Sprite {
     {
         if (!invisible) {
             TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
+            if (Game.debugToggle)
+            {
+                Engine.DrawRectEmpty(new Bounds2(position - hitbox / 2, hitbox), Color.Yellow);
+            }
+
+            
             Engine.DrawTexture(spritemap, position - hitbox / 2, source: bounds, mirror: mirror);
+            
         }
     }
 
@@ -159,7 +166,7 @@ class Sprite {
         return loc + hitbox.X / 2 * direc;
     }
 
-    public bool notCollidable()
+    public virtual bool notCollidable()
     {
         return invisible;
     }

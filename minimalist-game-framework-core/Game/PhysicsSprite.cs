@@ -20,15 +20,23 @@ class PhysicsSprite : Sprite
     internal float fractionOfPath;
     internal float velPath;
     internal float accPath;
+    private int invincibleFramesLeft;
 
-    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes) : base(loc, sprites, hitboxes)
+    public static readonly float invincibleTime = 1;
+
+    internal bool isSpinning;
+
+
+    //TODO: clean up these constructors
+    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes) : base(loc,sprites,hitboxes)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
         collided = false;
         timeLeft = 0;
         airTime = 0;
-        onGround = Game.map.onGround(this.getBotPoint());
+        onGround = Game.map.onGround(loc);
+        isSpinning = false;
         currPath = null;
         fractionOfPath = 0;
     }
@@ -40,6 +48,7 @@ class PhysicsSprite : Sprite
         collided = false;
         timeLeft = 0;
         this.onGround = false;
+        isSpinning = false;
         currPath = null;
         fractionOfPath = 0;
     }
@@ -51,9 +60,15 @@ class PhysicsSprite : Sprite
         collided = false;
         timeLeft = 0;
         airTime = 0;
-        onGround = Game.map.onGround(this.getBotPoint());
+        onGround = Game.map.onGround(loc);
+        isSpinning = false;
         currPath = null;
         fractionOfPath = 0;
+    }
+
+    public override bool notCollidable()
+    {
+        return (invincibleFramesLeft > 0) || base.notCollidable();
     }
 
     public void setVelocity(Vector2 vel)
@@ -76,6 +91,10 @@ class PhysicsSprite : Sprite
         airTime += time;
     }
 
+    public void setInvincible()
+    {
+        invincibleFramesLeft = (int)Math.Round(invincibleTime / Engine.TimeDelta);
+    }
     public void setAccelerationDirect(Vector2 acc)
     {
         this.acc = acc;
@@ -139,6 +158,7 @@ class PhysicsSprite : Sprite
         if (onGround && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
         {
             onGround = false;
+            isSpinning = true;
         }
 
 
@@ -151,6 +171,13 @@ class PhysicsSprite : Sprite
         {
             Animator.setPiperSprinting(false);
         }
+
+        //subtract invisible frames
+        if(invincibleFramesLeft > 0)
+        {
+            invincibleFramesLeft -= 1;
+        }
+
         keepOnSurface();
     }
 
@@ -170,6 +197,7 @@ class PhysicsSprite : Sprite
         collideSolid(timeLeft);
 
         onGround = true;
+        isSpinning = false;
         this.setState(Sprite.landState);
         if (airTime > 50)
         {

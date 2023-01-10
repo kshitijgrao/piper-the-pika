@@ -49,7 +49,7 @@ class Game
     public static readonly int MEDIUM = 1;
     public static readonly int EASY = 0;
 
-    bool debugToggle = false;
+    public static bool debugToggle = false;
     public Game()
     {
         //scene control
@@ -142,10 +142,11 @@ class Game
                 Engine.DrawRectSolid(new Bounds2(render.pos + piper.loc - new Vector2(1, 1), new Vector2(3, 3)), Color.Red);
                 piper.drawVectors(render.pos + piper.loc);
 
-                Engine.DrawString("Pos: " + piper.loc.Rounded(2).ToString(), new Vector2(Resolution.X - 12, 12), Color.Black, arial, TextAlignment.Right);
-                Engine.DrawString("onGround? " + piper.onGround, new Vector2(Resolution.X - 12, 24), Color.Black, arial, TextAlignment.Right);
-                Engine.DrawString("onPath? " + piper.onPath + " with fraction: " + Math.Round(piper.fractionOfPath, 3), new Vector2(Resolution.X - 12, 36), Color.Black, arial, TextAlignment.Right);
-                Engine.DrawString("current normal: " + map.getNormalVector(piper.loc).ToString(), new Vector2(Resolution.X - 12, 48), Color.Black, arial, TextAlignment.Right);
+                Engine.DrawString("Pos: " + piper.loc.Rounded(2).ToString(), new Vector2(Resolution.X - 12, 2), Color.Black, arial, TextAlignment.Right);
+                Engine.DrawString("onGround? " + piper.onGround, new Vector2(Resolution.X - 12, 14), Color.Black, arial, TextAlignment.Right);
+                Engine.DrawString("onPath? " + piper.onPath + " with fraction: " + Math.Round(piper.fractionOfPath, 3), new Vector2(Resolution.X - 12, 26), Color.Black, arial, TextAlignment.Right);
+                Engine.DrawString("current normal: " + map.getNormalVector(piper.loc).ToString(), new Vector2(Resolution.X - 12, 38), Color.Black, arial, TextAlignment.Right);
+                Engine.DrawString("isSpinning? " + piper.isSpinning, new Vector2(Resolution.X - 12, 50), Color.Black, arial, TextAlignment.Right);
             }
 
             if (Engine.GetKeyDown(Key.R))

@@ -172,7 +172,7 @@ class Enemy : PhysicsSprite
     public override void collide(PhysicsSprite other, float timeLeft)
     {
         if (other is PhysicsSprite) {
-            if (((PhysicsSprite)other).vel.Length() > killSpeed)
+            if (other.isSpinning)
             {
                 Game.sb.enemyKilled(1);
                 base.collide(other);
@@ -181,6 +181,7 @@ class Enemy : PhysicsSprite
             {
                 other.loc += other.vel * (Engine.TimeDelta - timeLeft);
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
+                other.setInvincible();
 
                 Animator.animatePiperTakingDamage(Game.piper);
 
