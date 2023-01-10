@@ -48,22 +48,29 @@ class Sonic : PhysicsSprite
     {
         if(key == Key.D)
         {
-            if (onGround)
+            if (onPath)
+                accPath = accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath,key);
+            else if (onGround)
                 this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(90);
             else
                 this.acc = accelerationMag * (new Vector2(1, 0));
         }
         else if(key == Key.A)
         {
-            if(onGround)
+            if (onPath)
+               accPath = -1 * accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath,key);
+            else if (onGround)
                this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(270);
             else
                 this.acc = accelerationMag * (new Vector2(-1, 0));
         }
         else
         {
-            //change this to just check onGround?
-            if (onGround)
+            if (onPath)
+            {
+                accPath = accelerationMag * this.currPath.getBoost(fractionOfPath, Key.D);
+            }
+            else if (onGround)
             {
                 this.acc = vel.Normalized() * (-1) * Math.Min(brakeAccMag, vel.Length() / Engine.TimeDelta);
             }
@@ -74,17 +81,26 @@ class Sonic : PhysicsSprite
         }
         if(flows > 0)
         {
-            acc.X *= accelerationBoostFactor;
+            acc *= accelerationBoostFactor;
         }
 
         if (Game.map.inAir(loc))
         {
             acc.X *= accelerationBoostFactor;
         }
+        if (onPath) 
+        {
+            accPath += Physics.getPhysicsAcceleration(this, this.loc, this.vel).X;
+        }
+        else
+        {
+            this.acc += Physics.getPhysicsAcceleration(this, this.loc, this.vel);
+        }
 
-        this.acc += Physics.getPhysicsAcceleration(this.loc, this.vel);
+
 
         //account for weird floating point errors
+        accPath = (float) Math.Round(accPath, 2);
         this.acc.round(2);
 
     }
