@@ -106,6 +106,12 @@ class PhysicsSprite : Sprite
         Engine.DrawLine(start, start + vel, Color.Black);
     }
 
+    public void setOnPath(bool onPath)
+    {
+        this.onPath = onPath;
+        Animator.setPiperSpinning(onPath, Game.piper);
+    }
+
     public override void updateState()
     {
         float time = collided ? timeLeft : Engine.TimeDelta;
@@ -123,12 +129,12 @@ class PhysicsSprite : Sprite
             if (fractionOfPath > 1 || (fractionOfPath == 1 & velPath > 0))
             {
                 fractionOfPath = 1;
-                onPath = false;
+                setOnPath(false);
             }
             if (fractionOfPath < 0 || (fractionOfPath == 0 & velPath < 0))
             {
                 fractionOfPath = 0;
-                onPath = false;
+                setOnPath(false);
             }
 
 
@@ -147,7 +153,7 @@ class PhysicsSprite : Sprite
                 Debug.WriteLine("The current tangent is " + currTangent.ToString());
                 Debug.WriteLine(Physics.g.ToString() + " dot " + currTangent.Rotated(270).ToString() + " is " + Vector2.Dot(Physics.g, currTangent.Rotated(270)));
                 Debug.WriteLine("asdfasdfasdf");
-                onPath = false;
+                setOnPath(false);
             }
 
         }
@@ -227,6 +233,7 @@ class PhysicsSprite : Sprite
         onPath = true;
         fractionOfPath = currPath.nearestFraction(loc);
         velPath = Vector2.Dot(vel, currPath.getTangent(fractionOfPath));
+        Animator.setPiperSpinning(true, Game.piper);
 
     }
 
