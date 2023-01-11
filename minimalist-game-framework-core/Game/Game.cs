@@ -61,7 +61,7 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("collision_map_1_10.bmp");
+        map = new Map("collision_map_1_11.bmp");
         
 
         // create piper sprite
@@ -77,7 +77,7 @@ class Game
         debugToggle = true;
 
         
-        render = new Rendering("display_map_1_10_1.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        render = new Rendering("display_map_1_11.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
         SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
@@ -88,7 +88,7 @@ class Game
         // start music
         Engine.PlayMusic(basicMusic);
 
-        piper.currPath = map.paths[map.paths.Count - 1];
+        //piper.currPath = map.paths[map.paths.Count - 1];
     }
 
     public void Update()
@@ -184,13 +184,13 @@ class Game
                 sb = new Scoreboard();
 
                 //create map
-                map = new Map("collision_map_1_10.bmp");
+                map = new Map("collision_map_1_11.bmp");
 
                 // create piper sprite
                 piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
                 sprites[0] = piper;
 
-                render = new Rendering("display_map_1_10_1.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+                render = new Rendering("display_map_1_11.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
                 //using svg to get normal vectors
                 SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
