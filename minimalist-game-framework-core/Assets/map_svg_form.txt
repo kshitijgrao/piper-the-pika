@@ -3,11 +3,11 @@
 <g clip-path="url(#clip0_433_457)">
 <rect width="8050" height="1255" fill="white"/>
 <rect width="347" height="1257" transform="matrix(-1 0 0 1 6482 0)" fill="#710000"/>
-<rect width="320" height="340" transform="matrix(-1 0 0 1 6802 916)" fill="#710000"/>
+<rect width="320" height="351" transform="matrix(-1 0 0 1 6802 905)" fill="#710000"/>
 <rect width="348" height="1257" transform="matrix(-1 0 0 1 7150 0)" fill="#710000"/>
-<rect width="900" height="30" transform="matrix(-1 0 0 1 8050 1226)" fill="#710000"/>
-<path d="M6802 896C7063.19 896 6970.21 1019.38 6938.96 1051C6907.71 1082.62 6898.88 1206 7150 1206" stroke="white" stroke-width="40"/>
-<path d="M6134 586C6395.19 586 6302.21 709.375 6270.96 741C6239.71 772.625 6230.88 896 6482 896" stroke="white" stroke-width="40"/>
+<rect width="900" height="41" transform="matrix(-1 0 0 1 8050 1215)" fill="#710000"/>
+<path d="M6802 893C7063.19 893 6970.21 1016.38 6938.96 1048C6907.71 1079.62 6898.88 1203 7150 1203" stroke="white" stroke-width="24"/>
+<path d="M6134 583C6395.19 583 6302.21 706.375 6270.96 738C6239.71 769.625 6230.88 893 6482 893" stroke="white" stroke-width="24"/>
 <rect x="5479" y="687.626" width="349" height="25.1008" fill="#710000"/>
 <rect x="5663.61" y="629.894" width="164.39" height="57.7318" fill="#710000"/>
 <rect x="5610.75" y="641.405" width="53.2225" height="46.1492" fill="#710000"/>
@@ -81,12 +81,13 @@
 <rect x="3302" y="597" width="30" height="30" fill="#710000"/>
 <rect x="5752" y="578" width="30" height="30" fill="#710000"/>
 <rect x="2028" y="744" width="30" height="30" fill="#710000"/>
-<path d="M6802 896C7063.19 896 6970.21 1019.38 6938.96 1051C6907.71 1082.62 6898.88 1206 7150 1206" stroke="#EBFF00" stroke-width="5"/>
-<path d="M6134 586C6395.19 586 6302.21 709.375 6270.96 741C6239.71 772.625 6230.88 896 6482 896" stroke="#EBFF00" stroke-width="5"/>
-<rect x="6577" y="896" width="1" height="1" fill="#FF00F5"/>
-<rect x="6637" y="896" width="1" height="1" fill="#FF00F5"/>
-<rect x="6667" y="896" width="1" height="1" fill="#FF00F5"/>
-<rect x="6697" y="896" width="1" height="1" fill="#FF00F5"/>
+<path d="M6802 893C7063.19 893 6970.21 1016.38 6938.96 1048C6907.71 1079.62 6898.88 1203 7150 1203" stroke="#EBFF00" stroke-width="24"/>
+<path d="M6134 583C6395.19 583 6302.21 706.375 6270.96 738C6239.71 769.625 6230.88 893 6482 893" stroke="#EBFF00" stroke-width="24"/>
+<rect x="6577" y="893" width="1" height="1" fill="#FF00F5"/>
+<rect x="6607" y="893" width="1" height="1" fill="#FF00F5"/>
+<rect x="6637" y="893" width="1" height="1" fill="#FF00F5"/>
+<rect x="6667" y="893" width="1" height="1" fill="#FF00F5"/>
+<rect x="6697" y="893" width="1" height="1" fill="#FF00F5"/>
 <rect x="7426" y="1201" width="1" height="1" fill="#FF00F5"/>
 <rect x="7396" y="1201" width="1" height="1" fill="#FF00F5"/>
 <rect x="7456" y="1201" width="1" height="1" fill="#FF00F5"/>
@@ -115,9 +116,7 @@
 <rect x="4153" y="821" width="1" height="1" fill="#FF00F5"/>
 <rect x="4183" y="821" width="1" height="1" fill="#FF00F5"/>
 <rect x="4213" y="821" width="1" height="1" fill="#FF00F5"/>
-<rect x="6607" y="896" width="1" height="1" fill="#FF00F5"/>
 <rect x="2936" y="867" width="1" height="1" fill="#0E770B"/>
-<rect x="3636" y="827" width="1" height="1" fill="#05FF00"/>
 <rect x="3938" y="867" width="1" height="1" fill="#05FF00"/>
 <rect x="4178" y="867" width="1" height="1" fill="#05FF00"/>
 <rect x="4518" y="717" width="1" height="1" fill="#0E770B"/>
@@ -138,9 +137,10 @@
 <rect x="1426" y="963" width="1" height="1" fill="#FF00F5"/>
 <rect x="1468" y="955" width="1" height="1" fill="#FF00F5"/>
 <rect x="2022" y="694" width="1" height="1" fill="#FF00F5"/>
-<rect x="1079" y="803" width="1" height="1" fill="#0E770B"/>
-<rect x="1949" y="754" width="1" height="1" fill="#05FF00"/>
-<rect x="1733" y="818" width="1" height="1" fill="#05FF00"/>
+<line x1="3585" y1="829.5" x2="3785" y2="829.5" stroke="#0E770B"/>
+<line x1="995" y1="810.5" x2="1195" y2="810.5" stroke="#0E770B"/>
+<line x1="1682" y1="816.5" x2="1762" y2="816.5" stroke="#05FF00"/>
+<line x1="1895" y1="756.5" x2="2015" y2="756.5" stroke="#05FF00"/>
 <rect x="3290" y="597" width="12" height="18" fill="#710000"/>
 <rect x="3332" y="597" width="12" height="18" fill="#710000"/>
 <rect x="3178" y="501" width="12" height="30" fill="#710000"/>
@@ -159,8 +159,8 @@
 <rect x="5782" y="578" width="12" height="30" fill="#710000"/>
 <rect x="5740" y="566" width="54" height="12" fill="#710000"/>
 <rect x="4087" y="595" width="274" height="12" fill="#FF0000"/>
-<rect x="4075" y="595" width="12" height="42" fill="#FF0000"/>
-<rect x="4005" y="625" width="12" height="42" fill="#FF0000"/>
+<rect x="4075" y="595" width="12" height="42" fill="#710000"/>
+<rect x="4005" y="625" width="12" height="42" fill="#710000"/>
 <rect x="4017" y="625" width="58" height="12" fill="#FF0000"/>
 <rect x="3738" y="655" width="267" height="12" fill="#FF0000"/>
 <rect x="5067" y="712" width="12" height="50" fill="#710000"/>
@@ -215,6 +215,7 @@
 <path d="M4794 676C4682.62 676 4645.85 654.275 4579.59 636.526C4513.33 618.778 4500.23 601 4361 601" stroke="#FF0000" stroke-width="12"/>
 <path d="M3678 676C3693.43 676 3698.53 671.655 3707.71 668.105C3716.89 664.556 3718.71 661 3738 661" stroke="#FF0000" stroke-width="12"/>
 <path d="M2686 726C2794.5 726 2814 616.798 2847 616" stroke="#FF0000" stroke-width="12"/>
+<path d="M5099.5 670.5C5132.67 674.833 5208.7 680.9 5247.5 670.5C5296 657.5 5442 617.5 5450 552.5C5458 487.5 5401.5 468.5 5358 468.5C5314.5 468.5 5230 484.5 5265 548.5C5300 612.5 5383 660.5 5423 670.5C5463 680.5 5497.5 661.5 5541.5 624" stroke="#EBFF00"/>
 <path d="M3391.18 943.5C3361.49 943.5 3309.64 920.243 3271.65 906.754C3233.66 893.265 3177.44 878.395 3099 881" stroke="#710000" stroke-width="12"/>
 </g>
 <rect x="5" y="5" width="8040" height="1245" stroke="#710000" stroke-width="10"/>

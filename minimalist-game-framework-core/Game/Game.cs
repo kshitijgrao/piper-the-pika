@@ -61,29 +61,34 @@ class Game
         sb = new Scoreboard();
 
         //create map
-        map = new Map("RingEnemyMapWithStroke.bmp");
-        enemyArr = enemies.ToArray();
-        flowerArr = flowers.ToArray();
+        map = new Map("collision_map_1_10.bmp");
+        
 
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = piper;
+        
+        piper.onPath = true;
 
-        piper.onPath = false;
+        Path2 arcTest = new Arc(new Vector2(160, 860), 80, 190, 350);
 
+        piper.currPath = arcTest;
+        piper.fractionOfPath = 0.1f;
+        debugToggle = true;
 
-        Path2 tunnelTest = new BezierGroup(new Vector2[] { new Vector2(6134, 586), new Vector2(6395.19f, 586), new Vector2(6302.21f, 709.375f), new Vector2(6270.96f, 741), new Vector2(6239.71f, 772.625f), new Vector2(6230.88f, 896), new Vector2(6482, 896) });
-
-        piper.currPath = tunnelTest;
-        piper.fractionOfPath = 0;
-
-        render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        
+        render = new Rendering("display_map_1_10_1.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
         SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
 
+        enemyArr = enemies.ToArray();
+        flowerArr = flowers.ToArray();
+
         // start music
         Engine.PlayMusic(basicMusic);
+
+        piper.currPath = map.paths[map.paths.Count - 1];
     }
 
     public void Update()
@@ -129,6 +134,16 @@ class Game
             // collect input and draw frame
 
             render.scrollingMotion();
+
+            if (debugToggle)
+            {
+                if (Engine.GetKeyDown(Key.C))
+                {
+                    render.pos = Resolution / 2 - piper.loc;
+                }
+            }
+            
+
             foreach (Enemy enemy in enemiesOnScreen)
             {
                 enemy.updateState();
@@ -169,18 +184,18 @@ class Game
                 sb = new Scoreboard();
 
                 //create map
-                map = new Map("RingEnemyMapWithStroke.bmp");
-                enemyArr = enemies.ToArray();
-                flowerArr = flowers.ToArray();
+                map = new Map("collision_map_1_10.bmp");
 
                 // create piper sprite
                 piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
                 sprites[0] = piper;
 
-                render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+                render = new Rendering("display_map_1_10_1.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
                 //using svg to get normal vectors
                 SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
+                enemyArr = enemies.ToArray();
+                flowerArr = flowers.ToArray();
             }
         }
     }

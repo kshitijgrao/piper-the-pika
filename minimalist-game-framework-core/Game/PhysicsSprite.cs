@@ -141,8 +141,12 @@ class PhysicsSprite : Sprite
             acc = currTangent * accPath + (currTangent).Rotated(270) * velPath * velPath * curvature;
 
 
+
             if (velPath * velPath * curvature < Vector2.Dot(Physics.g, currTangent.Rotated(270)))
             {
+                Debug.WriteLine("The current tangent is " + currTangent.ToString());
+                Debug.WriteLine(Physics.g.ToString() + " dot " + currTangent.Rotated(270).ToString() + " is " + Vector2.Dot(Physics.g, currTangent.Rotated(270)));
+                Debug.WriteLine("asdfasdfasdf");
                 onPath = false;
             }
 
@@ -155,10 +159,14 @@ class PhysicsSprite : Sprite
 
 
         //checks if its leaving the ground in some way--maybe this might not work in some edge cases... will have to rethink
-        if (onGround && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
+        if (onGround && !onPath && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
         {
             onGround = false;
             isSpinning = true;
+        }
+        if (onPath && !onGround)
+        {
+            onGround = true;
         }
 
 
