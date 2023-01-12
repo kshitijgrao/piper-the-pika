@@ -25,7 +25,7 @@ class Game
     public static readonly string LEFT = "left";
 
 
-    readonly Texture piperTexture = Engine.LoadTexture("pika-spritemap-2.png");
+    readonly Texture piperTexture = Engine.LoadTexture("piper-spritemap-no-border.png");
     readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
     readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
     readonly Music basicMusic = Engine.LoadMusic("emre_turkoglu_piper_basic_music.mp3");
@@ -102,7 +102,7 @@ class Game
         }
         else
         {
-
+            // collect player input
             currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));
 
 
