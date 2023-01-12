@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 
 
+// Scene enumerator
 public enum Scene {game, start, instructions, end};
 
 
