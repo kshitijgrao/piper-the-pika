@@ -18,8 +18,6 @@ class Game
     public static Map map;
     
     public Scene currentScene;
-    public int startScene; //0 = false, 1 = true, 2 = instructions, 3 = endScene
-    public static Boolean endScene;
     public static String message = "PASSED";
     public static List<Flower> flowers = new List<Flower>();
     public static List<Enemy> enemies = new List<Enemy>();
@@ -60,7 +58,6 @@ class Game
     {
         //scene control
         currentScene= Scene.start;
-        endScene = false;
 
         //scoreboard
         sb = new Scoreboard();
@@ -142,12 +139,15 @@ class Game
                 enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc));
             };
             piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));
-            
+
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
-            sb.updateScoreboard();
+            if (sb.updateScoreboard() == Scene.end)
+            {
+                currentScene = Scene.end;
+            }
             if (piper.loc.X >= 6125)
             {
-                endScene = true;
+                currentScene = Scene.end;
             }
             if (Engine.GetKeyDown(Key.F3))
             {
@@ -166,8 +166,8 @@ class Game
         if (Engine.GetKeyDown(Key.R))
         {
             //scene control
-            startScene = 1;
-            endScene = false;
+            currentScene = Scene.start;
+            
 
             //scoreboard
             sb = new Scoreboard();

@@ -23,7 +23,7 @@ public class Scoreboard
 
     }
 
-    public void updateScoreboard()
+    public Scene updateScoreboard()
     {
         //check for game over
         if (lives > 0)
@@ -66,9 +66,10 @@ public class Scoreboard
         }
         if(lives <= 0)
         {
-            Game.endScene = true;
+            return Scene.end;
             Game.message = "FAILED";
         }
+        return Scene.game;
     }
 
     public void renderScoreboard()
