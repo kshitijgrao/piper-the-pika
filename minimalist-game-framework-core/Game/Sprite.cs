@@ -15,6 +15,8 @@ class Sprite {
 
     private bool invisible;
 
+    internal float rotationAngle;
+
     public static readonly State landState = State.Landing;
 
     public Sprite(Vector2 loc, Texture spritemap)
@@ -88,14 +90,21 @@ class Sprite {
     {
         if (!invisible) {
             TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
-            Engine.DrawTexture(spritemap, position - hitbox / 2, source: bounds, mirror: mirror);
+            if (Game.debugToggle)
+            {
+                Engine.DrawRectEmpty(new Bounds2(position - hitbox / 2, hitbox), Color.Yellow);
+            }
+
+            
+            Engine.DrawTexture(spritemap, position - hitbox / 2, source: bounds,rotation: rotationAngle, mirror: mirror,scaleMode: TextureScaleMode.Nearest);
+            
         }
     }
 
     public void setState(State state)
     {
         this.state = state;
-        if (state == State.Spinning)
+        if (state == State.StartingJump)
         {
             Animator.changeFramerate(10);
         }
@@ -159,7 +168,7 @@ class Sprite {
         return loc + hitbox.X / 2 * direc;
     }
 
-    public bool notCollidable()
+    public virtual bool notCollidable()
     {
         return invisible;
     }

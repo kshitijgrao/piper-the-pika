@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -10,10 +11,10 @@ using System.Text;
 //TODO: this class + subclasses for different shaped hitboxes
 class Physics
 {
-    public static readonly Vector2 g = new Vector2(0,600);
+    public static readonly Vector2 g = new Vector2(0, 600);
     public static readonly int collisionSteps = 100;
     public static readonly int collisionPixelThresh = 1;
-    public static readonly float coeffRestitution = 0.5f;
+    public static readonly float coeffRestitution = 12f;
 
     //detect collisions for things that are within the window
     public static void detectCollisions(List<Flower> flowers)
@@ -33,7 +34,7 @@ class Physics
     public static void detectCollision(PhysicsSprite obj1, Sprite obj2)
     {
         
-        if (obj2.notCollidable())
+        if (obj2.notCollidable() || obj1.notCollidable())
         {
             return;
         }
@@ -50,15 +51,15 @@ class Physics
         bool secondPhysics = obj2 is PhysicsSprite;
 
         //check for tunneling
-        Vector2 relvel = obj1.vel - (secondPhysics ? ((PhysicsSprite) obj2).vel : Vector2.Zero);
+        Vector2 relvel = obj1.vel - (secondPhysics ? ((PhysicsSprite)obj2).vel : Vector2.Zero);
         b2.Position -= b1.Size / 2;
         b2.Size += b1.Size;
 
         float minXt, maxXt, minYt, maxYt;
 
-        if(relvel.X == 0)
+        if (relvel.X == 0)
         {
-            if (b2.Min.X <= b1.Position.X && b2.Max.X >= b1.Position.X)
+            if (b2.Min.X <= b1.Center.X && b2.Max.X >= b1.Center.X)
             {
                 minXt = 0;
                 maxXt = Engine.TimeDelta;
@@ -71,12 +72,12 @@ class Physics
         }
         else
         {
-            minXt = (b2.Min.X - b1.Position.X) / relvel.X;
-            maxXt = (b2.Max.X - b1.Position.X) / relvel.X;
+            minXt = (b2.Min.X - b1.Center.X) / relvel.X;
+            maxXt = (b2.Max.X - b1.Center.X) / relvel.X;
         }
         if (relvel.Y == 0)
         {
-            if (b2.Min.Y <= b1.Position.Y && b2.Max.Y >= b1.Position.Y)
+            if (b2.Min.Y <= b1.Center.Y && b2.Max.Y >= b1.Center.Y)
             {
                 minYt = 0;
                 maxYt = Engine.TimeDelta;
@@ -89,8 +90,8 @@ class Physics
         }
         else
         {
-            minYt = (b2.Min.Y - b1.Position.Y) / relvel.Y;
-            maxYt = (b2.Max.Y - b1.Position.Y) / relvel.Y;
+            minYt = (b2.Min.Y - b1.Center.Y) / relvel.Y;
+            maxYt = (b2.Max.Y - b1.Center.Y) / relvel.Y;
         }
 
         float tEnter = Math.Max(Math.Min(minXt, maxXt), Math.Min(minYt, maxYt));
@@ -100,23 +101,23 @@ class Physics
         if (tEnter > tExit)
             return;
 
-        if(tExit >= 0 && tExit <= Engine.TimeDelta)
+        if (tExit >= 0 && tExit <= Engine.TimeDelta)
         {
-            if(obj2 is Enemy && ((PhysicsSprite) obj2).mass > 0)
+            if (obj2 is Enemy && ((PhysicsSprite)obj2).mass > 0)
             {
                 obj2.collide(obj1, Math.Max(0, tExit));
             }
             else
             {
                 obj2.collide(obj1);
-            }            
+            }
         }
     }
 
     //possibly implement case where onGround = false but loc is onGround? I don't see how that would happen, but it's an edge case
     public static void detectSolid(PhysicsSprite obj)
     {
-        int steps = (int) Math.Ceiling(obj.vel.Length() * Engine.TimeDelta / collisionPixelThresh);
+        int steps = (int)Math.Ceiling(obj.vel.Length() * Engine.TimeDelta / collisionPixelThresh);
         Vector2 pos = obj.loc;
         Vector2 diff = obj.vel * Engine.TimeDelta / steps;
         Vector2 finalPos = pos + diff;
@@ -135,7 +136,7 @@ class Physics
                 obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
                 obj.loc = Game.map.getNearestHoveringPoint(finalPos);
 
-                if(Math.Round(norm.Y,2) == 0)
+                if (Math.Round(norm.Y, 2) == 0)
                 {
                     obj.collideSolid((steps - i) * Engine.TimeDelta / steps);
                 }
@@ -144,7 +145,7 @@ class Physics
                     obj.collideGround((steps - i) * Engine.TimeDelta / steps);
                 }
 
-                
+
                 break;
 
             }
@@ -153,6 +154,30 @@ class Physics
         }
     }
 
+    //TODO
+    public static void detectPath(PhysicsSprite obj)
+    {
+        if (obj.onPath)
+        {
+            return;
+        }
+        int steps = (int)Math.Ceiling(obj.vel.Length() * Engine.TimeDelta / collisionPixelThresh);
+        Vector2 pos = obj.loc;
+        Vector2 diff = obj.vel * Engine.TimeDelta / steps;
+        Vector2 finalPos = pos + diff;
+
+        for (int i = 0; i < steps; i++)
+        {
+            if (Game.map.onPath(finalPos))
+            {
+                obj.currPath = Game.map.getPath(finalPos);
+                obj.loc = finalPos;
+                obj.collidePath((steps - i) * Engine.TimeDelta / steps);
+            }
+            pos = finalPos;
+            finalPos += diff;
+        }
+    }
 
 
     //detecting ground
@@ -167,7 +192,7 @@ class Physics
             {
                 Vector2 diff = finalPos - pos;
 
-                
+
                 obj.loc += diff - (finalPos - pos);
                 int? surfaceY = Game.map.getSurfaceY(pos);
                 if (!surfaceY.HasValue || Math.Abs(surfaceY.Value - pos.Y) > 10)
@@ -183,25 +208,25 @@ class Physics
                 //might have to check for some 0 cases with the dividing here
                 obj.collideGround((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
                 break;
-                
+
             }
             pos = finalPos;
             finalPos += obj.vel * Engine.TimeDelta / collisionSteps;
 
         }
 
-        
 
-       /* if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel,Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
-        {
-            System.Diagnostics.Debug.WriteLine("bruh: " + pos.ToString() + " to:" + finalPos.ToString());
-            
-            while (!(Game.map.onGround(pos) || Game.map.throughThrough(finalPos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
-                pos += diff / collisionSteps;
 
-            
-        }*/
-        
+        /* if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel,Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
+         {
+             System.Diagnostics.Debug.WriteLine("bruh: " + pos.ToString() + " to:" + finalPos.ToString());
+
+             while (!(Game.map.onGround(pos) || Game.map.throughThrough(finalPos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
+                 pos += diff / collisionSteps;
+
+
+         }*/
+
 
     }
 
@@ -214,10 +239,10 @@ class Physics
 
         if (Game.map.onSolid(pos))
         {
-            obj.vel = obj.vel - (new Vector2(-1, 0)) * Math.Min(0,Vector2.Dot(new Vector2(-1, 0), obj.vel));
-            obj.acc = obj.acc - (new Vector2(-1, 0)) * Math.Min(0,Vector2.Dot(new Vector2(-1, 0), obj.acc));
+            obj.vel = obj.vel - (new Vector2(-1, 0)) * Math.Min(0, Vector2.Dot(new Vector2(-1, 0), obj.vel));
+            obj.acc = obj.acc - (new Vector2(-1, 0)) * Math.Min(0, Vector2.Dot(new Vector2(-1, 0), obj.acc));
         }
-        
+
         Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
 
         if (Game.map.inAir(pos) && Game.map.onSolid(finalPos))
@@ -227,7 +252,7 @@ class Physics
                 pos += diff / collisionSteps;
             obj.loc += diff - (finalPos - pos);
 
-            obj.vel = obj.vel - (new Vector2 (-1,0)) * Vector2.Dot(new Vector2(-1, 0), obj.vel);
+            obj.vel = obj.vel - (new Vector2(-1, 0)) * Vector2.Dot(new Vector2(-1, 0), obj.vel);
 
             obj.collideSolid((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
 
@@ -268,14 +293,21 @@ class Physics
 
     }
 
-    public static Vector2 getPhysicsAcceleration(Vector2 loc, Vector2 vel)
+    public static Vector2 getPhysicsAcceleration(PhysicsSprite obj, Vector2 loc, Vector2 vel)
     {
         Vector2 norm = Game.map.getNormalVector(loc);
         float radius = Game.map.getSurfaceRadius(loc);
 
-        if (Game.piper.onGround)
+
+        //able to do fake physics on path because all the curvature stuff is taken care of
+        if (obj.onPath)
         {
-            if(radius < 0)
+            Vector2 tangent = obj.currPath.getTangent(obj.fractionOfPath);
+            return Vector2.RIGHT * Vector2.Dot(tangent, g);
+        }
+        else if (obj.onGround)
+        {
+            if (radius < 0)
             {
                 return g - norm * Vector2.Dot(g, norm);
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 class PhysicsSprite : Sprite
@@ -14,7 +15,19 @@ class PhysicsSprite : Sprite
     private bool collided;
     private float timeLeft;
     internal bool onGround;
+    internal bool onPath;
+    internal Path2 currPath;
+    internal float fractionOfPath;
+    internal float velPath;
+    internal float accPath;
+    private int invincibleFramesLeft;
 
+    public static readonly float invincibleTime = 1;
+
+    internal bool isSpinning;
+
+
+    //TODO: clean up these constructors
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes) : base(loc,sprites,hitboxes)
     {
         vel = new Vector2(0, 0);
@@ -22,7 +35,10 @@ class PhysicsSprite : Sprite
         collided = false;
         timeLeft = 0;
         airTime = 0;
-        onGround = Game.map.onGround(this.getBotPoint());
+        onGround = Game.map.onGround(loc);
+        isSpinning = false;
+        currPath = null;
+        fractionOfPath = 0;
     }
 
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, bool onGround) : base(loc, sprites, hitboxes)
@@ -32,6 +48,9 @@ class PhysicsSprite : Sprite
         collided = false;
         timeLeft = 0;
         this.onGround = false;
+        isSpinning = false;
+        currPath = null;
+        fractionOfPath = 0;
     }
 
     public PhysicsSprite(Vector2 loc, Texture sprites) : base(loc, sprites)
@@ -41,7 +60,15 @@ class PhysicsSprite : Sprite
         collided = false;
         timeLeft = 0;
         airTime = 0;
-        onGround = Game.map.onGround(this.getBotPoint());
+        onGround = Game.map.onGround(loc);
+        isSpinning = false;
+        currPath = null;
+        fractionOfPath = 0;
+    }
+
+    public override bool notCollidable()
+    {
+        return (invincibleFramesLeft > 0) || base.notCollidable();
     }
 
     public void setVelocity(Vector2 vel)
@@ -61,9 +88,13 @@ class PhysicsSprite : Sprite
 
     public void addAirTime(float time)
     {
-        airTime+= time;
+        airTime += time;
     }
 
+    public void setInvincible()
+    {
+        invincibleFramesLeft = (int)Math.Round(invincibleTime / Engine.TimeDelta);
+    }
     public void setAccelerationDirect(Vector2 acc)
     {
         this.acc = acc;
@@ -75,25 +106,73 @@ class PhysicsSprite : Sprite
         Engine.DrawLine(start, start + vel, Color.Black);
     }
 
+    public void setOnPath(bool onPath)
+    {
+        this.onPath = onPath;
+        Animator.setPiperSpinning(onPath, Game.piper);
+    }
+
     public override void updateState()
     {
+        float time = collided ? timeLeft : Engine.TimeDelta;
+        collided = false;
         Vector2 locOrig = loc;
-        if (collided)
+
+        //with this implementation one frame is kind of glitched
+        if (onPath)
         {
-            loc = loc + vel * timeLeft;
-            vel += acc * timeLeft;
-            collided = false;
+            fractionOfPath = currPath.getNextFraction(fractionOfPath, velPath * time);
+
+            velPath += accPath * time;
+
+
+            if (fractionOfPath > 1 || (fractionOfPath == 1 & velPath > 0))
+            {
+                fractionOfPath = 1;
+                setOnPath(false);
+            }
+            if (fractionOfPath < 0 || (fractionOfPath == 0 & velPath < 0))
+            {
+                fractionOfPath = 0;
+                setOnPath(false);
+            }
+
+
+            loc = currPath.getPoint(fractionOfPath);
+
+            Vector2 currTangent = currPath.getTangent(fractionOfPath);
+            float curvature = currPath.getCurvature(fractionOfPath);
+
+            vel = currTangent * velPath;
+            acc = currTangent * accPath + (currTangent).Rotated(270) * velPath * velPath * curvature;
+
+
+
+            if (velPath * velPath * curvature < Vector2.Dot(Physics.g, currTangent.Rotated(270)))
+            {
+                Debug.WriteLine("The current tangent is " + currTangent.ToString());
+                Debug.WriteLine(Physics.g.ToString() + " dot " + currTangent.Rotated(270).ToString() + " is " + Vector2.Dot(Physics.g, currTangent.Rotated(270)));
+                Debug.WriteLine("asdfasdfasdf");
+                setOnPath(false);
+            }
+
         }
         else
         {
-            loc = loc + vel * Engine.TimeDelta;
-            vel += acc * Engine.TimeDelta;
+            loc = loc + vel * time;
+            vel += acc * time;
         }
 
+
         //checks if its leaving the ground in some way--maybe this might not work in some edge cases... will have to rethink
-        if (onGround && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
+        if (onGround && !onPath && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
         {
             onGround = false;
+            isSpinning = true;
+        }
+        if (onPath && !onGround)
+        {
+            onGround = true;
         }
 
 
@@ -101,12 +180,28 @@ class PhysicsSprite : Sprite
         if (vel.Length() > sprintSpeed)
         {
             Animator.setPiperSprinting(true);
-        } 
+        }
         else
         {
             Animator.setPiperSprinting(false);
         }
+
+        //subtract invisible frames
+        if(invincibleFramesLeft > 0)
+        {
+            invincibleFramesLeft -= 1;
+        }
+        Animator.checkPiperTurn(Game.piper);
         keepOnSurface();
+        if (Game.map.closeToSurface(loc))
+        {
+            this.rotationAngle = (float) (-1 * Math.Asin(Vector2.Cross(Game.map.getNormalVector(loc), Vector2.UP)) * 180 / Math.PI);
+        }
+        else
+        {
+            this.rotationAngle = 0;
+        }
+        
     }
 
     public override void collide(Sprite other)
@@ -125,6 +220,7 @@ class PhysicsSprite : Sprite
         collideSolid(timeLeft);
 
         onGround = true;
+        isSpinning = false;
         this.setState(Sprite.landState);
         if (airTime > 50)
         {
@@ -133,25 +229,38 @@ class PhysicsSprite : Sprite
 
     }
 
+
+
     public void collideSolid(float timeLeft)
     {
-        
+
         collided = true;
         this.timeLeft = timeLeft;
+    }
+
+    public void collidePath(float timeLeft)
+    {
+        collided = true;
+        onPath = true;
+        fractionOfPath = currPath.nearestFraction(loc);
+        velPath = Vector2.Dot(vel, currPath.getTangent(fractionOfPath));
+        Animator.setPiperSpinning(true, Game.piper);
+
     }
 
     //holy cow clean up the spaghetti code here
     public void keepOnSurface()
     {
         Vector2 pos = this.loc;
-        if (onGround)
+        if (Game.map.onGround(pos))
         {
             Vector2 newLoc = Game.map.getNearestHoveringPoint(pos);
             if ((newLoc - pos).Length() > 10)
                 return;
             this.loc = newLoc;
+            Vector2 norm = Game.map.getNormalVector(Game.map.getNearestSurfacePoint(pos));
 
-            vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
+            vel = vel - norm * Vector2.Dot(vel, norm);
 
         }
         /*

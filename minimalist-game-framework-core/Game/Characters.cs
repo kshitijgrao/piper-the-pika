@@ -17,12 +17,9 @@ class Sonic : PhysicsSprite
     public static readonly float flowerAccBoost = (float) 1.5;
 
     public static readonly float sonicMass = 2;
-    
-
 
     private float flows;
     
-
     public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes)
     {
         flows = 0;
@@ -48,22 +45,29 @@ class Sonic : PhysicsSprite
     {
         if(key == Key.D)
         {
-            if (onGround)
+            if (onPath)
+                accPath = accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath);
+            else if (onGround)
                 this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(90);
             else
                 this.acc = accelerationMag * (new Vector2(1, 0));
         }
         else if(key == Key.A)
         {
-            if(onGround)
+            if (onPath)
+               accPath = -1 * accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath);
+            else if (onGround)
                this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(270);
             else
                 this.acc = accelerationMag * (new Vector2(-1, 0));
         }
         else
         {
-            //change this to just check onGround?
-            if (onGround)
+            if (onPath)
+            {
+                accPath = (velPath > 0 ? -1 : 1) * Math.Min(brakeAccMag, vel.Length() / Engine.TimeDelta) +  accelerationMag * this.currPath.getBoost(fractionOfPath);
+            }
+            else if (onGround)
             {
                 this.acc = vel.Normalized() * (-1) * Math.Min(brakeAccMag, vel.Length() / Engine.TimeDelta);
             }
@@ -74,17 +78,26 @@ class Sonic : PhysicsSprite
         }
         if(flows > 0)
         {
-            acc.X *= accelerationBoostFactor;
+            acc *= accelerationBoostFactor;
         }
 
         if (Game.map.inAir(loc))
         {
             acc.X *= accelerationBoostFactor;
         }
+        if (onPath) 
+        {
+            accPath += Physics.getPhysicsAcceleration(this, this.loc, this.vel).X;
+        }
+        else
+        {
+            this.acc += Physics.getPhysicsAcceleration(this, this.loc, this.vel);
+        }
 
-        this.acc += Physics.getPhysicsAcceleration(this.loc, this.vel);
+
 
         //account for weird floating point errors
+        accPath = (float) Math.Round(accPath, 2);
         this.acc.round(2);
 
     }
@@ -92,8 +105,6 @@ class Sonic : PhysicsSprite
     public override void updateState()
     {
         float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
-
-        
 
         if (this.vel.X >= 0)
         {
@@ -156,7 +167,7 @@ class Enemy : PhysicsSprite
     public override void collide(PhysicsSprite other, float timeLeft)
     {
         if (other is PhysicsSprite) {
-            if (((PhysicsSprite)other).vel.Length() > killSpeed)
+            if (other.isSpinning)
             {
                 Game.sb.enemyKilled(1);
                 base.collide(other);
@@ -165,6 +176,7 @@ class Enemy : PhysicsSprite
             {
                 other.loc += other.vel * (Engine.TimeDelta - timeLeft);
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
+                other.setInvincible();
 
                 Animator.animatePiperTakingDamage(Game.piper);
 
