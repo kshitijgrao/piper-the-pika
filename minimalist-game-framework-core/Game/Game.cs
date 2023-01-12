@@ -6,14 +6,18 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
+
+public enum Scene {game, start, instructions, end};
+
+
 class Game
 {
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
     //public static List<Vector2> enemyCoords = new List<Vector2>();
     public static Map map;
-    public int startScene; //0 = false, 1 = true, 2 = instructions
-    public static Boolean endScene;
+    
+    public Scene currentScene;
     public static String message = "PASSED";
     public static List<Flower> flowers = new List<Flower>();
     public static List<Enemy> enemies = new List<Enemy>();
@@ -54,8 +58,7 @@ class Game
     public Game()
     {
         //scene control
-        startScene = 1;
-        endScene = false;
+        currentScene= Scene.start;
 
         //scoreboard
         sb = new Scoreboard();
@@ -86,16 +89,13 @@ class Game
     public void Update()
     {
         //scene control
-        if (startScene == 2)
+        if (currentScene == Scene.instructions)
         {
-            startScene = Scenes.instructionsScene();
+            currentScene = Scenes.instructionsScene();
         }
-        else if (startScene == 1) 
+        else if (currentScene == Scene.start) { currentScene = Scenes.titleScene(); }
+        else if (currentScene==Scene.end) 
         { 
-            startScene = Scenes.titleScene(); 
-        }
-        else if (endScene) 
-        {
             Engine.StopMusic(5);
             Scenes.endScene(message); 
         }
@@ -144,10 +144,15 @@ class Game
             piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));
 
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
-            sb.updateScoreboard();
+
+            if (sb.updateScoreboard() == Scene.end)
+            {
+                currentScene = Scene.end;
+            }
+
             if (piper.loc.X >= 8000)
             {
-                endScene = true;
+                currentScene = Scene.end;
             }
 
             if (Engine.GetKeyDown(Key.F3))
@@ -166,11 +171,11 @@ class Game
                 Engine.DrawString("isSpinning? " + piper.isSpinning, new Vector2(Resolution.X - 12, 50), Color.Black, arial, TextAlignment.Right);
             }
 
+
             if (Engine.GetKeyDown(Key.R))
             {
                 //scene control
-                startScene = 1;
-                endScene = false;
+                currentScene = Scene.start;
 
                 //scoreboard
                 sb = new Scoreboard();

@@ -22,56 +22,56 @@ public class Scenes
 
 
         //Title Scene
-		public static int titleScene()
+		public static Scene titleScene()
 		{
-		if (Engine.GetKeyDown(Key.Space))
+		if (Engine.GetKeyDown(Key.I))
 		{
-			return 2;
+			return Scene.instructions;
 		}
-		if (Engine.GetMouseButtonDown(MouseButton.Left))
+		if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
 		{
-			return 0;
+			return Scene.game;
             frameCount = 0;
         }
 
         Engine.DrawTexture(piper, new Vector2(135, 50), size: new Vector2(50, 50));
         Engine.DrawString("PIPER", new Vector2(100, 100), Color.White, h1);
         Engine.DrawString("THE PIKA", new Vector2(115, 140), Color.White, h2);
-		Engine.DrawString("Press SPACE for Instructions", new Vector2(0, 0), Color.White, h3);
-		Engine.DrawString(">   Easy", new Vector2(267,5), Color.White, h3);
-		Engine.DrawString("Medium", new Vector2(273,25), Color.White, h3);
-		Engine.DrawString("Hard", new Vector2(280,45), Color.White, h3);
+		Engine.DrawString("Press I for Instructions", new Vector2(0, 0), Color.White, h3);
+		//Engine.DrawString(">   Easy", new Vector2(267,5), Color.White, h3);
+		//Engine.DrawString("Medium", new Vector2(273,25), Color.White, h3);
+		//Engine.DrawString("Hard", new Vector2(280,45), Color.White, h3);
 		if (frameCount%90<=45)
 		{
-			Engine.DrawString("Click to Start", new Vector2(125, 170), Color.Yellow, h3);
+			Engine.DrawString("SPACE to Start", new Vector2(125, 170), Color.Yellow, h3);
 		}
 
 		frameCount++;
-		return 1;
+		return Scene.start;
 			
 		}
 
 		//Instructions Scene
-		public static int instructionsScene()
+		public static Scene instructionsScene()
 		{
-		if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
+		if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space) || Engine.GetKeyDown(Key.I))
 		{ 
-			return 1;
+			return Scene.start;
 		}
 		Engine.DrawString("BACK", new Vector2(0, 0), Color.White, h3);
 		Engine.DrawString("Press A and D to move", new Vector2(100,60), Color.White, h3);
 		Engine.DrawString("Press SPACE to jump", new Vector2(100, 90), Color.White, h3);
         Engine.DrawString("Collect rings for a speed boost", new Vector2(80, 120), Color.White, h3);
-        return 2;
+		Engine.DrawString("Press F to fullscreen", new Vector2(90, 150), Color.White, h3);
+        return Scene.instructions;
 		}
 
 
         //End Scene
 		public static void endScene(String message)
-
 		{
 			//exit game
-			if (Engine.GetMouseButtonDown(MouseButton.Left))
+			if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
 			{
 				Environment.Exit(0);
             }
