@@ -191,7 +191,7 @@ class PhysicsSprite : Sprite
         {
             invincibleFramesLeft -= 1;
         }
-
+        Animator.checkPiperTurn(Game.piper);
         keepOnSurface();
     }
 
@@ -241,14 +241,15 @@ class PhysicsSprite : Sprite
     public void keepOnSurface()
     {
         Vector2 pos = this.loc;
-        if (onGround)
+        if (Game.map.onGround(pos))
         {
             Vector2 newLoc = Game.map.getNearestHoveringPoint(pos);
             if ((newLoc - pos).Length() > 10)
                 return;
             this.loc = newLoc;
+            Vector2 norm = Game.map.getNormalVector(Game.map.getNearestSurfacePoint(pos));
 
-            vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
+            vel = vel - norm * Vector2.Dot(vel, norm);
 
         }
         /*

@@ -301,7 +301,7 @@ class BezierCurveNoStroke : Path2
     //fake, but should work for all practical purposes
     public bool contains(Vector2 loc)
     {
-        return loc.X >= start.X && loc.X <= end.X;
+        return loc.X >= start.X - 1 && loc.X <= end.X + 1;
     }
 
     public float nearestFraction(Vector2 loc)

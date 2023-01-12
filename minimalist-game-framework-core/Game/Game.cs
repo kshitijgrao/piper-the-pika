@@ -67,13 +67,6 @@ class Game
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
         sprites[0] = piper;
-        
-        piper.onPath = true;
-
-        Path2 arcTest = new Arc(new Vector2(160, 860), 80, 190, 350);
-
-        piper.currPath = arcTest;
-        piper.fractionOfPath = 0.1f;
         debugToggle = true;
 
         
