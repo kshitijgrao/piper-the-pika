@@ -179,6 +179,15 @@ class PhysicsSprite : Sprite
         }
 
         keepOnSurface();
+        if (Game.map.closeToSurface(loc))
+        {
+            this.rotationAngle = (float) (-1 * Math.Asin(Vector2.Cross(Game.map.getNormalVector(loc), Vector2.UP)) * 180 / Math.PI);
+        }
+        else
+        {
+            this.rotationAngle = 0;
+        }
+        
     }
 
     public override void collide(Sprite other)
@@ -205,6 +214,8 @@ class PhysicsSprite : Sprite
         }
 
     }
+
+
 
     public void collideSolid(float timeLeft)
     {
