@@ -109,8 +109,8 @@ class Game
         {
             currentScene = Scenes.instructionsScene();
         }
-        else if (startScene == 1) { startScene = Scenes.titleScene(); }
-        else if (endScene) { Scenes.endScene(message); }
+        else if (currentScene == Scene.start) { currentScene = Scenes.titleScene(); }
+        else if (currentScene==Scene.end) { Scenes.endScene(message); }
         else
         {
             currentKey = InputHandler.getPlayerInput(piper, render.pos + piper.loc - new Vector2(12, 12));

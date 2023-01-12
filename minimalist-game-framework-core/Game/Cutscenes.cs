@@ -22,15 +22,15 @@ public class Scenes
 
 
         //Title Scene
-		public static int titleScene()
+		public static Scene titleScene()
 		{
 		if (Engine.GetKeyDown(Key.I))
 		{
-			return 2;
+			return Scene.instructions;
 		}
 		if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
 		{
-			return 0;
+			return Scene.game;
             frameCount = 0;
         }
 
@@ -47,7 +47,7 @@ public class Scenes
 		}
 
 		frameCount++;
-		return 1;
+		return Scene.start;
 			
 		}
 
