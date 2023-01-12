@@ -16,7 +16,7 @@ unsafe class Map
     private Dictionary<CoordinateAxis, List<int>[]> transitions;
 
     private List<Curve> curves;
-    private List<Path2> paths;
+    public List<Path2> paths;
 
 
     SDL.SDL_Surface* pixelMap;
@@ -83,28 +83,10 @@ unsafe class Map
                     pixels[x, y] = AIR_CODE;
                 }
 
-                // checking for tunnel
-                //if (pixels[x, y] == (TUNNEL_CODE))
-                //{
-
-                //}
-
                 //checking for enemies
                 Bounds2 testPath = new Bounds2(new Vector2(locVect.X - 50, 0), new Vector2(locVect.X + 50, 0));
-                if (pixels[x, y] == ENEMY_WALKING)
+                if (pixels[x, y] == ENEMY_WALKING || pixels[x, y] == ENEMY_FLYING)
                 {
-                    enemyToAdd = new Enemy(locVect, testPath, false);
-                    enemyToAdd.setState(State.Walk);
-                    Game.enemies.Add(enemyToAdd);
-                    pixels[x, y] = AIR_CODE;
-                }
-
-                //checking for flying enemies
-                if (pixels[x, y] == ENEMY_FLYING)
-                {
-                    enemyToAdd = new Enemy(locVect, testPath, true);
-                    enemyToAdd.setState(State.Walk);
-                    Game.enemies.Add(enemyToAdd);
                     pixels[x, y] = AIR_CODE;
                 }
 

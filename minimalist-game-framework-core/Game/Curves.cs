@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 
 /*
 class BezierCurve
@@ -29,7 +30,9 @@ static class SVGReader
     {
         {"path" , "#EBFF00" },
         {"ground" , "#710000" },
-        {"through" , "#FF0000" }
+        {"through" , "#FF0000" },
+        {"flying_enemy", "#0E770B" },
+        {"ground_enemy", "#05FF00"}
     };
     public static void findElementsAndAdd(Map map, string path)
     {
@@ -42,12 +45,44 @@ static class SVGReader
             }
             else if (isPath(line))
             {
-                System.Diagnostics.Debug.WriteLine("asdf");
                 addPath(line, map);
+            }
+            else
+            {
+                checkAndAddEnemy(line);
             }
 
         }
     }
+
+    private static void checkAndAddEnemy(string line)
+    {
+        if(line.Length < 5 || line.Substring(0,5) != "<line") { return;  }
+        if (line.Contains(ColorTypes["flying_enemy"]))
+        {
+            addEnemy(line, true);
+        }
+        else if (line.Contains(ColorTypes["ground_enemy"]))
+        {
+            addEnemy(line, false);
+        }
+    }
+
+    private static void addEnemy(string line, bool flying)
+    {
+        float[] coords = new float[4];
+        string[] stringCoords = line.Substring(10, line.Length - 30).Replace("y", "").Replace("x", "").Replace("1=", "").Replace("2=", "").Replace("\"", "").Split(' ');
+
+        for (int i = 0; i < 4 && i < stringCoords.Length; i++)
+        {
+            coords[i] = float.Parse(stringCoords[i]);
+        }
+
+        Enemy enemyToAdd = new Enemy(new Vector2(coords[0], coords[1]), new Bounds2(coords[0], coords[1], coords[2], coords[3]), flying);
+        enemyToAdd.setState(State.Walk);
+        Game.enemies.Add(enemyToAdd);
+    }
+
     private static bool isCurve(string line)
     {
         if(line.Length <= 16)
@@ -107,29 +142,93 @@ interface Path2
     float getCurvature(float t);
     float getSpeed(float t);
     float getNextFraction(float t, float arcLength);
-    float getBoost(float t, Key key);
+    float getBoost(float t);
 
     bool contains(Vector2 loc);
     float nearestFraction(Vector2 loc);
 }
 
 
-class BezierGroup : Path2
+class PathGroup : Path2 
 {
-    private BezierCurveNoStroke[] bezierCurves;
+    private Path2[] paths;
 
-    public BezierGroup(params Vector2[] coordList)
+    public PathGroup(params Path2[] pathList)
     {
-        bezierCurves = new BezierCurveNoStroke[(coordList.Length - 1) / 3];
+        paths = pathList;
+    }
+
+    public Vector2 getPoint(float t) { return paths[getIndex(t)].getPoint(convertTime(t)); }
+    public Vector2 getTangent(float t) { return paths[getIndex(t)].getTangent(convertTime(t)); }
+    public float getCurvature(float t) { return paths[getIndex(t)].getCurvature(convertTime(t)); }
+    public float getSpeed(float t) { return paths[getIndex(t)].getSpeed(convertTime(t)) * paths.Length; }
+    public float getNextFraction(float t, float arcLength) { return paths[getIndex(t)].getNextFraction(convertTime(t), arcLength) / paths.Length + ((float)getIndex(t)) / paths.Length; }
+    public float getBoost(float t) { return paths[getIndex(t)].getBoost(convertTime(t)); }
+    public bool contains(Vector2 loc) 
+    {
+        foreach (Path2 path in paths)
+        {
+            if (path.contains(loc))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    private float convertTime(float t)
+    {
+        return (t - ((float)getIndex(t)) / paths.Length) * paths.Length;
+    }
+
+    public float nearestFraction(Vector2 loc)
+    {
+        foreach(Path2 path in paths)
+        {
+            if (path.contains(loc))
+            {
+                return path.nearestFraction(loc);
+            }
+
+        }
+        return paths[paths.Length - 1].nearestFraction(loc);
+    }
+
+    private int getIndex(float t)
+    {
+        if (t == 1)
+        {
+            return paths.Length - 1;
+        }
+        return (int)Math.Floor(t * paths.Length);
+    }
+}
+
+
+class BezierGroup : PathGroup
+{
+    public BezierGroup(params Vector2[] coordList) : base(calculatePaths(coordList))
+    {
+        
+        
+    }
+
+    public BezierGroup(params float[] coordList) : base(calculatePaths(coordList))
+    {
+    }
+
+    private static Path2[] calculatePaths(Vector2[] coordList)
+    {
+        BezierCurveNoStroke[] bezierCurves = new BezierCurveNoStroke[(coordList.Length - 1) / 3];
         for (int i = 0; i < bezierCurves.Length; i++)
         {
             bezierCurves[i] = new BezierCurveNoStroke(coordList[3 * i], coordList[3 * i + 1], coordList[3 * i + 2], coordList[3 * i + 3]);
         }
+        return bezierCurves;
     }
 
-    public BezierGroup(params float[] coordList)
+    private static Path2[] calculatePaths(float[] coordList)
     {
-        bezierCurves = new BezierCurveNoStroke[(coordList.Length - 2) / 6];
+        BezierCurveNoStroke[] bezierCurves = new BezierCurveNoStroke[(coordList.Length - 2) / 6];
         for (int i = 0; i < bezierCurves.Length; i++)
         {
             bezierCurves[i] = new BezierCurveNoStroke(new Vector2(coordList[6 * i], coordList[6 * i + 1]),
@@ -137,41 +236,8 @@ class BezierGroup : Path2
                 new Vector2(coordList[6 * i + 4], coordList[6 * i + 5]),
                 new Vector2(coordList[6 * i + 6], coordList[6 * i + 7]));
         }
+        return bezierCurves;
     }
-
-    public Vector2 getPoint(float t) { return bezierCurves[getIndex(t)].getPoint(convertTime(t)); }
-    public Vector2 getTangent(float t) { return bezierCurves[getIndex(t)].getTangent(convertTime(t)); }
-    public float getCurvature(float t) { return bezierCurves[getIndex(t)].getCurvature(convertTime(t)); }
-    public float getSpeed(float t) { return bezierCurves[getIndex(t)].getSpeed(convertTime(t)) * bezierCurves.Length; }
-    public float getNextFraction(float t, float arcLength) { return bezierCurves[getIndex(t)].getNextFraction(convertTime(t), arcLength) / bezierCurves.Length + ((float)getIndex(t)) / bezierCurves.Length; }
-    public float getBoost(float t, Key key) { return bezierCurves[getIndex(t)].getBoost(convertTime(t), key); }
-    public bool contains(Vector2 loc) { return bezierCurves[0].contains(loc) || bezierCurves[bezierCurves.Length - 1].contains(loc); }
-    private float convertTime(float t)
-    {
-        return (t - ((float)getIndex(t)) / bezierCurves.Length) * bezierCurves.Length;
-    }
-
-    public float nearestFraction(Vector2 loc)
-    {
-        if (bezierCurves[0].contains(loc))
-        {
-            return bezierCurves[0].nearestFraction(loc);
-        }
-        else
-        {
-            return bezierCurves[bezierCurves.Length - 1].nearestFraction(loc);
-        }
-    }
-
-    private int getIndex(float t)
-    {
-        if (t == 1)
-        {
-            return bezierCurves.Length - 1;
-        }
-        return (int)Math.Floor(t * bezierCurves.Length);
-    }
-
 }
 
 class BezierCurveNoStroke : Path2
@@ -227,23 +293,15 @@ class BezierCurveNoStroke : Path2
         return t + arcLength / getSpeed(t);
     }
 
-    public virtual float getBoost(float t, Key key)
+    public virtual float getBoost(float t)
     {
-        if (key == Key.A)
-        {
-            return 1;
-        }
-        if (key == Key.D)
-        {
-            return 1.5f;
-        }
-        return 0;
+        return 1;
     }
 
     //fake, but should work for all practical purposes
     public bool contains(Vector2 loc)
     {
-        return loc.X >= start.X && loc.X <= end.X;
+        return loc.X >= start.X - 1 && loc.X <= end.X + 1;
     }
 
     public float nearestFraction(Vector2 loc)
@@ -253,6 +311,92 @@ class BezierCurveNoStroke : Path2
             return 0;
         }
         return 1;
+    }
+}
+
+
+class Arc : Path2
+{
+    private Vector2 center;
+    private float radius;
+    private float startAngle;
+    private float endAngle;
+    
+
+    public Arc(Vector2 center, float radius, float startAngle, float endAngle)
+    {
+        this.center = center;
+        this.radius = radius;
+        this.startAngle =  startAngle * (float)Math.PI / 180;
+        this.endAngle = endAngle * (float)Math.PI / 180;
+    }
+    public Vector2 getPoint(float t)
+    {
+        return center + radius * (Vector2.RIGHT * (float) Math.Cos(getAngle(t)) + Vector2.UP * (float) Math.Sin(getAngle(t)));
+    }
+    public Vector2 getTangent(float t)
+    {
+        return Vector2.UP.Rotated(-1 * getAngle(t) * 180 / (float) Math.PI);
+    }
+    public float getCurvature(float t)
+    {
+        return 1 / radius;
+    }
+    public float getSpeed(float t)
+    {
+        return radius * Math.Abs(endAngle - startAngle);
+    }
+    public float getNextFraction(float t, float arcLength)
+    {
+        return t + arcLength / getSpeed(t);
+    }
+    public float getBoost(float t)
+    {
+        return 0;
+    }
+
+    public bool contains(Vector2 loc)
+    {
+        Vector2 shift = loc - center;
+        if(Math.Abs(shift.Length() - radius) < Map.CLOSE_THRESHOLD)
+        {
+            float angle = findAngle(loc);
+            if(angle <= endAngle && angle >= startAngle)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public float nearestFraction(Vector2 loc)
+    {
+        float test = (findAngle(loc) - startAngle) / (endAngle - startAngle);
+        if(test < 0)
+        {
+            return 0;
+        }
+        if(test > 1)
+        {
+            return 1;
+        }
+        return test;
+    }
+
+    //in radians
+    private float findAngle(Vector2 loc)
+    {
+        Vector2 shift = loc - center;
+        float initialAngle = (float)Math.Acos(Vector2.Dot(shift.Normalized(), Vector2.RIGHT));
+        if (shift.Y < 0)
+        {
+            initialAngle = (float)(2 * Math.PI) - initialAngle;
+        }
+        return initialAngle;
+    }
+
+    private float getAngle(float t)
+    {
+        return (endAngle - startAngle) * t + startAngle;
     }
 }
 

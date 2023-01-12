@@ -104,7 +104,7 @@ class Sprite {
     public void setState(State state)
     {
         this.state = state;
-        if (state == State.Spinning)
+        if (state == State.StartingJump)
         {
             Animator.changeFramerate(10);
         }

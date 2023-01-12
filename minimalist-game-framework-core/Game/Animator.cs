@@ -11,8 +11,9 @@ using System.Text;
  */
 internal static class Animator
 {
-    // animation speed
+    // animation constants
     static float Framerate = 5;
+    static float jumpTime = 30;
 
     // variables
     static State movementState = State.Walk;
@@ -54,7 +55,7 @@ internal static class Animator
         if (!piper.onGround)
         {
             piper.addAirTime(1);
-            if (piper.getAirTime() > 50)
+            if (piper.getAirTime() > jumpTime)
             {
                 piper.setState(State.Spinning);
             }
