@@ -5,7 +5,7 @@ using System.Text;
 
 class PhysicsSprite : Sprite
 {
-    internal readonly float sprintSpeed = 200;
+    internal readonly float sprintSpeed = 230;
 
     public float mass;
     public Vector2 vel;
@@ -29,6 +29,19 @@ class PhysicsSprite : Sprite
 
     //TODO: clean up these constructors
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes) : base(loc,sprites,hitboxes)
+    {
+        vel = new Vector2(0, 0);
+        acc = new Vector2(0, 0);
+        collided = false;
+        timeLeft = 0;
+        airTime = 0;
+        onGround = Game.map.onGround(loc);
+        isSpinning = false;
+        currPath = null;
+        fractionOfPath = 0;
+    }
+
+    public PhysicsSprite(Vector2 loc, Texture spritemap, Texture blinkmap) : base(loc, spritemap, blinkmap)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);

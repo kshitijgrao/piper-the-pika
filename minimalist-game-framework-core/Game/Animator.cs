@@ -11,16 +11,27 @@ using System.Text;
  */
 internal static class Animator
 {
+    static Random rng = new Random();
+
     // animation constants
     static float Framerate = 5;
     static float jumpTime = 30;
 
+    // blink constants
+    static int minFramesUntilBlink = 10;
+    static int maxFramesUntilBlink = 30;
+    static int blinkFrames = 1;
+
     // variables
     static State movementState = State.Walk;
+    static float timeUntilBlink = rng.Next(minFramesUntilBlink, maxFramesUntilBlink);
 
     public static float animatePiper(Sonic piper, Vector2 position, Key key)
     {
         float currentFrame = piper.getFrameIndex();
+
+        // make piper blink
+        checkBlink(piper);
 
         // only changes state if piper if not spinning or taking damage (aka not locked)
         if (!piper.animationIsLocked())
@@ -110,6 +121,20 @@ internal static class Animator
 
         // return current frame
         return frameIndex;
+    }
+
+    private static void checkBlink(Sprite piper)
+    {
+        timeUntilBlink -= Engine.TimeDelta * Framerate;
+        if (-blinkFrames < timeUntilBlink && timeUntilBlink <= 0)
+        {
+            piper.blink(true);
+        }
+        else if (timeUntilBlink < -blinkFrames)
+        {
+            piper.blink(false);
+            timeUntilBlink = rng.Next(minFramesUntilBlink, maxFramesUntilBlink);
+        }
     }
 
     public static void animatePiperLanding(Sprite piper)
