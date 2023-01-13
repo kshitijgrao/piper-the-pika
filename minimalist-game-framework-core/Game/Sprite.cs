@@ -17,6 +17,8 @@ class Sprite {
 
     private bool invisible;
 
+    internal float rotationAngle;
+
     public static readonly State landState = State.Landing;
 
     public Sprite(Vector2 loc, Texture spritemap)
@@ -124,10 +126,7 @@ class Sprite {
             {
                 Engine.DrawRectEmpty(new Bounds2(position - hitbox / 2, hitbox), Color.Yellow);
             }
-
-            
-            Engine.DrawTexture(currentmap, position - hitbox / 2, source: bounds, mirror: mirror);
-            
+            Engine.DrawTexture(currentmap, position - hitbox / 2, source: bounds, mirror: mirror);            
         }
     }
 

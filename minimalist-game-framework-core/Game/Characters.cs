@@ -17,12 +17,9 @@ class Sonic : PhysicsSprite
     public static readonly float flowerAccBoost = (float) 1.5;
 
     public static readonly float sonicMass = 2;
-    
-
 
     private float flows;
     
-
     public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes)
     {
         flows = 0;
@@ -55,7 +52,7 @@ class Sonic : PhysicsSprite
         if(key == Key.D)
         {
             if (onPath)
-                accPath = accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath,key);
+                accPath = accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath);
             else if (onGround)
                 this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(90);
             else
@@ -64,7 +61,7 @@ class Sonic : PhysicsSprite
         else if(key == Key.A)
         {
             if (onPath)
-               accPath = -1 * accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath,key);
+               accPath = -1 * accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath);
             else if (onGround)
                this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(270);
             else
@@ -74,7 +71,7 @@ class Sonic : PhysicsSprite
         {
             if (onPath)
             {
-                accPath = accelerationMag * this.currPath.getBoost(fractionOfPath, Key.D);
+                accPath = (velPath > 0 ? -1 : 1) * Math.Min(brakeAccMag, vel.Length() / Engine.TimeDelta) +  accelerationMag * this.currPath.getBoost(fractionOfPath);
             }
             else if (onGround)
             {
@@ -114,8 +111,6 @@ class Sonic : PhysicsSprite
     public override void updateState()
     {
         float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
-
-        
 
         if (this.vel.X >= 0)
         {

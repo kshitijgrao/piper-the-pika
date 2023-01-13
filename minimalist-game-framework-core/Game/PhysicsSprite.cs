@@ -119,6 +119,12 @@ class PhysicsSprite : Sprite
         Engine.DrawLine(start, start + vel, Color.Black);
     }
 
+    public void setOnPath(bool onPath)
+    {
+        this.onPath = onPath;
+        Animator.setPiperSpinning(onPath, Game.piper);
+    }
+
     public override void updateState()
     {
         float time = collided ? timeLeft : Engine.TimeDelta;
@@ -136,12 +142,12 @@ class PhysicsSprite : Sprite
             if (fractionOfPath > 1 || (fractionOfPath == 1 & velPath > 0))
             {
                 fractionOfPath = 1;
-                onPath = false;
+                setOnPath(false);
             }
             if (fractionOfPath < 0 || (fractionOfPath == 0 & velPath < 0))
             {
                 fractionOfPath = 0;
-                onPath = false;
+                setOnPath(false);
             }
 
 
@@ -154,9 +160,13 @@ class PhysicsSprite : Sprite
             acc = currTangent * accPath + (currTangent).Rotated(270) * velPath * velPath * curvature;
 
 
+
             if (velPath * velPath * curvature < Vector2.Dot(Physics.g, currTangent.Rotated(270)))
             {
-                onPath = false;
+                Debug.WriteLine("The current tangent is " + currTangent.ToString());
+                Debug.WriteLine(Physics.g.ToString() + " dot " + currTangent.Rotated(270).ToString() + " is " + Vector2.Dot(Physics.g, currTangent.Rotated(270)));
+                Debug.WriteLine("asdfasdfasdf");
+                setOnPath(false);
             }
 
         }
@@ -168,10 +178,14 @@ class PhysicsSprite : Sprite
 
 
         //checks if its leaving the ground in some way--maybe this might not work in some edge cases... will have to rethink
-        if (onGround && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
+        if (onGround && !onPath && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
         {
             onGround = false;
             isSpinning = true;
+        }
+        if (onPath && !onGround)
+        {
+            onGround = true;
         }
 
 
@@ -190,8 +204,17 @@ class PhysicsSprite : Sprite
         {
             invincibleFramesLeft -= 1;
         }
-
+        Animator.checkPiperTurn(Game.piper);
         keepOnSurface();
+        if (Game.map.closeToSurface(loc))
+        {
+            this.rotationAngle = (float) (-1 * Math.Asin(Vector2.Cross(Game.map.getNormalVector(loc), Vector2.UP)) * 180 / Math.PI);
+        }
+        else
+        {
+            this.rotationAngle = 0;
+        }
+        
     }
 
     public override void collide(Sprite other)
@@ -219,6 +242,8 @@ class PhysicsSprite : Sprite
 
     }
 
+
+
     public void collideSolid(float timeLeft)
     {
 
@@ -232,6 +257,7 @@ class PhysicsSprite : Sprite
         onPath = true;
         fractionOfPath = currPath.nearestFraction(loc);
         velPath = Vector2.Dot(vel, currPath.getTangent(fractionOfPath));
+        Animator.setPiperSpinning(true, Game.piper);
 
     }
 
@@ -239,14 +265,15 @@ class PhysicsSprite : Sprite
     public void keepOnSurface()
     {
         Vector2 pos = this.loc;
-        if (onGround)
+        if (Game.map.onGround(pos))
         {
             Vector2 newLoc = Game.map.getNearestHoveringPoint(pos);
             if ((newLoc - pos).Length() > 10)
                 return;
             this.loc = newLoc;
+            Vector2 norm = Game.map.getNormalVector(Game.map.getNearestSurfacePoint(pos));
 
-            vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
+            vel = vel - norm * Vector2.Dot(vel, norm);
 
         }
         /*

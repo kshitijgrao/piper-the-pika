@@ -6,14 +6,19 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
+
+// Scene enumerator
+public enum Scene {game, start, instructions, end};
+
+
 class Game
 {
     public static readonly string Title = "Piper the Pika";
     public static readonly Vector2 Resolution = new Vector2(320, 224);
     //public static List<Vector2> enemyCoords = new List<Vector2>();
     public static Map map;
-    public int startScene; //0 = false, 1 = true, 2 = instructions
-    public static Boolean endScene;
+    
+    public Scene currentScene;
     public static String message = "PASSED";
     public static List<Flower> flowers = new List<Flower>();
     public static List<Enemy> enemies = new List<Enemy>();
@@ -29,6 +34,7 @@ class Game
     readonly Texture piperTextureBlink = Engine.LoadTexture("piper-spritemap-blink.png");
     readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
     readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
+    readonly Music basicMusic = Engine.LoadMusic("emre_turkoglu_piper_basic_music.mp3");
 
     // sprites
     public static Sonic piper;
@@ -54,45 +60,47 @@ class Game
     public Game()
     {
         //scene control
-        startScene = 1;
-        endScene = false;
+        currentScene= Scene.start;
 
         //scoreboard
         sb = new Scoreboard();
 
         //create map
-        map = new Map("RingEnemyMapWithStroke.bmp");
-        enemyArr = enemies.ToArray();
-        flowerArr = flowers.ToArray();
+        map = new Map("collision_map_1_11.bmp");
+        
 
         // create piper sprite
         piper = new Sonic(new Vector2(160, 960), piperTexture, piperTextureBlink);
         sprites[0] = piper;
 
-        piper.onPath = false;
-
-
-        Path2 tunnelTest = new BezierGroup(new Vector2[] { new Vector2(6134, 586), new Vector2(6395.19f, 586), new Vector2(6302.21f, 709.375f), new Vector2(6270.96f, 741), new Vector2(6239.71f, 772.625f), new Vector2(6230.88f, 896), new Vector2(6482, 896) });
-
-        piper.currPath = tunnelTest;
-        piper.fractionOfPath = 0;
-
-        render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        
+        render = new Rendering("displayMapNoBG.png", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
         SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
 
+        enemyArr = enemies.ToArray();
+        flowerArr = flowers.ToArray();
+
+        // start music
+        Engine.PlayMusic(basicMusic);
+
+        //piper.currPath = map.paths[map.paths.Count - 1];
     }
 
     public void Update()
     {
         //scene control
-        if (startScene == 2)
+        if (currentScene == Scene.instructions)
         {
-            startScene = Scenes.instructionsScene();
+            currentScene = Scenes.instructionsScene();
         }
-        else if (startScene == 1) { startScene = Scenes.titleScene(); }
-        else if (endScene) { Scenes.endScene(message); }
+        else if (currentScene == Scene.start) { currentScene = Scenes.titleScene(); }
+        else if (currentScene==Scene.end) 
+        { 
+            Engine.StopMusic(5);
+            Scenes.endScene(message); 
+        }
         else
         {
             // collect player input
@@ -120,6 +128,16 @@ class Game
             // collect input and draw frame
 
             render.scrollingMotion();
+
+            if (debugToggle)
+            {
+                if (Engine.GetKeyDown(Key.C))
+                {
+                    render.pos = Resolution / 2 - piper.loc;
+                }
+            }
+            
+
             foreach (Enemy enemy in enemiesOnScreen)
             {
                 enemy.updateState();
@@ -128,10 +146,15 @@ class Game
             piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));
 
             //rings[0].draw(new Bounds2(0, 0, 24, 24), render.pos + rings[0].loc - new Vector2(10,10));
-            sb.updateScoreboard();
+
+            if (sb.updateScoreboard() == Scene.end)
+            {
+                currentScene = Scene.end;
+            }
+
             if (piper.loc.X >= 8000)
             {
-                endScene = true;
+                currentScene = Scene.end;
             }
 
             if (Engine.GetKeyDown(Key.F3))
@@ -150,28 +173,32 @@ class Game
                 Engine.DrawString("isSpinning? " + piper.isSpinning, new Vector2(Resolution.X - 12, 50), Color.Black, arial, TextAlignment.Right);
             }
 
+
             if (Engine.GetKeyDown(Key.R))
             {
                 //scene control
-                startScene = 1;
-                endScene = false;
+                currentScene = Scene.start;
 
                 //scoreboard
                 sb = new Scoreboard();
 
                 //create map
-                map = new Map("RingEnemyMapWithStroke.bmp");
+                enemiesOnScreen.Clear();
+                enemies.Clear();
+                flowers.Clear();
+                map = new Map("collision_map_1_11.bmp");
                 enemyArr = enemies.ToArray();
                 flowerArr = flowers.ToArray();
-
                 // create piper sprite
                 piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
                 sprites[0] = piper;
 
-                render = new Rendering("display_map.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+                render = new Rendering("displayMapNoBG.png", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
                 //using svg to get normal vectors
                 SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
+                enemyArr = enemies.ToArray();
+                flowerArr = flowers.ToArray();
             }
         }
     }
