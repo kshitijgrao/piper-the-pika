@@ -133,6 +133,12 @@ class Physics
                     System.Diagnostics.Debug.WriteLine("final Pos: " + finalPos + " norm: " + Game.map.getNormalVector(finalPos).ToString());
                 }
 
+                if (Game.map.onSpike(finalPos))
+                {
+                    obj.collideSpike((steps - i) * Engine.TimeDelta / steps);
+                }
+
+
                 obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
                 obj.loc = Game.map.getNearestHoveringPoint(finalPos);
 

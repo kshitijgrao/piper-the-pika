@@ -120,6 +120,33 @@ class Sonic : PhysicsSprite
            flows -= 1 / ((float) boostFrameTime);
     }
 
+    public override void collideSpike(float timeLeft)
+    {
+        base.collideSpike(timeLeft);
+
+        Animator.animatePiperTakingDamage(Game.piper);
+        if (Game.gameDifficulty == Game.EASY)
+        {
+            if (Scoreboard.flowers > 0)
+            {
+                Scoreboard.flowers = 0;
+            }
+            else
+            {
+                Scoreboard.lives--;
+            }
+        }
+        else if (Game.gameDifficulty == Game.MEDIUM)
+        {
+            Scoreboard.lives--;
+        }
+        else if (Game.gameDifficulty == Game.HARD)
+        {
+            Scoreboard.lives = 0;
+        }
+
+    }
+
     public void addFlower()
     {
         flows += 1;
