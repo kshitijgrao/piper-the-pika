@@ -252,7 +252,7 @@ class PhysicsSprite : Sprite
     public void keepOnSurface()
     {
         Vector2 pos = this.loc;
-        if (Game.map.onGround(pos))
+        if (onGround)
         {
             Vector2 newLoc = Game.map.getNearestHoveringPoint(pos);
             if ((newLoc - pos).Length() > 10)

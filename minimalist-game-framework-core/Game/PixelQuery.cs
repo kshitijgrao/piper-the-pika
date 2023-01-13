@@ -32,6 +32,9 @@ unsafe class Map
     public static readonly int ENEMY_FLYING = 25;
     public static readonly int PATH_CODE = 235;
 
+    public static readonly int SPRING_CODE = 123;
+    public static readonly int SPIKE_CODE = 132;
+
     //public static readonly int TUNNEL_CODE = 
 
     private static readonly int SLOPE_MAX_COUNT = 15;
@@ -66,7 +69,6 @@ unsafe class Map
         int bpp = 4;
         byte* pixelsImg = (byte*)(*pixelMap).pixels;
 
-        Enemy enemyToAdd;
         //looping through all the pixels
         for (int x = 0; x < pixels.GetLength(0); x++)
         {
@@ -95,18 +97,18 @@ unsafe class Map
                 //looking for air to ground transitions
                 if (y > 0 && pixels[x, y] != pixels[x, y - 1])
                 {
-                    if (pixels[x, y - 1] == AIR_CODE && (pixels[x,y] == GROUND_CODE || pixels[x,y] == SOLID_CODE || pixels[x,y] == PASS_THROUGH_CODE))
+                    if ((pixels[x, y - 1] == AIR_CODE || pixels[x,y-1] == SPIKE_CODE) && (pixels[x,y] == GROUND_CODE || pixels[x,y] == SOLID_CODE || pixels[x,y] == PASS_THROUGH_CODE))
                         transitionsY[x].Add(y);
-                    else if (pixels[x, y] == AIR_CODE && (pixels[x, y - 1] == GROUND_CODE || pixels[x, y - 1] == SOLID_CODE || pixels[x, y - 1] == PASS_THROUGH_CODE))
+                    else if ((pixels[x, y] == AIR_CODE || pixels[x, y - 1] == SPIKE_CODE) && (pixels[x, y - 1] == GROUND_CODE || pixels[x, y - 1] == SOLID_CODE || pixels[x, y - 1] == PASS_THROUGH_CODE))
                         transitionsY[x].Add(y - 1);
                 }
 
                 //horizontal 
                 if (x > 0 && pixels[x, y] != pixels[x - 1, y])
                 {
-                    if ((pixels[x, y] == GROUND_CODE || pixels[x, y] == SOLID_CODE) && (pixels[x - 1, y] == AIR_CODE || pixels[x - 1, y] == PASS_THROUGH_CODE))
+                    if ((pixels[x, y] == GROUND_CODE || pixels[x, y] == SOLID_CODE || pixels[x,y] == SPIKE_CODE) && (pixels[x - 1, y] == AIR_CODE || pixels[x - 1, y] == PASS_THROUGH_CODE))
                         transitionsX[y].Add(x);
-                    else if ((pixels[x - 1, y] == GROUND_CODE || pixels[x - 1, y] == SOLID_CODE) && (pixels[x, y] == AIR_CODE || pixels[x, y] == PASS_THROUGH_CODE))
+                    else if ((pixels[x - 1, y] == GROUND_CODE || pixels[x - 1, y] == SOLID_CODE || pixels[x-1,y] == SPIKE_CODE) && (pixels[x, y] == AIR_CODE || pixels[x, y] == PASS_THROUGH_CODE))
                         transitionsX[y].Add(x - 1);
                 }
 
@@ -146,6 +148,11 @@ unsafe class Map
             return AIR_CODE;
         }
         return pixels[x, y];
+    }
+
+    public bool onSpike(Vector2 coord)
+    {
+        return getPixelType(coord) == SPIKE_CODE;
     }
 
     public bool onGround(Vector2 coord)
@@ -199,6 +206,8 @@ unsafe class Map
                 return true;
             }
         }
+
+        if(inAir(initial) && )
 
         return false;
     }
