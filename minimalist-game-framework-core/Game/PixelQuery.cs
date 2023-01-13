@@ -187,7 +187,7 @@ unsafe class Map
 
     public bool passingSolid(Vector2 initial, Vector2 final)
     {
-        if (inAir(initial) && onSolid(final))
+        if ( (inAir(initial) || throughThrough(initial)) && onSolid(final))
         {
             return true;
         }

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 
 
+// Scene enumerator
 public enum Scene {game, start, instructions, end};
 
 
@@ -72,7 +73,7 @@ class Game
         sprites[0] = piper;
 
         
-        render = new Rendering("display_map_1_11.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        render = new Rendering("displayMapNoBG.png", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
         SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
@@ -181,13 +182,17 @@ class Game
                 sb = new Scoreboard();
 
                 //create map
+                enemiesOnScreen.Clear();
+                enemies.Clear();
+                flowers.Clear();
                 map = new Map("collision_map_1_11.bmp");
-
+                enemyArr = enemies.ToArray();
+                flowerArr = flowers.ToArray();
                 // create piper sprite
                 piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
                 sprites[0] = piper;
 
-                render = new Rendering("display_map_1_11.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+                render = new Rendering("displayMapNoBG.png", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
                 //using svg to get normal vectors
                 SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
