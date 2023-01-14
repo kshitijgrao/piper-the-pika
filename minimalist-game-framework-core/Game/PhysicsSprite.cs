@@ -150,9 +150,6 @@ class PhysicsSprite : Sprite
 
             if (velPath * velPath * curvature < Vector2.Dot(Physics.g, currTangent.Rotated(270)))
             {
-                Debug.WriteLine("The current tangent is " + currTangent.ToString());
-                Debug.WriteLine(Physics.g.ToString() + " dot " + currTangent.Rotated(270).ToString() + " is " + Vector2.Dot(Physics.g, currTangent.Rotated(270)));
-                Debug.WriteLine("asdfasdfasdf");
                 setOnPath(false);
             }
 
@@ -192,7 +189,11 @@ class PhysicsSprite : Sprite
             invincibleFramesLeft -= 1;
         }
         Animator.checkPiperTurn(Game.piper);
+        
+        
         keepOnSurface();
+        
+        
         if (Game.map.closeToSurface(loc))
         {
             this.rotationAngle = (float) (-1 * Math.Asin(Vector2.Cross(Game.map.getNormalVector(loc), Vector2.UP)) * 180 / Math.PI);
@@ -252,7 +253,7 @@ class PhysicsSprite : Sprite
     public void keepOnSurface()
     {
         Vector2 pos = this.loc;
-        if (Game.map.onGround(pos))
+        if (onGround)
         {
             Vector2 newLoc = Game.map.getNearestHoveringPoint(pos);
             if ((newLoc - pos).Length() > 10)

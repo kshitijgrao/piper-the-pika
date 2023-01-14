@@ -95,6 +95,7 @@ class Sprite {
                 Engine.DrawRectEmpty(new Bounds2(position - hitbox / 2, hitbox), Color.Yellow);
             }
 
+            rotationAngle = 0;
             
             Engine.DrawTexture(spritemap, position - hitbox / 2, source: bounds,rotation: rotationAngle, mirror: mirror,scaleMode: TextureScaleMode.Nearest);
             
