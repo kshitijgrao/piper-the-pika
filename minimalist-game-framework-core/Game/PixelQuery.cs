@@ -255,7 +255,7 @@ unsafe class Map
         int? y1 = getSurfaceY(pos - shift);
         int? y2 = getSurfaceY(pos + shift);
 
-        if(!y1.HasValue || !y1.HasValue)
+        if(!y1.HasValue || !y2.HasValue)
         {
             return -1;
         }
