@@ -25,6 +25,12 @@ class Sonic : PhysicsSprite
         flows = 0;
         this.mass = sonicMass;
     }
+
+    public Sonic(Vector2 loc, Texture spritemap, Texture blinkmap):base(loc, spritemap, blinkmap)
+    {
+        flows = 0;
+        this.mass = sonicMass;
+    }
     public Sonic(Vector2 loc, Texture sprites) : base(loc, sprites)
     {
         flows = 0;

@@ -6,7 +6,9 @@ using System.Text;
 class Sprite {
 
     public Vector2 loc;
+    private Texture currentmap;
     private Texture spritemap;
+    private Texture blinkmap;
     private float frameIndex;
     private protected State state;
     private Boolean spriteFaceLeft;
@@ -23,6 +25,22 @@ class Sprite {
     {
         this.loc = loc;
         this.spritemap = spritemap;
+        currentmap = spritemap;
+        blinkmap = spritemap;
+        frameIndex = 0;
+        hitbox = new Vector2(24, 24);
+        spriteFaceLeft = false;
+        AnimationLocked = false;
+        state = 0;
+        invisible = false;
+    }
+
+    public Sprite(Vector2 loc, Texture spritemap, Texture blinkmap)
+    {
+        this.loc = loc;
+        this.spritemap = spritemap;
+        this.blinkmap = blinkmap;
+        currentmap = spritemap;
         frameIndex = 0;
         hitbox = new Vector2(24, 24);
         spriteFaceLeft = false;
@@ -36,6 +54,8 @@ class Sprite {
         this.loc = loc;
         this.spritemap = spritemap;
         this.hitbox = hitbox;
+        currentmap = spritemap;
+        blinkmap = spritemap;
         spriteFaceLeft = false;
         state = 0;
         invisible = false;
@@ -71,6 +91,18 @@ class Sprite {
         loc += v;
     }
 
+    public void blink(Boolean willBlink)
+    {
+        if (willBlink)
+        {
+            currentmap = blinkmap;
+        }
+        else
+        {
+            currentmap = spritemap;
+        }
+    }
+
     public void turn()
     {
         spriteFaceLeft = !spriteFaceLeft;
@@ -94,11 +126,7 @@ class Sprite {
             {
                 Engine.DrawRectEmpty(new Bounds2(position - hitbox / 2, hitbox), Color.Yellow);
             }
-
-            rotationAngle = 0;
-            
-            Engine.DrawTexture(spritemap, position - hitbox / 2, source: bounds,rotation: rotationAngle, mirror: mirror,scaleMode: TextureScaleMode.Nearest);
-            
+            Engine.DrawTexture(currentmap, position - hitbox / 2, source: bounds, mirror: mirror);            
         }
     }
 

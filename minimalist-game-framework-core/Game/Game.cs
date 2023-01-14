@@ -30,7 +30,8 @@ class Game
     public static readonly string LEFT = "left";
 
 
-    readonly Texture piperTexture = Engine.LoadTexture("piper-spritemap-no-border.png");
+    readonly Texture piperTexture = Engine.LoadTexture("piper-spritemap.png");
+    readonly Texture piperTextureBlink = Engine.LoadTexture("piper-spritemap-blink.png");
     readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
     readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
     readonly Music basicMusic = Engine.LoadMusic("emre_turkoglu_piper_basic_music.mp3");
@@ -69,7 +70,7 @@ class Game
         
 
         // create piper sprite
-        piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
+        piper = new Sonic(new Vector2(160, 960), piperTexture, piperTextureBlink);
         sprites[0] = piper;
 
         

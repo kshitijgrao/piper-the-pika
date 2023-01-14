@@ -10,6 +10,7 @@ public class Scoreboard
     public Boolean instructions;
 
     Texture pikaPlaceholder = Engine.LoadTexture("pikaPlaceholder.png");
+    Texture flowerTexture = Engine.LoadTexture("flower.png");
     Font arial = Engine.LoadFont("Arial.ttf", 10);
 
     public Scoreboard()
@@ -74,7 +75,7 @@ public class Scoreboard
 
     public void renderScoreboard()
         {
-        //topLeft scoreboard elements
+            // top left scoreboard elements
             Engine.DrawString("Press I for Instructions", new Vector2(210, 0), Color.Black, arial);
             Engine.DrawString("SCORE", new Vector2(0, 0), Color.Black, arial); //yellow
             Engine.DrawString("" + score, new Vector2(40, 0), Color.Black, arial); //white
@@ -89,8 +90,9 @@ public class Scoreboard
             timeDisplay += (int)time % 60;
 
             Engine.DrawString(timeDisplay, new Vector2(28, 15), Color.Black, arial); //white
-            Engine.DrawString("FLOWERS", new Vector2(0, 30), Color.Black, arial); //yellow
-            Engine.DrawString("" + flowers, new Vector2(55, 30), Color.Black, arial); //white
+            Engine.DrawTexture(flowerTexture, new Vector2(0, 30));
+            Engine.DrawString("FLOWERS", new Vector2(13, 30), Color.Black, arial); //yellow
+            Engine.DrawString("" + flowers, new Vector2(68, 30), Color.Black, arial); //white
 
 
 

@@ -8,7 +8,7 @@ public class Scenes
 		static Font h3 = Engine.LoadFont("Arial.ttf", 12);
 
 		//startScene variables
-		static Texture piper = Engine.LoadTexture("pika-spritemap.png");
+		static Texture piper = Engine.LoadTexture("piper-spritemap.png");
 		static int frameCount = 0;
 		
 		//endScene variables
