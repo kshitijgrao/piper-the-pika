@@ -71,7 +71,7 @@ class Sonic : PhysicsSprite
         {
             if (onPath)
             {
-                accPath = (velPath > 0 ? -1 : 1) * Math.Min(brakeAccMag, vel.Length() / Engine.TimeDelta) +  accelerationMag * this.currPath.getBoost(fractionOfPath);
+                accPath = (velPath > 0 ? -1 : 1) * Math.Min(brakeAccMag,  vel.Length() / Engine.TimeDelta) +  accelerationMag * this.currPath.getBoost(fractionOfPath);
             }
             else if (onGround)
             {
@@ -82,7 +82,7 @@ class Sonic : PhysicsSprite
                 this.acc = Vector2.Zero;
             }
         }
-        if(flows > 0)
+        if(flows > 0 && (key == Key.A || key == Key.D))
         {
             acc *= accelerationBoostFactor;
         }
