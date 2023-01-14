@@ -74,7 +74,7 @@ class Game
         sprites[0] = piper;
 
         
-        render = new Rendering("asdfasdfasdf.png", "asdfasdfasdf.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        render = new Rendering("displayMap1_14_windows.png", "newBG_windows.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
         SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
@@ -197,7 +197,7 @@ class Game
                 piper = new Sonic(new Vector2(160, 960), piperTexture, new Vector2(24, 24));
                 sprites[0] = piper;
 
-                render = new Rendering("displayMap1_14.png", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+                render = new Rendering("displayMap1_14_windows.png", "newBG_windows.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
                 //using svg to get normal vectors
                 SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
