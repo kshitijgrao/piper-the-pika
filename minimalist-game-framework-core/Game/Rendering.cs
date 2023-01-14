@@ -21,8 +21,8 @@ class Rendering
 
     public void scrollingMotion()
     {
-        Engine.DrawTexture(bg, (pos / 2) - new Vector2(0, 420));
-        Engine.DrawTexture(map, pos);
+        Engine.DrawTexture(bg, (pos / 2) - new Vector2(2382, 420));
+        Engine.DrawTexture(map, pos - new Vector2(893, 0));
 
         foreach (Flower flow in Game.flowers)
         {
