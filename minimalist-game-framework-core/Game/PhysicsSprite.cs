@@ -26,9 +26,11 @@ class PhysicsSprite : Sprite
 
     internal bool isSpinning;
 
+    public Vector2 collisionBox;
+
 
     //TODO: clean up these constructors
-    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes) : base(loc,sprites,hitboxes)
+    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, Vector2 collisionBox) : base(loc,sprites,hitboxes)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
@@ -39,9 +41,11 @@ class PhysicsSprite : Sprite
         isSpinning = false;
         currPath = null;
         fractionOfPath = 0;
+
+        this.collisionBox = collisionBox;
     }
 
-    public PhysicsSprite(Vector2 loc, Texture spritemap, Texture blinkmap) : base(loc, spritemap, blinkmap)
+    public PhysicsSprite(Vector2 loc, Texture spritemap, Texture blinkmap, Vector2 collisionBox) : base(loc, spritemap, blinkmap)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
@@ -52,9 +56,10 @@ class PhysicsSprite : Sprite
         isSpinning = false;
         currPath = null;
         fractionOfPath = 0;
+        this.collisionBox = collisionBox;
     }
 
-    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, bool onGround) : base(loc, sprites, hitboxes)
+    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, bool onGround, Vector2 collisionBox) : base(loc, sprites, hitboxes)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
@@ -64,9 +69,10 @@ class PhysicsSprite : Sprite
         isSpinning = false;
         currPath = null;
         fractionOfPath = 0;
+        this.collisionBox = collisionBox;
     }
 
-    public PhysicsSprite(Vector2 loc, Texture sprites) : base(loc, sprites)
+    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 collisionBox) : base(loc, sprites)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
@@ -77,6 +83,12 @@ class PhysicsSprite : Sprite
         isSpinning = false;
         currPath = null;
         fractionOfPath = 0;
+        this.collisionBox = collisionBox;
+    }
+
+    public override Bounds2 getPhysicsHitbox()
+    {
+        return (new Bounds2(loc - collisionBox / 2, collisionBox));
     }
 
     public override bool notCollidable()
