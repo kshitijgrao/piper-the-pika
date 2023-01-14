@@ -74,7 +74,7 @@ class Game
         sprites[0] = piper;
 
         
-        render = new Rendering("displayMap1_14.png", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        render = new Rendering("displayMapNoBG.png", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
         SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
