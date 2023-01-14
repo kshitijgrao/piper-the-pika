@@ -216,6 +216,8 @@ unsafe class Map
         {
             if (c.contains(surfacePoint))
             {
+                Curve curr = c;
+
                 return c.getNearestNormal(surfacePoint);
             }
         }
@@ -233,19 +235,62 @@ unsafe class Map
 
     //TODO: need to implement -- something along th elines of the commented out code
     //TODO: use svg to get exact curvatures
+    //method is relatively costly, could use sorting and past query memory to improve..
     public float getSurfaceRadius(Vector2 pos)
     {
-        return -1;
-        /*Vector2 shift = new Vector2(5, 0);
-        Vector2 x1 = new Vector2(pos.X - shift.X, getSurfaceY(pos - shift));
-        Vector2 x2 = new Vector2(pos.X + shift.X, getSurfaceY(pos + shift));
+        Vector2 surfacePoint = getNearestSurfacePoint(pos);
+        foreach (Curve c in curves)
+        {
+            if (c.contains(surfacePoint))
+            {
+                return 1 / c.getNearestCurvature(surfacePoint);
+            }
+        }
+
+        Vector2 norm = getNormalVector(surfacePoint);
+
+        Vector2 shift = new Vector2(5, 0);
+
+        int? y1 = getSurfaceY(pos - shift);
+        int? y2 = getSurfaceY(pos + shift);
+
+        if(!y1.HasValue || !y1.HasValue)
+        {
+            return -1;
+        }
+        
+        Vector2 x1 = new Vector2(surfacePoint.X - shift.X, y1.Value);
+        Vector2 x2 = new Vector2(surfacePoint.X + shift.X, y2.Value);
         Vector2 norm1 = getNormalVector(x1);
         Vector2 norm2 = getNormalVector(x2);
-        float angle = (float) Math.Round(Math.Acos(Vector2.Dot(norm1, norm2)),1);
 
-        if (angle == 0)
+        float angle1 = (float)Math.Acos(Vector2.Dot(norm1,norm));
+        float angle2 = (float)Math.Acos(Vector2.Dot(norm2, norm));
+
+        if(angle1 == 0 || angle2 == 0 || (angle1 + angle2) == 0)
+        {
             return -1;
-        return (x1 - x2).Length() / angle;*/
+        }
+
+        float outputRadius;
+
+        if (angle2 > 2 * angle1)
+        {
+            outputRadius = (x1 - surfacePoint).Length() / angle1;
+        }
+        else if (angle1 > 2 * angle2)
+        {
+            outputRadius = (surfacePoint - x2).Length() / angle2;
+        }
+        else
+        {
+            outputRadius = (x1 - x2).Length() / (angle1 + angle2);
+        }
+        if (float.IsNaN(outputRadius))
+        {
+            return -1;
+        }
+        return outputRadius;
     }
 
     //returns the point to put the sprite on when hovering over ground

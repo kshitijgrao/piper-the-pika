@@ -74,7 +74,7 @@ class Game
         sprites[0] = piper;
 
         
-        render = new Rendering("displayMap1_14.png", "newBG.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
+        render = new Rendering("asdfasdfasdf.png", "asdfasdfasdf.png", new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3));
 
         //using svg to get normal vectors
         SVGReader.findElementsAndAdd(map, "Assets/map_svg_form.txt");
@@ -90,6 +90,8 @@ class Game
 
     public void Update()
     {
+        map.getNormalVector(new Vector2(1302, 932));
+
         //scene control
         if (currentScene == Scene.instructions)
         {
@@ -169,8 +171,10 @@ class Game
                 Engine.DrawString("Pos: " + piper.loc.Rounded(2).ToString(), new Vector2(Resolution.X - 12, 12), Color.Black, arial, TextAlignment.Right);
                 Engine.DrawString("onGround? " + piper.onGround, new Vector2(Resolution.X - 12, 24), Color.Black, arial, TextAlignment.Right);
                 Engine.DrawString("onPath? " + piper.onPath + " with fraction: " + Math.Round(piper.fractionOfPath, 3), new Vector2(Resolution.X - 12, 36), Color.Black, arial, TextAlignment.Right);
-                Engine.DrawString("current normal: " + map.getNormalVector(piper.loc).ToString(), new Vector2(Resolution.X - 12, 48), Color.Black, arial, TextAlignment.Right);
+                Engine.DrawString("current normal: " + map.getNormalVector(piper.loc).Rounded(2).ToString() + " current radius: " + Math.Round(map.getSurfaceRadius(piper.loc),7), new Vector2(Resolution.X - 12, 48), Color.Black, arial, TextAlignment.Right);
                 Engine.DrawString("isSpinning? " + piper.isSpinning, new Vector2(Resolution.X - 12, 60), Color.Black, arial, TextAlignment.Right);
+
+                Debug.WriteLine(map.getSurfaceRadius(piper.loc));
             }
 
 
