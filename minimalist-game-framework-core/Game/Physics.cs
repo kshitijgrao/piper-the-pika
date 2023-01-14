@@ -38,8 +38,8 @@ class Physics
         {
             return;
         }
-        Bounds2 b1 = obj1.getHitbox();
-        Bounds2 b2 = obj2.getHitbox();
+        Bounds2 b1 = obj1.getPhysicsHitbox();
+        Bounds2 b2 = obj2.getPhysicsHitbox();
         if (b1.Overlaps(b2))
         {
             if (obj2 is Enemy)
