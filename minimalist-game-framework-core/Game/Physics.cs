@@ -127,7 +127,7 @@ class Physics
             if (Game.map.passingSolid(pos, finalPos))
             {
                 Vector2 norm = Game.map.getNormalVector(finalPos);
-                if (Engine.GetKeyHeld(Key.NumRow6))
+                if (Game.debugToggle)
                 {
                     System.Diagnostics.Debug.WriteLine("Colliding now: params: loc: " + obj.loc.ToString() + " vel: " + obj.vel.ToString());
                     System.Diagnostics.Debug.WriteLine("final Pos: " + finalPos + " norm: " + Game.map.getNormalVector(finalPos).ToString());
