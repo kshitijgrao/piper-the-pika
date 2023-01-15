@@ -38,8 +38,8 @@ class Physics
         {
             return;
         }
-        Bounds2 b1 = obj1.getHitbox();
-        Bounds2 b2 = obj2.getHitbox();
+        Bounds2 b1 = obj1.getPhysicsHitbox();
+        Bounds2 b2 = obj2.getPhysicsHitbox();
         if (b1.Overlaps(b2))
         {
             if (obj2 is Enemy)
@@ -127,11 +127,6 @@ class Physics
             if (Game.map.passingSolid(pos, finalPos))
             {
                 Vector2 norm = Game.map.getNormalVector(finalPos);
-                if (Game.debugToggle)
-                {
-                    System.Diagnostics.Debug.WriteLine("Colliding now: params: loc: " + obj.loc.ToString() + " vel: " + obj.vel.ToString());
-                    System.Diagnostics.Debug.WriteLine("final Pos: " + finalPos + " norm: " + Game.map.getNormalVector(finalPos).ToString());
-                }
 
                 obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
                 obj.loc = Game.map.getNearestHoveringPoint(finalPos);
@@ -307,7 +302,8 @@ class Physics
         }
         else if (obj.onGround)
         {
-            if (radius < 0)
+            //return g - norm * Vector2.Dot(g, norm);
+            if (radius < 0 || Game.debugToggle)
             {
                 return g - norm * Vector2.Dot(g, norm);
             }

@@ -16,25 +16,21 @@ class Sonic : PhysicsSprite
     public static readonly float accelerationBoostFactor = (float) 1.3;
     public static readonly float flowerAccBoost = (float) 1.5;
 
+    public static readonly Vector2 sonicBox = new Vector2(20, 20);
+
     public static readonly float sonicMass = 2;
 
     private float flows;
     
-    public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes)
+    public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes, sonicBox)
     {
         flows = 0;
         this.mass = sonicMass;
     }
 
-    public Sonic(Vector2 loc, Texture spritemap, Texture blinkmap):base(loc, spritemap, blinkmap)
+    public Sonic(Vector2 loc, Texture spritemap, Texture blinkmap):base(loc, spritemap, blinkmap, sonicBox)
     {
         flows = 0;
-        this.mass = sonicMass;
-    }
-    public Sonic(Vector2 loc, Texture sprites) : base(loc, sprites)
-    {
-        flows = 0;
-        onGround = Game.map.onGround(this.getBotPoint());
         this.mass = sonicMass;
     }
 
@@ -141,13 +137,17 @@ class Enemy : PhysicsSprite
     public static readonly Vector2 wolfHit = new Vector2(40, 34);
     public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
+    public static readonly Vector2 wolfCollisionHit = new Vector2(30, 24);
+    public static readonly Vector2 hawkCollisionHit = new Vector2(40, 20);
+
     public static readonly float killSpeed = 150;
 
-    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
+    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false, flying ? hawkCollisionHit : wolfCollisionHit)
     {
         this.path = path;
         this.mass = 10;
     }
+
 
     //public Enemy(Vector2 loc, Texture sprites, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, false)
     //{
@@ -217,6 +217,7 @@ class Enemy : PhysicsSprite
 class Flower : Sprite
 {
     public static readonly Vector2 defaultFlowerHitbox = new Vector2(13, 14);
+    public static readonly Vector2 collisionFlowerHitbox = new Vector2(10, 10);
     public static readonly Texture defaultFlower = Engine.LoadTexture("flower.png");
     public Flower(Vector2 loc) : base(loc + defaultFlowerHitbox / 2, defaultFlower, defaultFlowerHitbox)
     {
@@ -231,5 +232,10 @@ class Flower : Sprite
             ((Sonic)mainCharacter).addFlower();
         }        
         base.collide(mainCharacter);
+    }
+
+    public override Bounds2 getPhysicsHitbox()
+    {
+        return (new Bounds2(loc - collisionFlowerHitbox / 2, collisionFlowerHitbox));
     }
 }

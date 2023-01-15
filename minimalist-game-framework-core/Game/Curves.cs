@@ -514,6 +514,8 @@ class Rect : Curve
             rect.Position.Y = (float)Math.Round(Double.Parse(s[7]));
             rect.Size.X = (float)Math.Round(Double.Parse(s[0])) - 1;
             rect.Size.Y = (float)Math.Round(Double.Parse(s[1])) - 1;
+
+            rect.Position -= rect.Size;
         }
         else if (s.Length >= 4)
         {
@@ -521,6 +523,8 @@ class Rect : Curve
             rect.Position.Y = (float)Math.Round(Double.Parse(s[1]));
             rect.Size.X = (float)Math.Round(Double.Parse(s[2])) - 1;
             rect.Size.Y = (float)Math.Round(Double.Parse(s[3])) - 1;
+
+            
         }
         this.color = color;
     }
