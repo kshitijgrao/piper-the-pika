@@ -21,16 +21,25 @@ class Sonic : PhysicsSprite
     public static readonly float sonicMass = 2;
 
     private float flows;
-    
+    private int flowerCount;
+
+
+    public int enemiesKilled;
+
+    public static readonly Texture piperTexture = Engine.LoadTexture("piper-spritemap.png");
+    public static readonly Texture piperTextureBlink = Engine.LoadTexture("piper-spritemap-blink.png");
+
     public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes, sonicBox)
     {
         flows = 0;
+        flowerCount = 0;
         this.mass = sonicMass;
     }
 
-    public Sonic(Vector2 loc, Texture spritemap, Texture blinkmap):base(loc, spritemap, blinkmap, sonicBox)
+    public Sonic(Vector2 loc):base(loc, piperTexture, piperTextureBlink, sonicBox)
     {
         flows = 0;
+        flowerCount = 0;
         this.mass = sonicMass;
     }
 
@@ -38,19 +47,19 @@ class Sonic : PhysicsSprite
     {
         if (onGround)
         {
-            this.vel = this.vel + jumpImpulseMag * Game.map.getNormalVector(loc);
+            this.vel = this.vel + jumpImpulseMag * Game.currentLevel.getMap().getNormalVector(loc);
         }
         
     }
 
-    public void setAcceleration(Key key)
+    public void setAcceleration(Key key, Map map)
     {
         if(key == Key.D)
         {
             if (onPath)
                 accPath = accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath);
             else if (onGround)
-                this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(90);
+                this.acc = accelerationMag * map.getNormalVector(loc).Rotated(90);
             else
                 this.acc = accelerationMag * (new Vector2(1, 0));
         }
@@ -59,7 +68,7 @@ class Sonic : PhysicsSprite
             if (onPath)
                accPath = -1 * accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath);
             else if (onGround)
-               this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(270);
+               this.acc = accelerationMag * map.getNormalVector(loc).Rotated(270);
             else
                 this.acc = accelerationMag * (new Vector2(-1, 0));
         }
@@ -83,17 +92,17 @@ class Sonic : PhysicsSprite
             acc *= accelerationBoostFactor;
         }
 
-        if (Game.map.inAir(loc))
+        if (map.inAir(loc))
         {
             acc.X *= accelerationBoostFactor;
         }
         if (onPath) 
         {
-            accPath += Physics.getPhysicsAcceleration(this, this.loc, this.vel).X;
+            accPath += Physics.getPhysicsAcceleration(this, this.loc, this.vel, map).X;
         }
         else
         {
-            this.acc += Physics.getPhysicsAcceleration(this, this.loc, this.vel);
+            this.acc += Physics.getPhysicsAcceleration(this, this.loc, this.vel, map);
         }
 
 
@@ -104,7 +113,7 @@ class Sonic : PhysicsSprite
 
     }
 
-    public override void updateState()
+    public override void updateState(Map map)
     {
         float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
 
@@ -116,7 +125,7 @@ class Sonic : PhysicsSprite
         {
             this.vel.X = Math.Max(this.vel.X, -1 * horVelCap);
         }
-        base.updateState();
+        base.updateState(map);
         
         if(flows > 0)
            flows -= 1 / ((float) boostFrameTime);
@@ -125,6 +134,12 @@ class Sonic : PhysicsSprite
     public void addFlower()
     {
         flows += 1;
+        flowerCount += 1;
+    }
+
+    public int getFlowers()
+    {
+        return flowerCount;
     }
 }
 
@@ -142,7 +157,7 @@ class Enemy : PhysicsSprite
 
     public static readonly float killSpeed = 150;
 
-    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false, flying ? hawkCollisionHit : wolfCollisionHit)
+    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false, flying ? hawkCollisionHit : wolfCollisionHit)
     {
         this.path = path;
         this.mass = 10;
@@ -175,7 +190,7 @@ class Enemy : PhysicsSprite
         if (other is PhysicsSprite) {
             if (other.isSpinning)
             {
-                Game.sb.enemyKilled(1);
+                Game.currentLevel.sb.enemyKilled(1);
                 base.collide(other);
             }
             else
@@ -184,7 +199,7 @@ class Enemy : PhysicsSprite
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
                 other.setInvincible();
 
-                Animator.animatePiperTakingDamage(Game.piper);
+                Animator.animatePiperTakingDamage(other);
 
                 if (Game.gameDifficulty == Game.EASY)
                 {
@@ -226,10 +241,11 @@ class Flower : Sprite
 
     public override void collide(Sprite mainCharacter)
     {
-        Game.sb.addFlower();
+        Game.currentLevel.sb.addFlower();
         if (mainCharacter is Sonic)
         {
             ((Sonic)mainCharacter).addFlower();
+
         }        
         base.collide(mainCharacter);
     }

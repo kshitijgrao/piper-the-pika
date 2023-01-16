@@ -151,7 +151,7 @@ class Sprite {
         return state;
     }
 
-    public virtual void updateState()
+    public virtual void updateState(Map map)
     {
         state = (State)(((int)state + 1) % 5);
     }
