@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
+using System.Reflection.Emit;
 
 /*
 class BezierCurve
@@ -32,9 +33,10 @@ static class SVGReader
         {"ground" , "#710000" },
         {"through" , "#FF0000" },
         {"flying_enemy", "#0E770B" },
-        {"ground_enemy", "#05FF00"}
+        {"ground_enemy", "#05FF00"},
+        {"flower", "#FF00F5" }
     };
-    public static void findElementsAndAdd(Map map, string path)
+    public static void findAllElementsAndAdd(Map map, string path)
     {
         string[] lines = File.ReadAllLines(path);
         foreach (string line in lines)
@@ -47,28 +49,33 @@ static class SVGReader
             {
                 addPath(line, map);
             }
-            else
-            {
-                checkAndAddEnemy(line);
-            }
 
         }
     }
 
-    private static void checkAndAddEnemy(string line)
+    public static Enemy[] findEnemies(string path)
     {
-        if(line.Length < 5 || line.Substring(0,5) != "<line") { return;  }
-        if (line.Contains(ColorTypes["flying_enemy"]))
+        string[] lines = File.ReadAllLines(path);
+
+        List<Enemy> enemiesOut = new List<Enemy>();
+
+        foreach(string line in lines)
         {
-            addEnemy(line, true);
+            if (line.Length < 5 || line.Substring(0, 5) != "<line") { continue; }
+            if (line.Contains(ColorTypes["flying_enemy"]))
+            {
+                enemiesOut.Add(getEnemy(line, true));
+            }
+            else if (line.Contains(ColorTypes["ground_enemy"]))
+            {
+                enemiesOut.Add(getEnemy(line, false));
+            }
         }
-        else if (line.Contains(ColorTypes["ground_enemy"]))
-        {
-            addEnemy(line, false);
-        }
+
+        return enemiesOut.ToArray();
     }
 
-    private static void addEnemy(string line, bool flying)
+    private static Enemy getEnemy(string line, bool flying)
     {
         float[] coords = new float[4];
         string[] stringCoords = line.Substring(10, line.Length - 30).Replace("y", "").Replace("x", "").Replace("1=", "").Replace("2=", "").Replace("\"", "").Split(' ');
@@ -80,8 +87,28 @@ static class SVGReader
 
         Enemy enemyToAdd = new Enemy(new Vector2(coords[0], coords[1]), new Bounds2(coords[0], coords[1], coords[2], coords[3]), flying);
         enemyToAdd.setState(State.Walk);
-        Game.enemies.Add(enemyToAdd);
+        return enemyToAdd;
     }
+
+    public static Flower[] findFlowers(string path)
+    {
+        string[] lines = File.ReadAllLines(path);
+
+        List<Flower> flowersOut = new List<Flower>();
+
+        foreach (string line in lines)
+        {
+            if (line.Length < 5 || line.Substring(0, 5) != "<rect") { continue; }
+            if (line.Contains(ColorTypes["flower"]))
+            {
+                string[] stringCoords = line.Substring(9, line.Length - 48).Split("\" y=\"");
+                flowersOut.Add(new Flower(new Vector2(float.Parse(stringCoords[0]), float.Parse(stringCoords[1]))));
+            }
+        }
+
+        return flowersOut.ToArray();
+    }
+
 
     private static bool isCurve(string line)
     {

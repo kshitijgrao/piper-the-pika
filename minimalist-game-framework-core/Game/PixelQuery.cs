@@ -79,7 +79,6 @@ unsafe class Map
                 Vector2 locVect = new Vector2(x, y);
                 if (pixels[x, y] == (245 + 255))
                 {
-                    Game.flowers.Add(new Flower(locVect));
                     pixels[x, y] = AIR_CODE;
                 }
 
@@ -238,7 +237,6 @@ unsafe class Map
     //method is relatively costly, could use sorting and past query memory to improve..
     public float getSurfaceRadius(Vector2 pos)
     {
-
         Vector2 surfacePoint = getNearestSurfacePoint(pos);
         foreach (Curve c in curves)
         {

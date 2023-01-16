@@ -83,27 +83,19 @@ internal static class Animator
     {
         Vector2 maxPosition = enemy.getPath().Size;
         Vector2 minPosition = enemy.getPath().Position;
-        if (!enemy.isLeft()) // TODO: CURRENTLY INCORRECT. IF ENEMY "IS LEFT" THEY ARE ACTUALLY FACING RIGHT. THIS WILL BE FIXED LATER
+
+        Debug.WriteLine(minPosition.ToString() + " " + maxPosition.ToString());
+
+        if(enemy.loc.X >= maxPosition.X)
         {
-            if (enemy.loc.X > minPosition.X)
-            {
-                enemy.setVelocity(new Vector2(-enemy.getSpeed(), 0));
-            } else
-            {
-                enemy.turn();
-            }
+            enemy.setVelocity((minPosition - maxPosition).Normalized() * enemy.getSpeed());
         }
-        else
+        if(enemy.loc.X <= minPosition.X)
         {
-            if (enemy.loc.X < maxPosition.X)
-            {
-                enemy.setVelocity(new Vector2(enemy.getSpeed(), 0));
-            }
-            else
-            {
-                enemy.turn();
-            }
+            enemy.setVelocity((maxPosition - minPosition).Normalized() * enemy.getSpeed());
         }
+
+        enemy.turn();
 
         return changeFrame(enemy, position, 5);
     }
@@ -174,7 +166,7 @@ internal static class Animator
         }
     }
 
-    public static void checkPiperTurn(Sonic piper)
+    public static void checkPiperTurn(PhysicsSprite piper)
     {
         if ((piper.isLeft() && piper.vel.X > 1) || (!piper.isLeft() && piper.vel.X < -1))
         {
