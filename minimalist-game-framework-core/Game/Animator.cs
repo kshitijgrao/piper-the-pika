@@ -17,6 +17,7 @@ internal static class Animator
     static float piperFramerate = 5;
     public static float generalFramerate = 5;
     static float jumpTime = 30;
+    public static float sparkleFramesLeft = 0;
 
     // blink constants
     static int minFramesUntilBlink = 10;
@@ -75,6 +76,15 @@ internal static class Animator
         else
         {
             piper.addAirTime(-piper.getAirTime());
+        }
+
+        if (piper.isSparkling)
+        {
+            sparkleFramesLeft -= Engine.TimeDelta * generalFramerate;
+            if (sparkleFramesLeft <= 0)
+            {
+                piper.isSparkling = false;
+            }
         }
 
         return changeFrame(piper, position, 4, piperFramerate);

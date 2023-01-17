@@ -205,6 +205,10 @@ class Enemy : PhysicsSprite
                 Game.sb.enemyKilled(1);
                 base.collide(other);
                 base.setFrameIndex(0);
+
+                // bounce piper upwards
+                other.loc += other.vel * (Engine.TimeDelta - timeLeft);
+                other.vel = Physics.coeffRestitution * new Vector2(0, -30);
             }
             else if (base.getState() != State.Damage)
             {
@@ -264,6 +268,8 @@ class Flower : Sprite
             {
                 ((Sonic)mainCharacter).addFlower();
             }
+            mainCharacter.isSparkling = true;
+            Animator.sparkleFramesLeft = 5;
             base.collide(mainCharacter);
         }
     }

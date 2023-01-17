@@ -16,9 +16,11 @@ class Sprite {
     private protected Vector2 hitbox;
 
     public bool invisible;
+    public bool isSparkling;
 
     internal float rotationAngle;
 
+    readonly Texture sparkles = Engine.LoadTexture("sparkles-effect.png");
     public static readonly State landState = State.Landing;
 
     public Sprite(Vector2 loc, Texture spritemap)
@@ -138,6 +140,12 @@ class Sprite {
                 Engine.DrawRectEmpty(new Bounds2(position - hitbox / 2, hitbox), Color.Yellow);
             }
             Engine.DrawTexture(currentmap, position - hitbox / 2, source: bounds, mirror: mirror);            
+        }
+        if (isSparkling)
+        {
+            System.Diagnostics.Debug.WriteLine(bounds);
+            Bounds2 sparkleBounds = new Bounds2(new Vector2(bounds.Min.X, 0), new Vector2(24, 24));
+            Engine.DrawTexture(sparkles, position - hitbox / 2, source: sparkleBounds);
         }
     }
 
