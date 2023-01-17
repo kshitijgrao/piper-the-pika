@@ -33,7 +33,7 @@ unsafe class Map
     public static readonly int PATH_CODE = 235;
 
     public static readonly int SPRING_CODE = 123;
-    public static readonly int SPIKE_CODE = 132;
+    public static readonly int SPIKE_CODE = 252;
 
     //public static readonly int TUNNEL_CODE = 
 

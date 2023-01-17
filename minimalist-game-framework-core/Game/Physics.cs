@@ -128,10 +128,7 @@ class Physics
             {
                 Vector2 norm = map.getNormalVector(finalPos);
 
-                if (Game.map.onSpike(finalPos))
-                {
-                    obj.collideSpike((steps - i) * Engine.TimeDelta / steps);
-                }
+                
 
 
                 obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
@@ -149,6 +146,10 @@ class Physics
 
                 break;
 
+            }
+            if (map.onSpike(finalPos) && map.getNormalVector(finalPos).X == 0)
+            {
+                obj.collideSpike((steps - i) * Engine.TimeDelta / steps);
             }
             //detecting paths
             if (!obj.onPath && map.onPath(finalPos))
