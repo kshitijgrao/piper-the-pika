@@ -255,7 +255,12 @@ class PhysicsSprite : Sprite
 
     }
 
+    public virtual void collideSpike (float timeLeft)
+    {
+        collided = true;
+        this.timeLeft = timeLeft;
 
+    }
 
     public void collideSolid(float timeLeft)
     {

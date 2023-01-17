@@ -34,7 +34,8 @@ static class SVGReader
         {"through" , "#FF0000" },
         {"flying_enemy", "#0E770B" },
         {"ground_enemy", "#05FF00"},
-        {"flower", "#FF00F5" }
+        {"flower", "#FF00F5" },
+        {"spike", "#0028FC" }
     };
     public static void findAllElementsAndAdd(Map map, string path)
     {
@@ -116,7 +117,7 @@ static class SVGReader
         {
             return false;
         }
-        return line.Substring(0, 5) == "<rect" && (line.Substring(line.Length - 10, 7) == ColorTypes["ground"] || line.Substring(line.Length - 10, 7) == ColorTypes["through"]);
+        return line.Substring(0, 5) == "<rect" && (line.Substring(line.Length - 10, 7) == ColorTypes["ground"] || line.Substring(line.Length - 10, 7) == ColorTypes["through"] || line.Substring(line.Length - 10, 7) == ColorTypes["spike"]);
     }
 
     private static void addCurve(string line, Map map)
