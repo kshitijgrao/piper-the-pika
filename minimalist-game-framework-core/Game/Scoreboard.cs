@@ -2,7 +2,7 @@
 
 public class Scoreboard
 {
-    static int score;
+    public int score;
     static float time;
     public static int flowers;
     public static int lives;
@@ -36,7 +36,7 @@ public class Scoreboard
                 {
                     instructions = false;
                 }
-                else if(Engine.GetKeyDown(Key.I))
+                else if (Engine.GetKeyDown(Key.I))
                 {
                     instructions = true;
                 }
@@ -65,7 +65,7 @@ public class Scoreboard
             time += Engine.TimeDelta;
 
         }
-        if(lives <= 0)
+        if (lives <= 0)
         {
             return Scene.end;
             Game.message = "FAILED";
@@ -74,123 +74,123 @@ public class Scoreboard
     }
 
     public void renderScoreboard()
+    {
+        // top left scoreboard elements
+        Engine.DrawString("Press I for Instructions", new Vector2(210, 0), Color.Black, arial);
+        Engine.DrawString("SCORE", new Vector2(0, 0), Color.Black, arial); //yellow
+        Engine.DrawString("" + score, new Vector2(40, 0), Color.Black, arial); //white
+        Engine.DrawString("TIME", new Vector2(0, 15), Color.Black, arial); //yellow
+
+        String timeDisplay = (int)time / 60 + ":";
+        if (time % 60 < 10)
         {
-            // top left scoreboard elements
-            Engine.DrawString("Press I for Instructions", new Vector2(210, 0), Color.Black, arial);
-            Engine.DrawString("SCORE", new Vector2(0, 0), Color.Black, arial); //yellow
-            Engine.DrawString("" + score, new Vector2(40, 0), Color.Black, arial); //white
-            Engine.DrawString("TIME", new Vector2(0, 15), Color.Black, arial); //yellow
-
-            String timeDisplay = (int)time / 60 + ":";
-            if (time % 60 < 10)
-            {
-                timeDisplay += 0;
-            }
-
-            timeDisplay += (int)time % 60;
-
-            Engine.DrawString(timeDisplay, new Vector2(28, 15), Color.Black, arial); //white
-            Engine.DrawTexture(flowerTexture, new Vector2(0, 30));
-            Engine.DrawString("FLOWERS", new Vector2(13, 30), Color.Black, arial); //yellow
-            Engine.DrawString("" + flowers, new Vector2(68, 30), Color.Black, arial); //white
-
-
-
-            //bottom left scoreboard elements
-            Engine.DrawTexture(pikaPlaceholder, new Vector2(6, 197), size: new Vector2(19, 17));
-            Engine.DrawString("PIPER", new Vector2(26, 195), Color.Black, arial); //yellow
-            Engine.DrawString("x      " + lives, new Vector2(26, 204), Color.Black, arial); //white
+            timeDisplay += 0;
         }
+
+        timeDisplay += (int)time % 60;
+
+        Engine.DrawString(timeDisplay, new Vector2(28, 15), Color.Black, arial); //white
+        Engine.DrawTexture(flowerTexture, new Vector2(0, 30));
+        Engine.DrawString("FLOWERS", new Vector2(13, 30), Color.Black, arial); //yellow
+        Engine.DrawString("" + flowers, new Vector2(68, 30), Color.Black, arial); //white
+
+
+
+        //bottom left scoreboard elements
+        Engine.DrawTexture(pikaPlaceholder, new Vector2(6, 197), size: new Vector2(19, 17));
+        Engine.DrawString("PIPER", new Vector2(26, 195), Color.Black, arial); //yellow
+        Engine.DrawString("x      " + lives, new Vector2(26, 204), Color.Black, arial); //white
+    }
 
     //modify flower count
     public void addFlower()
-        {
+    {
         flowers++;
         score += 10;
-        }
+    }
 
 
     //if an enemy is killed, increase score based on how many enemies have been killed
     public void enemyKilled(int killNumber)
+    {
+        if (killNumber == 0)
         {
-            if (killNumber == 0)
-            {
-                score += 100;
-            }
-            else if (killNumber == 1)
-            {
-                score += 200;
-            }
-            else if (killNumber == 2)
-            {
-                score += 500;
-            }
-            else if (killNumber < 15)
-            {
-                score += 1000;
-            }
-            else
-            {
-                score += 10000;
-            }
+            score += 100;
         }
+        else if (killNumber == 1)
+        {
+            score += 200;
+        }
+        else if (killNumber == 2)
+        {
+            score += 500;
+        }
+        else if (killNumber < 15)
+        {
+            score += 1000;
+        }
+        else
+        {
+            score += 10000;
+        }
+    }
 
     //input -1 if a life is lost
     //input 1 if an extra life is gained
     public static void modifyLives(int x)
-        {
-            lives += x;
-        }
+    {
+        lives += x;
+    }
 
     //time bonus after level
     public static int timeBonus()
+    {
+        if ((int)time < 29)
         {
-            if ((int)time < 29)
-            {
-                return 50000;
-            }
-            else if ((int)time < 45)
-            {
-                return 10000;
-            }
-            else if ((int)time < 60)
-            {
-            return 5000;
-            }
-            else if ((int)time < 90)
-            {
-            return 4000;
-            }
-            else if ((int)time < 120)
-            {
-            return 3000;
-            }
-            else if ((int)time < 180)
-            {
-            return 2000;
-            }
-            else if ((int)time < 240)
-            {
-            return 1000;
-            }
-            else if ((int)time < 300)
-            {
-            return 500;
-            }
-            return 0;
+            return 50000;
         }
+        else if ((int)time < 45)
+        {
+            return 10000;
+        }
+        else if ((int)time < 60)
+        {
+            return 5000;
+        }
+        else if ((int)time < 90)
+        {
+            return 4000;
+        }
+        else if ((int)time < 120)
+        {
+            return 3000;
+        }
+        else if ((int)time < 180)
+        {
+            return 2000;
+        }
+        else if ((int)time < 240)
+        {
+            return 1000;
+        }
+        else if ((int)time < 300)
+        {
+            return 500;
+        }
+        return 0;
+    }
 
     public static float getTime()
     {
         return time;
     }
 
-    public static int getScore()
+    public int getScore()
     {
         return score;
     }
 
-    public static void updateScore(int x)
+    public void updateScore(int x)
     {
         score += x;
     }

@@ -200,8 +200,9 @@ class Enemy : PhysicsSprite
                 other.setInvincible();
 
                 Animator.animatePiperTakingDamage(other);
+                Difficulty currDiff = Game.currentLevel.diff;
 
-                if (Game.gameDifficulty == Game.EASY)
+                if (currDiff == Difficulty.easy)
                 {
                     if (Scoreboard.flowers > 0)
                     {
@@ -212,11 +213,11 @@ class Enemy : PhysicsSprite
                         Scoreboard.lives--;
                     }
                 }
-                else if (Game.gameDifficulty == Game.MEDIUM)
+                else if (currDiff == Difficulty.medium)
                 {
                     Scoreboard.lives--;
                 }
-                else if (Game.gameDifficulty == Game.HARD)
+                else if (currDiff == Difficulty.hard)
                 {
                     Scoreboard.lives = 0;
                 }
