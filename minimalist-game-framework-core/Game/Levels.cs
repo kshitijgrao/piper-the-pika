@@ -11,38 +11,44 @@ class Level
     private Vector2 startingCoord;
     private int finishingThresh;
     private string svg_path;
+    public Difficulty diff;
 
 
     //drawing
     private Rendering render;
     string front_pic_path;
     string back_pic_path;
+    Vector2 pos;
+    Vector2 bgOff;
+    Vector2 mapOff;
 
     //display
     public Scoreboard sb;
-
     private float maxProgress;
-    private bool passed;
+    public LevelPassed passed;
     private int highScore;
+    public int levelNum;
 
     private Sonic piper;
     public Enemy[] enemies;
     public Flower[] flowers;
 
-    public Level(string map_path, string svg_path, string front_pic_path, string back_pic_path, Vector2 startingCoord, int finalX)
+    public Level(string map_path, string svg_path, string front_pic_path, string back_pic_path, Vector2 startingCoord, Vector2 pos, Vector2 bgOff, Vector2 mapOff, int finalX, LevelPassed startLevel)
     {
         this.map = new Map(map_path);
-        this.render = new Rendering(front_pic_path, back_pic_path);
+        this.render = new Rendering(front_pic_path, back_pic_path, pos, bgOff, mapOff);
         this.svg_path = svg_path;
 
         this.front_pic_path = front_pic_path;
         this.back_pic_path = back_pic_path;
 
+        this.pos = pos;
+        this.bgOff = bgOff;
+        this.mapOff = mapOff;
+
         SVGReader.findAllElementsAndAdd(map, svg_path);
 
-        sb = new Scoreboard();
-
-        passed = false;
+        passed = startLevel;
         maxProgress = 0;
         highScore = 0;
         finishingThresh = finalX;
@@ -63,7 +69,7 @@ class Level
         enemies = SVGReader.findEnemies(svg_path);
         flowers = SVGReader.findFlowers(svg_path);
 
-        render = new Rendering(front_pic_path, back_pic_path);
+        render = new Rendering(front_pic_path, back_pic_path, pos, bgOff, mapOff);
 
     }
 
@@ -125,7 +131,10 @@ class Level
 
         if (piper.loc.X >= finishingThresh)
         {
-            passed = true;
+            if (Game.progress <= passed)
+            {
+                Game.progress++;
+            }
             Game.currentScene = Scene.end;
         }
 
@@ -150,7 +159,7 @@ class Level
         }
 
         maxProgress = Math.Max(maxProgress, (piper.loc.X - startingCoord.X) / (finishingThresh - startingCoord.X));
-        highScore = Math.Max(highScore, Scoreboard.getScore());
+        highScore = Math.Max(highScore, sb.getScore());
     }
 
     public Map getMap()
@@ -158,9 +167,9 @@ class Level
         return map;
     }
 
-    public bool getPassed()
+    public LevelPassed getPassed()
     {
-        return passed;
+        return (LevelPassed) Math.Min((int) Game.progress, (int) passed + 1);
     }
 
     public float returnPercentCompletion()
