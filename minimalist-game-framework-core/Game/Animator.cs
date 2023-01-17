@@ -11,16 +11,27 @@ using System.Text;
  */
 internal static class Animator
 {
+    static Random rng = new Random();
+
     // animation constants
     static float Framerate = 5;
     static float jumpTime = 30;
 
+    // blink constants
+    static int minFramesUntilBlink = 10;
+    static int maxFramesUntilBlink = 30;
+    static int blinkFrames = 1;
+
     // variables
     static State movementState = State.Walk;
+    static float timeUntilBlink = rng.Next(minFramesUntilBlink, maxFramesUntilBlink);
 
     public static float animatePiper(Sonic piper, Vector2 position, Key key)
     {
         float currentFrame = piper.getFrameIndex();
+
+        // make piper blink
+        checkBlink(piper);
 
         // only changes state if piper if not spinning or taking damage (aka not locked)
         if (!piper.animationIsLocked())
@@ -72,27 +83,19 @@ internal static class Animator
     {
         Vector2 maxPosition = enemy.getPath().Size;
         Vector2 minPosition = enemy.getPath().Position;
-        if (!enemy.isLeft()) // TODO: CURRENTLY INCORRECT. IF ENEMY "IS LEFT" THEY ARE ACTUALLY FACING RIGHT. THIS WILL BE FIXED LATER
+
+        Debug.WriteLine(minPosition.ToString() + " " + maxPosition.ToString());
+
+        if(enemy.loc.X >= maxPosition.X)
         {
-            if (enemy.loc.X > minPosition.X)
-            {
-                enemy.setVelocity(new Vector2(-enemy.getSpeed(), 0));
-            } else
-            {
-                enemy.turn();
-            }
+            enemy.setVelocity((minPosition - maxPosition).Normalized() * enemy.getSpeed());
         }
-        else
+        if(enemy.loc.X <= minPosition.X)
         {
-            if (enemy.loc.X < maxPosition.X)
-            {
-                enemy.setVelocity(new Vector2(enemy.getSpeed(), 0));
-            }
-            else
-            {
-                enemy.turn();
-            }
+            enemy.setVelocity((maxPosition - minPosition).Normalized() * enemy.getSpeed());
         }
+
+        enemy.turn();
 
         return changeFrame(enemy, position, 5);
     }
@@ -110,6 +113,20 @@ internal static class Animator
 
         // return current frame
         return frameIndex;
+    }
+
+    private static void checkBlink(Sprite piper)
+    {
+        timeUntilBlink -= Engine.TimeDelta * Framerate;
+        if (-blinkFrames < timeUntilBlink && timeUntilBlink <= 0)
+        {
+            piper.blink(true);
+        }
+        else if (timeUntilBlink < -blinkFrames)
+        {
+            piper.blink(false);
+            timeUntilBlink = rng.Next(minFramesUntilBlink, maxFramesUntilBlink);
+        }
     }
 
     public static void animatePiperLanding(Sprite piper)
@@ -149,9 +166,9 @@ internal static class Animator
         }
     }
 
-    public static void checkPiperTurn(Sonic piper)
+    public static void checkPiperTurn(PhysicsSprite piper)
     {
-        if (piper.isLeft() != piper.vel.X < 0)
+        if ((piper.isLeft() && piper.vel.X > 1) || (!piper.isLeft() && piper.vel.X < -1))
         {
             piper.turn();
         }

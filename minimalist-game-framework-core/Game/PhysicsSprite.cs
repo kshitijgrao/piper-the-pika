@@ -5,7 +5,7 @@ using System.Text;
 
 class PhysicsSprite : Sprite
 {
-    internal readonly float sprintSpeed = 200;
+    internal readonly float sprintSpeed = 230;
 
     public float mass;
     public Vector2 vel;
@@ -26,22 +26,40 @@ class PhysicsSprite : Sprite
 
     internal bool isSpinning;
 
+    public Vector2 collisionBox;
+
 
     //TODO: clean up these constructors
-    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes) : base(loc,sprites,hitboxes)
+    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, Vector2 collisionBox) : base(loc,sprites,hitboxes)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
         collided = false;
         timeLeft = 0;
         airTime = 0;
-        onGround = Game.map.onGround(loc);
+        onGround = false;
         isSpinning = false;
         currPath = null;
         fractionOfPath = 0;
+
+        this.collisionBox = collisionBox;
     }
 
-    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, bool onGround) : base(loc, sprites, hitboxes)
+    public PhysicsSprite(Vector2 loc, Texture spritemap, Texture blinkmap, Vector2 collisionBox) : base(loc, spritemap, blinkmap)
+    {
+        vel = new Vector2(0, 0);
+        acc = new Vector2(0, 0);
+        collided = false;
+        timeLeft = 0;
+        airTime = 0;
+        onGround = false;
+        isSpinning = false;
+        currPath = null;
+        fractionOfPath = 0;
+        this.collisionBox = collisionBox;
+    }
+
+    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, bool onGround, Vector2 collisionBox) : base(loc, sprites, hitboxes)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
@@ -51,19 +69,26 @@ class PhysicsSprite : Sprite
         isSpinning = false;
         currPath = null;
         fractionOfPath = 0;
+        this.collisionBox = collisionBox;
     }
 
-    public PhysicsSprite(Vector2 loc, Texture sprites) : base(loc, sprites)
+    public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 collisionBox) : base(loc, sprites)
     {
         vel = new Vector2(0, 0);
         acc = new Vector2(0, 0);
         collided = false;
         timeLeft = 0;
         airTime = 0;
-        onGround = Game.map.onGround(loc);
+        onGround = false;
         isSpinning = false;
         currPath = null;
         fractionOfPath = 0;
+        this.collisionBox = collisionBox;
+    }
+
+    public override Bounds2 getPhysicsHitbox()
+    {
+        return (new Bounds2(loc - collisionBox / 2, collisionBox));
     }
 
     public override bool notCollidable()
@@ -109,10 +134,10 @@ class PhysicsSprite : Sprite
     public void setOnPath(bool onPath)
     {
         this.onPath = onPath;
-        Animator.setPiperSpinning(onPath, Game.piper);
+        Animator.setPiperSpinning(onPath, this);
     }
 
-    public override void updateState()
+    public override void updateState(Map map)
     {
         float time = collided ? timeLeft : Engine.TimeDelta;
         collided = false;
@@ -150,9 +175,6 @@ class PhysicsSprite : Sprite
 
             if (velPath * velPath * curvature < Vector2.Dot(Physics.g, currTangent.Rotated(270)))
             {
-                Debug.WriteLine("The current tangent is " + currTangent.ToString());
-                Debug.WriteLine(Physics.g.ToString() + " dot " + currTangent.Rotated(270).ToString() + " is " + Vector2.Dot(Physics.g, currTangent.Rotated(270)));
-                Debug.WriteLine("asdfasdfasdf");
                 setOnPath(false);
             }
 
@@ -165,7 +187,7 @@ class PhysicsSprite : Sprite
 
 
         //checks if its leaving the ground in some way--maybe this might not work in some edge cases... will have to rethink
-        if (onGround && !onPath && Game.map.inAir(loc - Game.map.getNormalVector(locOrig)))
+        if (onGround && !onPath && map.inAir(loc - map.getNormalVector(locOrig)))
         {
             onGround = false;
             isSpinning = true;
@@ -191,11 +213,15 @@ class PhysicsSprite : Sprite
         {
             invincibleFramesLeft -= 1;
         }
-        Animator.checkPiperTurn(Game.piper);
-        keepOnSurface();
-        if (Game.map.closeToSurface(loc))
+        Animator.checkPiperTurn(this);
+        
+        
+        keepOnSurface(map);
+        
+        
+        if (map.closeToSurface(loc))
         {
-            this.rotationAngle = (float) (-1 * Math.Asin(Vector2.Cross(Game.map.getNormalVector(loc), Vector2.UP)) * 180 / Math.PI);
+            this.rotationAngle = (float) (-1 * Math.Asin(Vector2.Cross(map.getNormalVector(loc), Vector2.UP)) * 180 / Math.PI);
         }
         else
         {
@@ -250,21 +276,21 @@ class PhysicsSprite : Sprite
         onPath = true;
         fractionOfPath = currPath.nearestFraction(loc);
         velPath = Vector2.Dot(vel, currPath.getTangent(fractionOfPath));
-        Animator.setPiperSpinning(true, Game.piper);
+        Animator.setPiperSpinning(true, this);
 
     }
 
     //holy cow clean up the spaghetti code here
-    public void keepOnSurface()
+    public void keepOnSurface(Map map)
     {
         Vector2 pos = this.loc;
         if (onGround)
         {
-            Vector2 newLoc = Game.map.getNearestHoveringPoint(pos);
+            Vector2 newLoc = map.getNearestHoveringPoint(pos);
             if ((newLoc - pos).Length() > 10)
                 return;
             this.loc = newLoc;
-            Vector2 norm = Game.map.getNormalVector(Game.map.getNearestSurfacePoint(pos));
+            Vector2 norm = map.getNormalVector(map.getNearestSurfacePoint(pos));
 
             vel = vel - norm * Vector2.Dot(vel, norm);
 
