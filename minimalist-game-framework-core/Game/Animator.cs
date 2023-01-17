@@ -225,7 +225,7 @@ internal static class Animator
 
     public static void checkPiperTurn(Sonic piper)
     {
-        if (piper.isLeft() != piper.vel.X < 0)
+        if ((piper.isLeft() != piper.vel.X < 0) && Math.Abs(piper.vel.X) > 2)
         {
             piper.turn();
         }
