@@ -113,6 +113,7 @@ internal static class Animator
         {
             if (enemy.isBlinking == true)
             {
+                System.Diagnostics.Debug.WriteLine(enemy.getFrameIndex() + " >= 3");
                 if (enemy.getFrameIndex() >= 3)
                 {
                     enemy.invisible = true;

@@ -200,13 +200,13 @@ class Enemy : PhysicsSprite
     public override void collide(PhysicsSprite other, float timeLeft)
     {
         if (other is PhysicsSprite) {
-            if (other.isSpinning)
+            if (other.isSpinning && base.getState() != State.Damage)
             {
                 Game.sb.enemyKilled(1);
                 base.collide(other);
-                other.setInvincible();
+                base.setFrameIndex(0);
             }
-            else if (other.getState() != State.Damage)
+            else if (base.getState() != State.Damage)
             {
                 other.loc += other.vel * (Engine.TimeDelta - timeLeft);
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
