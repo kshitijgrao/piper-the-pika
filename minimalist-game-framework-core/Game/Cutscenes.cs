@@ -42,8 +42,8 @@ public class Scenes
         }
         if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
         {
-            return Scene.levels;
             frameCount = 0;
+            return Scene.levels;
         }
 
         Engine.DrawTexture(piper, new Vector2(135, 50), size: new Vector2(50, 50));
@@ -82,6 +82,8 @@ public class Scenes
             enterCount = 0;
             diffState = 0;
             levelState = 1;
+            Engine.PlayMusic(Game.basicMusic);
+            bonus = 0;
             return Scene.game;
         }
 
@@ -142,7 +144,6 @@ public class Scenes
             Engine.DrawString("1", new Vector2(34, 65), Color.White, h4);
         }
 
-        Console.WriteLine(Game.progress);
         if (levelState == 2)
         {
             Engine.DrawTexture(level2, new Vector2(110, 62), size: new Vector2(100, 100));
@@ -159,11 +160,6 @@ public class Scenes
             Engine.DrawString("2", new Vector2(143, 67), Color.Black, h4);
             Engine.DrawString("2", new Vector2(141, 65), Color.White, h4);
         }
-        {
-            Engine.DrawTexture(level2, new Vector2(120, 66), size: new Vector2(80, 80));
-            Engine.DrawString("2", new Vector2(143, 67), Color.Black, h4);
-            Engine.DrawString("2", new Vector2(141, 65), Color.White, h4);
-        }
 
         if (levelState == 3)
         {
@@ -175,7 +171,7 @@ public class Scenes
             Engine.DrawTexture(level3BW, new Vector2(223, 66), size: new Vector2(80, 80));
             Engine.DrawString("3", new Vector2(245, 67), Color.Black, h4);
             Engine.DrawString("3", new Vector2(243, 65), Color.White, h4);
-        }
+        } else
         {
             Engine.DrawTexture(level3, new Vector2(223, 66), size: new Vector2(80, 80));
             Engine.DrawString("3", new Vector2(245, 67), Color.Black, h4);
@@ -236,8 +232,19 @@ public class Scenes
         //exit game
         if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
         {
+            scoreUpdate = false;
+            line1X = -100;
+            line2X = -100;
+            line3X = 320;
+            line4x = 320;
+            textSlideSpeed = 10;
+            Game.message = "PASSED";
+            Console.WriteLine(bonus);
+
             Game.currentLevel.reset();
             Game.currentScene = Scene.levels;
+
+            
         }
 
         //line sliding animation
@@ -282,8 +289,10 @@ public class Scenes
 
         if (!scoreUpdate)
         {
-            bonus = Scoreboard.timeBonus();
+            Console.WriteLine(bonus);
+            bonus = Game.currentLevel.sb.timeBonus();
             scoreUpdate = true;
+            Console.WriteLine(bonus);
         }
 
         //draw score

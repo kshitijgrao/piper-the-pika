@@ -64,6 +64,7 @@ class Game
         progress = LevelPassed.none;
         currentScene = Scene.start;
         currentLevel = level1;
+        //Engine.PlayMusic(basicMusic);
     }
 
     public void Update()
@@ -83,11 +84,13 @@ class Game
         }
         else
         {
+
             currentLevel.playLevel();
 
             if (Engine.GetKeyDown(Key.R))
             {
                 currentScene = Scene.start;
+                Engine.StopMusic(0);
                 currentLevel.reset();
             }
         }

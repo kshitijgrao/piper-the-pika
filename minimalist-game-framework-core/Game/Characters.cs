@@ -204,22 +204,22 @@ class Enemy : PhysicsSprite
 
                 if (currDiff == Difficulty.easy)
                 {
-                    if (Scoreboard.flowers > 0)
+                    if (Game.currentLevel.sb.flowers > 0)
                     {
-                        Scoreboard.flowers = 0;
+                        Game.currentLevel.sb.flowers = 0;
                     }
                     else
                     {
-                        Scoreboard.lives--;
+                        Game.currentLevel.sb.lives--;
                     }
                 }
                 else if (currDiff == Difficulty.medium)
                 {
-                    Scoreboard.lives--;
+                    Game.currentLevel.sb.lives--;
                 }
                 else if (currDiff == Difficulty.hard)
                 {
-                    Scoreboard.lives = 0;
+                    Game.currentLevel.sb.lives = 0;
                 }
 
                 base.collide(other, timeLeft);

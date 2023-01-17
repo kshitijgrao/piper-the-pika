@@ -3,10 +3,10 @@
 public class Scoreboard
 {
     public int score;
-    static float time;
-    public static int flowers;
-    public static int lives;
-    static int oneUps;
+    public float time;
+    public int flowers;
+    public int lives;
+    int oneUps;
     public Boolean instructions;
 
     Texture pikaPlaceholder = Engine.LoadTexture("pikaPlaceholder.png");
@@ -67,8 +67,8 @@ public class Scoreboard
         }
         if (lives <= 0)
         {
-            return Scene.end;
             Game.message = "FAILED";
+            return Scene.end;
         }
         return Scene.game;
     }
@@ -137,13 +137,13 @@ public class Scoreboard
 
     //input -1 if a life is lost
     //input 1 if an extra life is gained
-    public static void modifyLives(int x)
+    public void modifyLives(int x)
     {
         lives += x;
     }
 
     //time bonus after level
-    public static int timeBonus()
+    public int timeBonus()
     {
         if ((int)time < 29)
         {
@@ -180,7 +180,7 @@ public class Scoreboard
         return 0;
     }
 
-    public static float getTime()
+    public float getTime()
     {
         return time;
     }
