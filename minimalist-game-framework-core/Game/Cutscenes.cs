@@ -112,7 +112,7 @@ public class Scenes
         {
             if (enterCount == 0)
             {
-                if (levelState < ((int)Game.progress + 1))
+                if (levelState < (Math.Min((int) Game.progress + 1, 3)))
                 {
                     levelState++;
                 }
@@ -285,7 +285,7 @@ public class Scenes
         Engine.DrawString("PIPER  HAS", new Vector2(line1X, 50), Color.White, h2); //100, 50
         Engine.DrawString(message, new Vector2(line2X, 75), Color.White, h2); //15 , 75
         Engine.DrawString("Act", new Vector2(line3X + 5, 97), Color.Orange, h3); //170, 97
-        Engine.DrawString("1", new Vector2(line3X + 30, 72), Color.Yellow, h1); //200, 72
+        Engine.DrawString("" + (int) (Game.currentLevel.passed + 1) , new Vector2(line3X + 30, 72), Color.Yellow, h1); //200, 72
 
         if (!scoreUpdate)
         {
@@ -304,7 +304,7 @@ public class Scenes
         }
 
         //exit game
-        if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space))
+        if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space) || Engine.GetKeyDown(Key.Return))
         {
             scoreUpdate = false;
             line1X = -100;

@@ -9,27 +9,33 @@ class Rendering
     public Vector2 pos;
     private Vector2 center;
     private Bounds2 window;
+    private Vector2 bgOff;
+    private Vector2 mapOff;
 
     public static readonly Bounds2 defaultWindow = new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3);
 
     public Rendering(String texture, String bgText, Bounds2 window)
     {
-        pos = new Vector2(0, -838);
         map = Engine.LoadTexture(texture);
         bg = Engine.LoadTexture(bgText);
         center = new Vector2(Game.Resolution.X / 2, Game.Resolution.Y / 2);
         this.window = window;
     }
 
-    public Rendering(string texture, string bgText) : this(texture, bgText, defaultWindow)
+    public Rendering(string texture, string bgText, Vector2 pos, Vector2 bgOff, Vector2 mapOff) : this(texture, bgText, defaultWindow)
     {
-
+        // pos = new Vector2(0, -838)
+        this.pos = pos;
+        this.bgOff = bgOff;
+        this.mapOff = mapOff;
     }
 
     public void scrollingMotion(Sonic piper)
     {
-        Engine.DrawTexture(bg, (pos / 2) - new Vector2(2382, 420));
-        Engine.DrawTexture(map, pos - new Vector2(893, 0));
+        // bgOff = - new Vector2(2382, 420)
+        // mapOff = - new Vector2(893, 0)
+        Engine.DrawTexture(bg, (pos / 2) - bgOff);
+        Engine.DrawTexture(map, pos - mapOff);
 
  /*       for (int i = 0; i < Game.currentLevel.enemies.Length; i++)
         {
