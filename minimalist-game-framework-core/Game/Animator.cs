@@ -14,7 +14,8 @@ internal static class Animator
     static Random rng = new Random();
 
     // animation constants
-    static float Framerate = 5;
+    static float piperFramerate = 5;
+    static float generalFramerate = 5;
     static float jumpTime = 30;
 
     // blink constants
@@ -76,39 +77,53 @@ internal static class Animator
             piper.addAirTime(-piper.getAirTime());
         }
 
-        return changeFrame(piper, position, 4);
+        return changeFrame(piper, position, 4, piperFramerate);
     }
 
     public static float animateEnemy(Enemy enemy, Vector2 position)
     {
         Vector2 maxPosition = enemy.getPath().Size;
         Vector2 minPosition = enemy.getPath().Position;
-        if (!enemy.isLeft()) // TODO: CURRENTLY INCORRECT. IF ENEMY "IS LEFT" THEY ARE ACTUALLY FACING RIGHT. THIS WILL BE FIXED LATER
+        if (enemy.getState() != State.Damage)
         {
-            if (enemy.loc.X > minPosition.X)
+            if (!enemy.isLeft()) // TODO: CURRENTLY INCORRECT. IF ENEMY "IS LEFT" THEY ARE ACTUALLY FACING RIGHT. THIS WILL BE FIXED LATER
             {
-                enemy.setVelocity(new Vector2(-enemy.getSpeed(), 0));
-            } else
-            {
-                enemy.turn();
-            }
-        }
-        else
-        {
-            if (enemy.loc.X < maxPosition.X)
-            {
-                enemy.setVelocity(new Vector2(enemy.getSpeed(), 0));
+                if (enemy.loc.X > minPosition.X)
+                {
+                    enemy.setVelocity(new Vector2(-enemy.getSpeed(), 0));
+                }
+                else
+                {
+                    enemy.turn();
+                }
             }
             else
             {
-                enemy.turn();
+                if (enemy.loc.X < maxPosition.X)
+                {
+                    enemy.setVelocity(new Vector2(enemy.getSpeed(), 0));
+                }
+                else
+                {
+                    enemy.turn();
+                }
+            }
+        }
+        else if (enemy.getState() == State.Damage)
+        {
+            float currentFrame = enemy.getFrameIndex();
+            enemy.setVelocity(Vector2.Zero);
+            if (currentFrame >= 4)
+            {
+                enemy.invisible = true;
+                enemy.setState(State.Dead);
             }
         }
 
-        return changeFrame(enemy, position, 5);
+        return changeFrame(enemy, position, enemy.totalFramesInCurrentState, generalFramerate);
     }
 
-    private static float changeFrame(Sprite sprite, Vector2 position, int totalFrames)
+    private static float changeFrame(Sprite sprite, Vector2 position, int totalFrames, float Framerate)
     {
         // find frame
         sprite.setFrameIndex((sprite.getFrameIndex() + Engine.TimeDelta * Framerate) % (float)totalFrames);
@@ -125,7 +140,7 @@ internal static class Animator
 
     private static void checkBlink(Sprite piper)
     {
-        timeUntilBlink -= Engine.TimeDelta * Framerate;
+        timeUntilBlink -= Engine.TimeDelta * piperFramerate;
         if (-blinkFrames < timeUntilBlink && timeUntilBlink <= 0)
         {
             piper.blink(true);
@@ -182,8 +197,16 @@ internal static class Animator
         }
     }
 
+    public static void animateEnemyTakingDamage(Enemy enemy)
+    {
+        enemy.setState(State.Damage);
+        enemy.setFrameIndex(0);
+        enemy.changeLocked(true);
+        enemy.totalFramesInCurrentState = 7;
+    }
+
     public static void changeFramerate(float framerate)
     {
-        Framerate = framerate;
+        piperFramerate = framerate;
     }
 }

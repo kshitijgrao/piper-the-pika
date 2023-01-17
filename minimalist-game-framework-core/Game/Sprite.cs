@@ -15,7 +15,7 @@ class Sprite {
     private Boolean AnimationLocked; // a sprite is locked if stuck finishing an animation
     private protected Vector2 hitbox;
 
-    private bool invisible;
+    public bool invisible;
 
     internal float rotationAngle;
 
@@ -78,7 +78,14 @@ class Sprite {
 
     public virtual void collide(Sprite other)
     {
-        invisible = true;
+        if (this is Enemy)
+        {
+            Animator.animateEnemyTakingDamage((Enemy)this);
+        }
+        else
+        {
+            invisible = true;
+        }
     }
 
     public virtual void collide(PhysicsSprite other, float timeLeft)
@@ -213,6 +220,7 @@ enum State
     StartingJump,
     Spinning,
     Landing,
-    Damage
+    Damage,
+    Dead
 }
 

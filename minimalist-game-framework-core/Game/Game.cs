@@ -32,8 +32,6 @@ class Game
 
     readonly Texture piperTexture = Engine.LoadTexture("piper-spritemap.png");
     readonly Texture piperTextureBlink = Engine.LoadTexture("piper-spritemap-blink.png");
-    readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
-    readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
     readonly Music basicMusic = Engine.LoadMusic("emre_turkoglu_piper_basic_music.mp3");
 
     // sprites

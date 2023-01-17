@@ -136,12 +136,13 @@ class Enemy : PhysicsSprite
 {
     Bounds2 path; // holds the max and minumum vector displacement (from loc) of an enemy
     float speed = 20;
-    public static readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
-    public static readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
+    public static readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap-3.png");
+    public static readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap-3.png");
     public static readonly Vector2 wolfHit = new Vector2(40, 34);
     public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
     public static readonly float killSpeed = 150;
+    public int totalFramesInCurrentState = 5;
 
     public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
     {
@@ -177,8 +178,9 @@ class Enemy : PhysicsSprite
             {
                 Game.sb.enemyKilled(1);
                 base.collide(other);
+                other.setInvincible();
             }
-            else
+            else if (other.getState() != State.Damage)
             {
                 other.loc += other.vel * (Engine.TimeDelta - timeLeft);
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;

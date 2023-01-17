@@ -78,6 +78,7 @@ static class SVGReader
             coords[i] = float.Parse(stringCoords[i]);
         }
 
+        System.Diagnostics.Debug.WriteLine(coords[0] + " " + coords[1] + " ");
         Enemy enemyToAdd = new Enemy(new Vector2(coords[0], coords[1]), new Bounds2(coords[0], coords[1], coords[2], coords[3]), flying);
         enemyToAdd.setState(State.Walk);
         Game.enemies.Add(enemyToAdd);
