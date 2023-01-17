@@ -41,8 +41,6 @@ class Level
 
         SVGReader.findAllElementsAndAdd(map, svg_path);
 
-        sb = new Scoreboard();
-
         passed = startLevel;
         maxProgress = 0;
         highScore = 0;
