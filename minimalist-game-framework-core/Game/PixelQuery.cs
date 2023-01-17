@@ -242,7 +242,23 @@ unsafe class Map
             return Vector2.UP;
         }
 
-        slope.Y = getSurfaceY(pos + slope / 2).Value - getSurfaceY(pos - slope / 2).Value;
+        float yRight = getSurfaceY(pos + slope / 2).Value - surfacePoint.Y;
+        float yLeft = surfacePoint.Y - getSurfaceY(pos + slope / 2).Value;
+
+        if (Math.Abs(yRight) > Math.Abs(yLeft) + 10)
+        {
+            slope.Y = yLeft * 2;
+        }
+        else if(Math.Abs(yLeft) > Math.Abs(yRight) + 10)
+        {
+            slope.Y = yRight * 2;
+        }
+        else
+        {
+            slope.Y = yLeft + yRight;
+        }
+
+        
 
         return slope.Rotated(270).Normalized();
     }
