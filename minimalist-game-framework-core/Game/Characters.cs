@@ -131,6 +131,35 @@ class Sonic : PhysicsSprite
            flows -= 1 / ((float) boostFrameTime);
     }
 
+    public override void collideSpike(float timeLeft)
+    {
+        base.collideSpike(timeLeft);
+
+        Animator.animatePiperTakingDamage(this);
+        Difficulty currDiff = Game.currentLevel.diff;
+
+        if (currDiff == Difficulty.easy)
+        {
+            if (Game.currentLevel.sb.flowers > 0)
+            {
+                Game.currentLevel.sb.flowers = 0;
+            }
+            else
+            {
+                Game.currentLevel.sb.lives--;
+            }
+        }
+        else if (currDiff == Difficulty.medium)
+        {
+            Game.currentLevel.sb.lives--;
+        }
+        else if (currDiff == Difficulty.hard)
+        {
+            Game.currentLevel.sb.lives = 0;
+        }
+
+    }
+
     public void addFlower()
     {
         flows += 1;

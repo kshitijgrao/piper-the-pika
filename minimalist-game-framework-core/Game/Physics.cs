@@ -128,6 +128,9 @@ class Physics
             {
                 Vector2 norm = map.getNormalVector(finalPos);
 
+                
+
+
                 obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
                 obj.loc = map.getNearestHoveringPoint(finalPos);
 
@@ -144,12 +147,30 @@ class Physics
                 break;
 
             }
+            if (map.onSpike(finalPos) && map.getNormalVector(finalPos).X == 0)
+            {
+                if(map.getNormalVector(finalPos).Y < 0)
+                {
+                    obj.vel.Y = (float)(-1 * Math.Sqrt(2 * g.Y * 50));
+                }
+                else
+                {
+                    obj.vel.Y *= -1;
+                }
+                obj.loc = map.getNearestHoveringPoint(finalPos);
+
+                obj.collideSpike((steps - i) * Engine.TimeDelta / steps);
+
+                break;
+            }
             //detecting paths
             if (!obj.onPath && map.onPath(finalPos))
             {
                 obj.currPath = map.getPath(finalPos);
                 obj.loc = finalPos;
                 obj.collidePath((steps - i) * Engine.TimeDelta / steps);
+
+                break;
             }
             pos = finalPos;
             finalPos += diff;
