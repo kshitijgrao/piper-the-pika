@@ -135,7 +135,7 @@ class Sonic : PhysicsSprite
     {
         base.collideSpike(timeLeft);
 
-        Animator.animatePiperTakingDamage(Game.piper);
+        Animator.animatePiperTakingDamage(this);
         Difficulty currDiff = Game.currentLevel.diff;
 
         if (currDiff == Difficulty.easy)

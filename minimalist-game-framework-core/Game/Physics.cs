@@ -157,7 +157,7 @@ class Physics
                 {
                     obj.vel.Y *= -1;
                 }
-                onj.loc = map.getNearestHoveringPoint(finalPos);
+                obj.loc = map.getNearestHoveringPoint(finalPos);
 
                 obj.collideSpike((steps - i) * Engine.TimeDelta / steps);
 
