@@ -149,7 +149,19 @@ class Physics
             }
             if (map.onSpike(finalPos) && map.getNormalVector(finalPos).X == 0)
             {
+                if(map.getNormalVector(finalPos).Y < 0)
+                {
+                    obj.vel.Y = (float)(-1 * Math.Sqrt(2 * g.Y * 50));
+                }
+                else
+                {
+                    obj.vel.Y *= -1;
+                }
+                onj.loc = map.getNearestHoveringPoint(finalPos);
+
                 obj.collideSpike((steps - i) * Engine.TimeDelta / steps);
+
+                break;
             }
             //detecting paths
             if (!obj.onPath && map.onPath(finalPos))
@@ -157,6 +169,8 @@ class Physics
                 obj.currPath = map.getPath(finalPos);
                 obj.loc = finalPos;
                 obj.collidePath((steps - i) * Engine.TimeDelta / steps);
+
+                break;
             }
             pos = finalPos;
             finalPos += diff;

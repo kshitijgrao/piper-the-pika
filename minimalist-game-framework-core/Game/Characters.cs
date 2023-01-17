@@ -136,24 +136,26 @@ class Sonic : PhysicsSprite
         base.collideSpike(timeLeft);
 
         Animator.animatePiperTakingDamage(Game.piper);
-        if (Game.gameDifficulty == Game.EASY)
+        Difficulty currDiff = Game.currentLevel.diff;
+
+        if (currDiff == Difficulty.easy)
         {
-            if (Scoreboard.flowers > 0)
+            if (Game.currentLevel.sb.flowers > 0)
             {
-                Scoreboard.flowers = 0;
+                Game.currentLevel.sb.flowers = 0;
             }
             else
             {
-                Scoreboard.lives--;
+                Game.currentLevel.sb.lives--;
             }
         }
-        else if (Game.gameDifficulty == Game.MEDIUM)
+        else if (currDiff == Difficulty.medium)
         {
-            Scoreboard.lives--;
+            Game.currentLevel.sb.lives--;
         }
-        else if (Game.gameDifficulty == Game.HARD)
+        else if (currDiff == Difficulty.hard)
         {
-            Scoreboard.lives = 0;
+            Game.currentLevel.sb.lives = 0;
         }
 
     }

@@ -96,7 +96,7 @@ unsafe class Map
                 //looking for air to ground transitions
                 if (y > 0 && pixels[x, y] != pixels[x, y - 1])
                 {
-                    if ((pixels[x, y - 1] == AIR_CODE ) && (pixels[x,y] == GROUND_CODE || pixels[x,y] == SOLID_CODE || pixels[x,y] == PASS_THROUGH_CODE || pixels[x, y - 1] == SPIKE_CODE))
+                    if ((pixels[x, y - 1] == AIR_CODE ) && (pixels[x,y] == GROUND_CODE || pixels[x,y] == SOLID_CODE || pixels[x,y] == PASS_THROUGH_CODE || pixels[x, y] == SPIKE_CODE))
                         transitionsY[x].Add(y);
                     else if ((pixels[x, y] == AIR_CODE) && (pixels[x, y - 1] == GROUND_CODE || pixels[x, y - 1] == SOLID_CODE || pixels[x, y - 1] == PASS_THROUGH_CODE || pixels[x, y - 1] == SPIKE_CODE))
                         transitionsY[x].Add(y - 1);

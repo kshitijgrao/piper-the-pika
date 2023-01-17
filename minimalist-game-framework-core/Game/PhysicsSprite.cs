@@ -259,7 +259,6 @@ class PhysicsSprite : Sprite
     {
         collided = true;
         this.timeLeft = timeLeft;
-        vel.Y *= -2.5f;
 
     }
 
