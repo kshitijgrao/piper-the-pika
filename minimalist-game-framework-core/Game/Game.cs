@@ -135,6 +135,10 @@ class Game
                 }
             }
             
+            foreach (Flower flower in Game.flowers)
+            {
+                flower.setFrameIndex(Animator.animateFlowers(flower, render.pos + flower.loc));
+            }
 
             foreach (Enemy enemy in enemiesOnScreen)
             {

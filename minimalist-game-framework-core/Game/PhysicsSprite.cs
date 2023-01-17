@@ -287,5 +287,4 @@ class PhysicsSprite : Sprite
             vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
         }*/
     }
-
 }

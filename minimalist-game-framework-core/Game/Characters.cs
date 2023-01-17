@@ -244,8 +244,11 @@ class Enemy : PhysicsSprite
 
 class Flower : Sprite
 {
-    public static readonly Vector2 defaultFlowerHitbox = new Vector2(13, 14);
-    public static readonly Texture defaultFlower = Engine.LoadTexture("flower.png");
+    public static readonly Vector2 defaultFlowerHitbox = new Vector2(13, 16);
+    public static readonly Texture defaultFlower = Engine.LoadTexture("flower-3.png");
+
+    public Boolean collected = false;
+
     public Flower(Vector2 loc) : base(loc + defaultFlowerHitbox / 2, defaultFlower, defaultFlowerHitbox)
     {
 
@@ -253,11 +256,15 @@ class Flower : Sprite
 
     public override void collide(Sprite mainCharacter)
     {
-        Game.sb.addFlower();
-        if (mainCharacter is Sonic)
+        if (!collected)
         {
-            ((Sonic)mainCharacter).addFlower();
-        }        
-        base.collide(mainCharacter);
+            collected = true;
+            Game.sb.addFlower();
+            if (mainCharacter is Sonic)
+            {
+                ((Sonic)mainCharacter).addFlower();
+            }
+            base.collide(mainCharacter);
+        }
     }
 }

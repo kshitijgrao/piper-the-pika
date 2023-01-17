@@ -133,6 +133,19 @@ internal static class Animator
         return changeFrame(enemy, position, enemy.totalFramesInCurrentState, generalFramerate);
     }
 
+    public static float animateFlowers(Flower flower, Vector2 position)
+    {
+        if (flower.collected == true && flower.invisible == false)
+        {
+            if (flower.getFrameIndex() >= 3)
+            {
+                flower.invisible = true;
+            }
+            return changeFrame(flower, position, 4, 8);
+        }
+        return changeFrame(flower, position, 1, 8);
+    }
+
     private static float changeFrame(Sprite sprite, Vector2 position, int totalFrames, float Framerate)
     {
         // find frame
@@ -140,9 +153,9 @@ internal static class Animator
         float frameIndex = sprite.getFrameIndex();
 
         // find bounds on spritemap and draw
-        Vector2 piperFrameStart = new Vector2((int)frameIndex * sprite.getHitboxNoCalc().X, (int)sprite.getState() * sprite.getHitboxNoCalc().Y);
-        Bounds2 piperFrameBounds = new Bounds2(piperFrameStart, sprite.getHitboxNoCalc());
-        sprite.draw(piperFrameBounds, position);
+        Vector2 FrameStart = new Vector2((int)frameIndex * sprite.getHitboxNoCalc().X, (int)sprite.getState() * sprite.getHitboxNoCalc().Y);
+        Bounds2 FrameBounds = new Bounds2(FrameStart, sprite.getHitboxNoCalc());
+        sprite.draw(FrameBounds, position);
 
         // return current frame
         return frameIndex;

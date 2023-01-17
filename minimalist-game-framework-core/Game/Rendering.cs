@@ -24,11 +24,6 @@ class Rendering
         Engine.DrawTexture(bg, (pos / 2) - new Vector2(0, 420));
         Engine.DrawTexture(map, pos);
 
-        foreach (Flower flow in Game.flowers)
-        {
-            flow.draw(new Bounds2(0, 0, 13, 14), flow.loc + pos);
-        }
-
         for (int i = 0; i < Game.enemies.Count; i++)
         {
             Vector2 enemyPos = Game.enemies[i].loc + pos;

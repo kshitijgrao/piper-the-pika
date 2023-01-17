@@ -82,6 +82,10 @@ class Sprite {
         {
             Animator.animateEnemyTakingDamage((Enemy)this);
         }
+        else if (this is Flower)
+        {
+            this.setState(State.Walk); // flower is not actually walking, uhh its walking out of the screen :) **its an exit animation
+        }
         else
         {
             invisible = true;
