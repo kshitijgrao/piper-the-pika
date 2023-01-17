@@ -144,6 +144,12 @@ class Enemy : PhysicsSprite
     public static readonly float killSpeed = 150;
     public int totalFramesInCurrentState = 5;
 
+    // animation variables
+    public Boolean isBlinking = false;
+    public float framesBlinked = 0; // time spent blinking (in frames)
+    public float additionUntilNextBlinkFrame = 0;
+    public float nextBlinkFrame = 0;
+
     public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
     {
         this.path = path;
@@ -169,6 +175,26 @@ class Enemy : PhysicsSprite
     public float getSpeed()
     {
         return speed;
+    }
+
+    public void setBlinking()
+    {
+        isBlinking = true;
+        framesBlinked = 0;
+        additionUntilNextBlinkFrame = 0.8f;
+        nextBlinkFrame += additionUntilNextBlinkFrame;
+    }
+
+    public void updateBlink()
+    {
+        framesBlinked += Engine.TimeDelta * Animator.generalFramerate;
+        System.Diagnostics.Debug.WriteLine(framesBlinked + " >= " + nextBlinkFrame);
+        if (framesBlinked >= nextBlinkFrame)
+        {
+            additionUntilNextBlinkFrame *= 0.8f ;
+            nextBlinkFrame += additionUntilNextBlinkFrame;
+            this.invisible = !this.invisible;
+        }
     }
 
     public override void collide(PhysicsSprite other, float timeLeft)

@@ -15,7 +15,7 @@ internal static class Animator
 
     // animation constants
     static float piperFramerate = 5;
-    static float generalFramerate = 5;
+    public static float generalFramerate = 5;
     static float jumpTime = 30;
 
     // blink constants
@@ -111,12 +111,22 @@ internal static class Animator
         }
         else if (enemy.getState() == State.Damage)
         {
-            float currentFrame = enemy.getFrameIndex();
-            enemy.setVelocity(Vector2.Zero);
-            if (currentFrame >= 4)
+            if (enemy.isBlinking == true)
             {
-                enemy.invisible = true;
-                enemy.setState(State.Dead);
+                if (enemy.getFrameIndex() >= 3)
+                {
+                    enemy.invisible = true;
+                    enemy.setState(State.Dead);
+                }
+                else
+                {
+                    enemy.updateBlink();
+                }
+            }
+            else
+            {
+                enemy.setVelocity(Vector2.Zero);
+                enemy.setBlinking();
             }
         }
 
