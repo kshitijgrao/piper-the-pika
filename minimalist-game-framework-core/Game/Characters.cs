@@ -16,25 +16,30 @@ class Sonic : PhysicsSprite
     public static readonly float accelerationBoostFactor = (float) 1.3;
     public static readonly float flowerAccBoost = (float) 1.5;
 
+    public static readonly Vector2 sonicBox = new Vector2(20, 20);
+
     public static readonly float sonicMass = 2;
 
     private float flows;
-    
-    public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes)
+    private int flowerCount;
+
+
+    public int enemiesKilled;
+
+    public static readonly Texture piperTexture = Engine.LoadTexture("piper-spritemap.png");
+    public static readonly Texture piperTextureBlink = Engine.LoadTexture("piper-spritemap-blink.png");
+
+    public Sonic(Vector2 loc, Texture sprites, Vector2 hitboxes):base(loc, sprites, hitboxes, sonicBox)
     {
         flows = 0;
+        flowerCount = 0;
         this.mass = sonicMass;
     }
 
-    public Sonic(Vector2 loc, Texture spritemap, Texture blinkmap):base(loc, spritemap, blinkmap)
+    public Sonic(Vector2 loc):base(loc, piperTexture, piperTextureBlink, sonicBox)
     {
         flows = 0;
-        this.mass = sonicMass;
-    }
-    public Sonic(Vector2 loc, Texture sprites) : base(loc, sprites)
-    {
-        flows = 0;
-        onGround = Game.map.onGround(this.getBotPoint());
+        flowerCount = 0;
         this.mass = sonicMass;
     }
 
@@ -42,19 +47,19 @@ class Sonic : PhysicsSprite
     {
         if (onGround)
         {
-            this.vel = this.vel + jumpImpulseMag * Game.map.getNormalVector(loc);
+            this.vel = this.vel + jumpImpulseMag * Game.currentLevel.getMap().getNormalVector(loc);
         }
         
     }
 
-    public void setAcceleration(Key key)
+    public void setAcceleration(Key key, Map map)
     {
         if(key == Key.D)
         {
             if (onPath)
                 accPath = accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath);
             else if (onGround)
-                this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(90);
+                this.acc = accelerationMag * map.getNormalVector(loc).Rotated(90);
             else
                 this.acc = accelerationMag * (new Vector2(1, 0));
         }
@@ -63,7 +68,7 @@ class Sonic : PhysicsSprite
             if (onPath)
                accPath = -1 * accelerationMag + accelerationMag * this.currPath.getBoost(fractionOfPath);
             else if (onGround)
-               this.acc = accelerationMag * Game.map.getNormalVector(loc).Rotated(270);
+               this.acc = accelerationMag * map.getNormalVector(loc).Rotated(270);
             else
                 this.acc = accelerationMag * (new Vector2(-1, 0));
         }
@@ -87,17 +92,17 @@ class Sonic : PhysicsSprite
             acc *= accelerationBoostFactor;
         }
 
-        if (Game.map.inAir(loc))
+        if (map.inAir(loc))
         {
             acc.X *= accelerationBoostFactor;
         }
         if (onPath) 
         {
-            accPath += Physics.getPhysicsAcceleration(this, this.loc, this.vel).X;
+            accPath += Physics.getPhysicsAcceleration(this, this.loc, this.vel, map).X;
         }
         else
         {
-            this.acc += Physics.getPhysicsAcceleration(this, this.loc, this.vel);
+            this.acc += Physics.getPhysicsAcceleration(this, this.loc, this.vel, map);
         }
 
 
@@ -108,7 +113,7 @@ class Sonic : PhysicsSprite
 
     }
 
-    public override void updateState()
+    public override void updateState(Map map)
     {
         float horVelCap = maxHorVel + (flows > 0 ? maxHorVelBoost : 0);
 
@@ -120,15 +125,50 @@ class Sonic : PhysicsSprite
         {
             this.vel.X = Math.Max(this.vel.X, -1 * horVelCap);
         }
-        base.updateState();
+        base.updateState(map);
         
         if(flows > 0)
            flows -= 1 / ((float) boostFrameTime);
     }
 
+    public override void collideSpike(float timeLeft)
+    {
+        base.collideSpike(timeLeft);
+
+        Animator.animatePiperTakingDamage(this);
+        Difficulty currDiff = Game.currentLevel.diff;
+
+        if (currDiff == Difficulty.easy)
+        {
+            if (Game.currentLevel.sb.flowers > 0)
+            {
+                Game.currentLevel.sb.flowers = 0;
+            }
+            else
+            {
+                Game.currentLevel.sb.lives--;
+            }
+        }
+        else if (currDiff == Difficulty.medium)
+        {
+            Game.currentLevel.sb.lives--;
+        }
+        else if (currDiff == Difficulty.hard)
+        {
+            Game.currentLevel.sb.lives = 0;
+        }
+
+    }
+
     public void addFlower()
     {
         flows += 1;
+        flowerCount += 1;
+    }
+
+    public int getFlowers()
+    {
+        return flowerCount;
     }
 }
 
@@ -141,6 +181,9 @@ class Enemy : PhysicsSprite
     public static readonly Vector2 wolfHit = new Vector2(40, 34);
     public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
+    public static readonly Vector2 wolfCollisionHit = new Vector2(30, 24);
+    public static readonly Vector2 hawkCollisionHit = new Vector2(40, 20);
+
     public static readonly float killSpeed = 150;
     public int totalFramesInCurrentState = 5;
 
@@ -150,11 +193,12 @@ class Enemy : PhysicsSprite
     public float additionUntilNextBlinkFrame = 0;
     public float nextBlinkFrame = 0;
 
-    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(flying ? loc : (loc + new Vector2(0, 4)), flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false)
+    public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false, flying ? hawkCollisionHit : wolfCollisionHit)
     {
         this.path = path;
         this.mass = 10;
     }
+
 
     //public Enemy(Vector2 loc, Texture sprites, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, false)
     //{
@@ -202,7 +246,7 @@ class Enemy : PhysicsSprite
         if (other is PhysicsSprite) {
             if (other.isSpinning && base.getState() != State.Damage)
             {
-                Game.sb.enemyKilled(1);
+                Game.currentLevel.sb.enemyKilled(1);
                 base.collide(other);
                 base.setFrameIndex(0);
 
@@ -216,26 +260,27 @@ class Enemy : PhysicsSprite
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
                 other.setInvincible();
 
-                Animator.animatePiperTakingDamage(Game.piper);
+                Animator.animatePiperTakingDamage(other);
+                Difficulty currDiff = Game.currentLevel.diff;
 
-                if (Game.gameDifficulty == Game.EASY)
+                if (currDiff == Difficulty.easy)
                 {
-                    if (Scoreboard.flowers > 0)
+                    if (Game.currentLevel.sb.flowers > 0)
                     {
-                        Scoreboard.flowers = 0;
+                        Game.currentLevel.sb.flowers = 0;
                     }
                     else
                     {
-                        Scoreboard.lives--;
+                        Game.currentLevel.sb.lives--;
                     }
                 }
-                else if (Game.gameDifficulty == Game.MEDIUM)
+                else if (currDiff == Difficulty.medium)
                 {
-                    Scoreboard.lives--;
+                    Game.currentLevel.sb.lives--;
                 }
-                else if (Game.gameDifficulty == Game.HARD)
+                else if (currDiff == Difficulty.hard)
                 {
-                    Scoreboard.lives = 0;
+                    Game.currentLevel.sb.lives = 0;
                 }
 
                 base.collide(other, timeLeft);
@@ -249,8 +294,8 @@ class Enemy : PhysicsSprite
 class Flower : Sprite
 {
     public static readonly Vector2 defaultFlowerHitbox = new Vector2(13, 16);
+    public static readonly Vector2 collisionFlowerHitbox = new Vector2(10, 10);
     public static readonly Texture defaultFlower = Engine.LoadTexture("flower-3.png");
-
     public Boolean collected = false;
 
     public Flower(Vector2 loc) : base(loc + defaultFlowerHitbox / 2, defaultFlower, defaultFlowerHitbox)
@@ -263,7 +308,7 @@ class Flower : Sprite
         if (!collected)
         {
             collected = true;
-            Game.sb.addFlower();
+            Game.currentLevel.sb.addFlower();
             if (mainCharacter is Sonic)
             {
                 ((Sonic)mainCharacter).addFlower();

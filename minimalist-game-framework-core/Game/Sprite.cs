@@ -135,11 +135,14 @@ class Sprite {
     {
         if (!invisible) {
             TextureMirror mirror = spriteFaceLeft ? TextureMirror.Horizontal : TextureMirror.None;
+            
+
+
+            Engine.DrawTexture(spritemap, position - hitbox / 2, source: bounds, rotation: rotationAngle, mirror: mirror, scaleMode: TextureScaleMode.Nearest);
             if (Game.debugToggle)
             {
-                Engine.DrawRectEmpty(new Bounds2(position - hitbox / 2, hitbox), Color.Yellow);
+                Engine.DrawRectEmpty(new Bounds2(position - getPhysicsHitbox().Size / 2, getPhysicsHitbox().Size), Color.Yellow);
             }
-            Engine.DrawTexture(currentmap, position - hitbox / 2, source: bounds, mirror: mirror);            
         }
         if (isSparkling)
         {
@@ -167,7 +170,7 @@ class Sprite {
         return state;
     }
 
-    public virtual void updateState()
+    public virtual void updateState(Map map)
     {
         state = (State)(((int)state + 1) % 5);
     }
@@ -202,6 +205,11 @@ class Sprite {
     }
 
     public Bounds2 getHitbox()
+    {
+        return new Bounds2(loc - hitbox / 2, hitbox);
+    }
+
+    public virtual Bounds2 getPhysicsHitbox()
     {
         return new Bounds2(loc - hitbox / 2, hitbox);
     }

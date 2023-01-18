@@ -23,7 +23,7 @@ class Physics
     }
 
     //detect collisions with specific object
-    public static void detectCollisions(PhysicsSprite obj, Sprite[] colliders)
+    public static void detectCollisions(PhysicsSprite obj, params Sprite[] colliders)
     {
         foreach (Sprite c in colliders)
         {
@@ -38,8 +38,8 @@ class Physics
         {
             return;
         }
-        Bounds2 b1 = obj1.getHitbox();
-        Bounds2 b2 = obj2.getHitbox();
+        Bounds2 b1 = obj1.getPhysicsHitbox();
+        Bounds2 b2 = obj2.getPhysicsHitbox();
         if (b1.Overlaps(b2))
         {
             if (obj2 is Enemy)
@@ -115,7 +115,7 @@ class Physics
     }
 
     //possibly implement case where onGround = false but loc is onGround? I don't see how that would happen, but it's an edge case
-    public static void detectSolid(PhysicsSprite obj)
+    public static void detectSolid(PhysicsSprite obj, Map map)
     {
         int steps = (int)Math.Ceiling(obj.vel.Length() * Engine.TimeDelta / collisionPixelThresh);
         Vector2 pos = obj.loc;
@@ -124,17 +124,15 @@ class Physics
 
         for (int i = 0; i < steps; i++)
         {
-            if (Game.map.passingSolid(pos, finalPos))
+            if (map.passingSolid(pos, finalPos))
             {
-                Vector2 norm = Game.map.getNormalVector(finalPos);
-                if (Engine.GetKeyHeld(Key.NumRow6))
-                {
-                    System.Diagnostics.Debug.WriteLine("Colliding now: params: loc: " + obj.loc.ToString() + " vel: " + obj.vel.ToString());
-                    System.Diagnostics.Debug.WriteLine("final Pos: " + finalPos + " norm: " + Game.map.getNormalVector(finalPos).ToString());
-                }
+                Vector2 norm = map.getNormalVector(finalPos);
+
+                
+
 
                 obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
-                obj.loc = Game.map.getNearestHoveringPoint(finalPos);
+                obj.loc = map.getNearestHoveringPoint(finalPos);
 
                 if (Math.Round(norm.Y, 2) == 0)
                 {
@@ -149,30 +147,30 @@ class Physics
                 break;
 
             }
-            pos = finalPos;
-            finalPos += diff;
-        }
-    }
-
-    //TODO
-    public static void detectPath(PhysicsSprite obj)
-    {
-        if (obj.onPath)
-        {
-            return;
-        }
-        int steps = (int)Math.Ceiling(obj.vel.Length() * Engine.TimeDelta / collisionPixelThresh);
-        Vector2 pos = obj.loc;
-        Vector2 diff = obj.vel * Engine.TimeDelta / steps;
-        Vector2 finalPos = pos + diff;
-
-        for (int i = 0; i < steps; i++)
-        {
-            if (Game.map.onPath(finalPos))
+            if (map.onSpike(finalPos) && map.getNormalVector(finalPos).X == 0)
             {
-                obj.currPath = Game.map.getPath(finalPos);
+                if(map.getNormalVector(finalPos).Y < 0)
+                {
+                    obj.vel.Y = (float)(-1 * Math.Sqrt(2 * g.Y * 50));
+                }
+                else
+                {
+                    obj.vel.Y *= -1;
+                }
+                obj.loc = map.getNearestHoveringPoint(finalPos);
+
+                obj.collideSpike((steps - i) * Engine.TimeDelta / steps);
+
+                break;
+            }
+            //detecting paths
+            if (!obj.onPath && map.onPath(finalPos))
+            {
+                obj.currPath = map.getPath(finalPos);
                 obj.loc = finalPos;
                 obj.collidePath((steps - i) * Engine.TimeDelta / steps);
+
+                break;
             }
             pos = finalPos;
             finalPos += diff;
@@ -180,123 +178,12 @@ class Physics
     }
 
 
-    //detecting ground
-    public static void detectGround(PhysicsSprite obj)
+
+
+    public static Vector2 getPhysicsAcceleration(PhysicsSprite obj, Vector2 loc, Vector2 vel, Map map)
     {
-        Vector2 pos = obj.getBotPoint();
-        Vector2 finalPos = pos + obj.vel * Engine.TimeDelta / collisionSteps;
-
-        for (int i = 0; i < collisionSteps; i++)
-        {
-            if (Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel, Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
-            {
-                Vector2 diff = finalPos - pos;
-
-
-                obj.loc += diff - (finalPos - pos);
-                int? surfaceY = Game.map.getSurfaceY(pos);
-                if (!surfaceY.HasValue || Math.Abs(surfaceY.Value - pos.Y) > 10)
-                {
-                    return;
-                }
-                obj.loc.Y += (surfaceY.Value - pos.Y);
-
-                Vector2 posNew = obj.getBotPoint();
-
-                obj.vel = obj.vel - Game.map.getNormalVector(posNew) * Vector2.Dot(Game.map.getNormalVector(posNew), obj.vel);
-
-                //might have to check for some 0 cases with the dividing here
-                obj.collideGround((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
-                break;
-
-            }
-            pos = finalPos;
-            finalPos += obj.vel * Engine.TimeDelta / collisionSteps;
-
-        }
-
-
-
-        /* if(Game.map.inAir(pos) && (Game.map.onGround(finalPos) || (Game.map.throughThrough(finalPos) && Vector2.Dot(obj.vel,Game.map.getNormalVector(finalPos)) < 0 && Game.map.closeToSurface(finalPos))))
-         {
-             System.Diagnostics.Debug.WriteLine("bruh: " + pos.ToString() + " to:" + finalPos.ToString());
-
-             while (!(Game.map.onGround(pos) || Game.map.throughThrough(finalPos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
-                 pos += diff / collisionSteps;
-
-
-         }*/
-
-
-    }
-
-    //detecting unpenetrable thingies
-    public static void detectUnpenetrable(PhysicsSprite obj)
-    {
-        Vector2 direc = Game.map.getNormalVector(obj.getBotPoint()).Rotated(90);
-
-        Vector2 pos = obj.getPoint(direc);
-
-        if (Game.map.onSolid(pos))
-        {
-            obj.vel = obj.vel - (new Vector2(-1, 0)) * Math.Min(0, Vector2.Dot(new Vector2(-1, 0), obj.vel));
-            obj.acc = obj.acc - (new Vector2(-1, 0)) * Math.Min(0, Vector2.Dot(new Vector2(-1, 0), obj.acc));
-        }
-
-        Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
-
-        if (Game.map.inAir(pos) && Game.map.onSolid(finalPos))
-        {
-            Vector2 diff = finalPos - pos;
-            while (!(Game.map.onSolid(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
-                pos += diff / collisionSteps;
-            obj.loc += diff - (finalPos - pos);
-
-            obj.vel = obj.vel - (new Vector2(-1, 0)) * Vector2.Dot(new Vector2(-1, 0), obj.vel);
-
-            obj.collideSolid((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
-
-        }
-
-    }
-
-    //detecting unpenetrable thingies from a certain direction
-    //TODO: should be able to reduced redundancy by 
-    public static void detectUnpenetrable(PhysicsSprite obj, Vector2 direc)
-    {
-        Vector2 pos = obj.getPoint(direc);
-
-        //not allowing futher movement within
-        //NOTE:This is SLIGHTLY broken and gets stuck within wall until we implement full bottom layer collision
-        //detection or switch to an SVG encoding of the map
-        if (Game.map.onSolid(pos))
-        {
-            obj.vel = obj.vel - (new Vector2(-1, 0)) * Math.Min(0, Vector2.Dot(new Vector2(-1, 0), obj.vel));
-            obj.acc = obj.acc - (new Vector2(-1, 0)) * Math.Min(0, Vector2.Dot(new Vector2(-1, 0), obj.acc));
-        }
-
-        Vector2 finalPos = pos + obj.vel * Engine.TimeDelta;
-
-        if (Game.map.inAir(pos) && Game.map.onSolid(finalPos))
-        {
-            Vector2 diff = finalPos - pos;
-            while (!(Game.map.onSolid(pos)) && (pos.X <= finalPos.X && pos.Y <= finalPos.Y))
-                pos += diff / collisionSteps;
-            obj.loc += diff - (finalPos - pos);
-
-            obj.vel = obj.vel - (new Vector2(-1, 0)) * Vector2.Dot(new Vector2(-1, 0), obj.vel);
-
-            obj.collideSolid((finalPos - pos).Length() / diff.Length() * Engine.TimeDelta);
-
-        }
-
-
-    }
-
-    public static Vector2 getPhysicsAcceleration(PhysicsSprite obj, Vector2 loc, Vector2 vel)
-    {
-        Vector2 norm = Game.map.getNormalVector(loc);
-        float radius = Game.map.getSurfaceRadius(loc);
+        Vector2 norm = map.getNormalVector(loc);
+        float radius = map.getSurfaceRadius(loc);
 
 
         //able to do fake physics on path because all the curvature stuff is taken care of
@@ -307,7 +194,8 @@ class Physics
         }
         else if (obj.onGround)
         {
-            if (radius < 0)
+            //return g - norm * Vector2.Dot(g, norm);
+            if (radius < 0 || Game.debugToggle)
             {
                 return g - norm * Vector2.Dot(g, norm);
             }
@@ -322,11 +210,11 @@ class Physics
 
 
     //update physics for things that are within the window
-    public static void updatePhysics(Sprite[] sprites)
+    public static void updatePhysics(Map map, params Sprite[] sprites)
     {
         foreach (Sprite s in sprites)
         {
-            s.updateState();
+            s.updateState(map);
         }
     }
 }

@@ -32,6 +32,9 @@ unsafe class Map
     public static readonly int ENEMY_FLYING = 25;
     public static readonly int PATH_CODE = 235;
 
+    public static readonly int SPRING_CODE = 123;
+    public static readonly int SPIKE_CODE = 252;
+
     //public static readonly int TUNNEL_CODE = 
 
     private static readonly int SLOPE_MAX_COUNT = 15;
@@ -66,7 +69,6 @@ unsafe class Map
         int bpp = 4;
         byte* pixelsImg = (byte*)(*pixelMap).pixels;
 
-        Enemy enemyToAdd;
         //looping through all the pixels
         for (int x = 0; x < pixels.GetLength(0); x++)
         {
@@ -79,7 +81,6 @@ unsafe class Map
                 Vector2 locVect = new Vector2(x, y);
                 if (pixels[x, y] == (245 + 255))
                 {
-                    Game.flowers.Add(new Flower(locVect));
                     pixels[x, y] = AIR_CODE;
                 }
 
@@ -95,18 +96,18 @@ unsafe class Map
                 //looking for air to ground transitions
                 if (y > 0 && pixels[x, y] != pixels[x, y - 1])
                 {
-                    if (pixels[x, y - 1] == AIR_CODE && (pixels[x,y] == GROUND_CODE || pixels[x,y] == SOLID_CODE || pixels[x,y] == PASS_THROUGH_CODE))
+                    if ((pixels[x, y - 1] == AIR_CODE ) && (pixels[x,y] == GROUND_CODE || pixels[x,y] == SOLID_CODE || pixels[x,y] == PASS_THROUGH_CODE || pixels[x, y] == SPIKE_CODE))
                         transitionsY[x].Add(y);
-                    else if (pixels[x, y] == AIR_CODE && (pixels[x, y - 1] == GROUND_CODE || pixels[x, y - 1] == SOLID_CODE || pixels[x, y - 1] == PASS_THROUGH_CODE))
+                    else if ((pixels[x, y] == AIR_CODE) && (pixels[x, y - 1] == GROUND_CODE || pixels[x, y - 1] == SOLID_CODE || pixels[x, y - 1] == PASS_THROUGH_CODE || pixels[x, y - 1] == SPIKE_CODE))
                         transitionsY[x].Add(y - 1);
                 }
 
                 //horizontal 
                 if (x > 0 && pixels[x, y] != pixels[x - 1, y])
                 {
-                    if ((pixels[x, y] == GROUND_CODE || pixels[x, y] == SOLID_CODE) && (pixels[x - 1, y] == AIR_CODE || pixels[x - 1, y] == PASS_THROUGH_CODE))
+                    if ((pixels[x, y] == GROUND_CODE || pixels[x, y] == SOLID_CODE || pixels[x,y] == SPIKE_CODE) && (pixels[x - 1, y] == AIR_CODE || pixels[x - 1, y] == PASS_THROUGH_CODE))
                         transitionsX[y].Add(x);
-                    else if ((pixels[x - 1, y] == GROUND_CODE || pixels[x - 1, y] == SOLID_CODE) && (pixels[x, y] == AIR_CODE || pixels[x, y] == PASS_THROUGH_CODE))
+                    else if ((pixels[x - 1, y] == GROUND_CODE || pixels[x - 1, y] == SOLID_CODE || pixels[x-1,y] == SPIKE_CODE) && (pixels[x, y] == AIR_CODE || pixels[x, y] == PASS_THROUGH_CODE))
                         transitionsX[y].Add(x - 1);
                 }
 
@@ -146,6 +147,11 @@ unsafe class Map
             return AIR_CODE;
         }
         return pixels[x, y];
+    }
+
+    public bool onSpike(Vector2 coord)
+    {
+        return getPixelType(coord) == SPIKE_CODE;
     }
 
     public bool onGround(Vector2 coord)
@@ -200,6 +206,14 @@ unsafe class Map
             }
         }
 
+        if(inAir(initial) && onSpike(final))
+        {
+            if (getNormalVector(final).Y == 0)
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -216,6 +230,8 @@ unsafe class Map
         {
             if (c.contains(surfacePoint))
             {
+                Curve curr = c;
+
                 return c.getNearestNormal(surfacePoint);
             }
         }
@@ -226,26 +242,85 @@ unsafe class Map
             return Vector2.UP;
         }
 
-        slope.Y = getSurfaceY(pos + slope / 2).Value - getSurfaceY(pos - slope / 2).Value;
+        float yRight = getSurfaceY(pos + slope / 2).Value - surfacePoint.Y;
+        float yLeft = surfacePoint.Y - getSurfaceY(pos + slope / 2).Value;
+
+        if (Math.Abs(yRight) > Math.Abs(yLeft) + 10)
+        {
+            slope.Y = yLeft * 2;
+        }
+        else if(Math.Abs(yLeft) > Math.Abs(yRight) + 10)
+        {
+            slope.Y = yRight * 2;
+        }
+        else
+        {
+            slope.Y = yLeft + yRight;
+        }
+
+        
 
         return slope.Rotated(270).Normalized();
     }
 
     //TODO: need to implement -- something along th elines of the commented out code
     //TODO: use svg to get exact curvatures
+    //method is relatively costly, could use sorting and past query memory to improve..
     public float getSurfaceRadius(Vector2 pos)
     {
-        return -1;
-        /*Vector2 shift = new Vector2(5, 0);
-        Vector2 x1 = new Vector2(pos.X - shift.X, getSurfaceY(pos - shift));
-        Vector2 x2 = new Vector2(pos.X + shift.X, getSurfaceY(pos + shift));
+        Vector2 surfacePoint = getNearestSurfacePoint(pos);
+        foreach (Curve c in curves)
+        {
+            if (c.contains(surfacePoint))
+            {
+                return 1 / c.getNearestCurvature(surfacePoint);
+            }
+        }
+
+        Vector2 norm = getNormalVector(surfacePoint);
+
+        Vector2 shift = new Vector2(5, 0);
+
+        int? y1 = getSurfaceY(pos - shift);
+        int? y2 = getSurfaceY(pos + shift);
+
+        if(!y1.HasValue || !y2.HasValue)
+        {
+            return -1;
+        }
+        
+        Vector2 x1 = new Vector2(surfacePoint.X - shift.X, y1.Value);
+        Vector2 x2 = new Vector2(surfacePoint.X + shift.X, y2.Value);
         Vector2 norm1 = getNormalVector(x1);
         Vector2 norm2 = getNormalVector(x2);
-        float angle = (float) Math.Round(Math.Acos(Vector2.Dot(norm1, norm2)),1);
 
-        if (angle == 0)
+        float angle1 = (float)Math.Acos(Vector2.Dot(norm1,norm));
+        float angle2 = (float)Math.Acos(Vector2.Dot(norm2, norm));
+
+        if(angle1 == 0 || angle2 == 0 || (angle1 + angle2) == 0)
+        {
             return -1;
-        return (x1 - x2).Length() / angle;*/
+        }
+
+        float outputRadius;
+
+        if (angle2 > 2 * angle1)
+        {
+            outputRadius = (x1 - surfacePoint).Length() / angle1;
+        }
+        else if (angle1 > 2 * angle2)
+        {
+            outputRadius = (surfacePoint - x2).Length() / angle2;
+        }
+        else
+        {
+            outputRadius = (x1 - x2).Length() / (angle1 + angle2);
+        }
+        if (float.IsNaN(outputRadius))
+        {
+            return -1;
+        }
+        return outputRadius;
     }
 
     //returns the point to put the sprite on when hovering over ground
