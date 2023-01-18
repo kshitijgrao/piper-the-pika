@@ -23,8 +23,15 @@ class Game
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
 
+    public Boolean playedMusic = false;
     
     public static readonly Music basicMusic = Engine.LoadMusic("emre_turkoglu_piper_basic_music.mp3");
+    // sounds from https://opengameart.org/content/beep-tone-sound-sfx
+    public static readonly Sound flowerCollectSound = Engine.LoadSound("beep.wav");
+    public static readonly Sound piperDamageSound = Engine.LoadSound("piper-damage-sound.wav");
+    public static readonly Sound piperDeathSound = Engine.LoadSound("piper-death-sound.ogg");
+    public static readonly Sound piperVictorySound = Engine.LoadSound("victory-sound.wav");
+    public static readonly Sound enemyDamageSound = Engine.LoadSound("enemy-damage-sound.ogg");
 
     // sprites
     Sprite[] sprites = new Sprite[1];
@@ -97,7 +104,19 @@ class Game
         else if (currentScene == Scene.levels) { currentScene = Scenes.levelSelect(); }
         else if (currentScene == Scene.end) 
         { 
-            Engine.StopMusic(5);
+            Engine.StopMusic(0);
+            if (!playedMusic)
+            {
+                if (message.Equals("PASSED"))
+                {
+                    Engine.PlaySound(Game.piperVictorySound);
+                }
+                else
+                {
+                    Engine.PlaySound(Game.piperDeathSound);
+                }
+                playedMusic = true;
+            }
             Scenes.endScene(message);
         }
         else
