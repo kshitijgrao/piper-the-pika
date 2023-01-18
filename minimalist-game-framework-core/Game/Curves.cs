@@ -580,6 +580,10 @@ class Rect : Curve
         {
             return Vector2.UP;
         }
+
+        
+
+
         if (pos.Y == rect.Min.Y)
         {
             return Vector2.UP;
@@ -596,6 +600,19 @@ class Rect : Curve
         {
             return Vector2.DOWN;
         }
+
+        Dictionary<float, Vector2> storeNormal = new Dictionary<float, Vector2>{
+            {pos.Y - rect.Min.Y, Vector2.UP},
+            {pos.Y - rect.Max.Y, Vector2.DOWN },
+            {pos.X - rect.Min.X, Vector2.LEFT },
+            {pos.X - rect.Max.X, Vector2.RIGHT }
+        };
+
+        float minimum = Math.Min(Math.Min(Math.Abs(pos.Y - rect.Min.Y), Math.Abs(pos.Y - rect.Max.Y)), Math.Min(Math.Abs(pos.X - rect.Min.X), Math.Abs(pos.X - rect.Max.X)));
+
+        return storeNormal[minimum];
+
+
         return Vector2.UP;
 
     }
