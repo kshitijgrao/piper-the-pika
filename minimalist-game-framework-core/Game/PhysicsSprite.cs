@@ -213,7 +213,7 @@ class PhysicsSprite : Sprite
         {
             invincibleFramesLeft -= 1;
         }
-        Animator.checkPiperTurn(this);
+        Animator.checkTurn(this);
         
         
         keepOnSurface(map);
@@ -305,5 +305,4 @@ class PhysicsSprite : Sprite
             vel = vel - Game.map.getNormalVector(loc) * Vector2.Dot(vel, Game.map.getNormalVector(loc));
         }*/
     }
-
 }

@@ -20,7 +20,7 @@ class Sonic : PhysicsSprite
 
     public static readonly float sonicMass = 2;
 
-    private float flows;
+    public float flows;
     private int flowerCount;
 
 
@@ -176,8 +176,8 @@ class Enemy : PhysicsSprite
 {
     Bounds2 path; // holds the max and minumum vector displacement (from loc) of an enemy
     float speed = 20;
-    public static readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
-    public static readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
+    public static readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap-3.png");
+    public static readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap-3.png");
     public static readonly Vector2 wolfHit = new Vector2(40, 34);
     public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
@@ -185,6 +185,13 @@ class Enemy : PhysicsSprite
     public static readonly Vector2 hawkCollisionHit = new Vector2(40, 20);
 
     public static readonly float killSpeed = 150;
+    public int totalFramesInCurrentState = 5;
+
+    // animation variables
+    public Boolean isBlinking = false;
+    public float framesBlinked = 0; // time spent blinking (in frames)
+    public float additionUntilNextBlinkFrame = 0;
+    public float nextBlinkFrame = 0;
 
     public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false, flying ? hawkCollisionHit : wolfCollisionHit)
     {
@@ -214,15 +221,40 @@ class Enemy : PhysicsSprite
         return speed;
     }
 
+    public void setBlinking()
+    {
+        isBlinking = true;
+        framesBlinked = 0;
+        additionUntilNextBlinkFrame = 0.8f;
+        nextBlinkFrame += additionUntilNextBlinkFrame;
+    }
+
+    public void updateBlink()
+    {
+        framesBlinked += Engine.TimeDelta * Animator.generalFramerate;
+        System.Diagnostics.Debug.WriteLine(framesBlinked + " >= " + nextBlinkFrame);
+        if (framesBlinked >= nextBlinkFrame)
+        {
+            additionUntilNextBlinkFrame *= 0.8f ;
+            nextBlinkFrame += additionUntilNextBlinkFrame;
+            this.invisible = !this.invisible;
+        }
+    }
+
     public override void collide(PhysicsSprite other, float timeLeft)
     {
         if (other is PhysicsSprite) {
-            if (other.isSpinning)
+            if (other.isSpinning && base.getState() != State.Damage)
             {
                 Game.currentLevel.sb.enemyKilled(1);
                 base.collide(other);
+                base.setFrameIndex(0);
+
+                // bounce piper upwards
+                other.loc += other.vel * (Engine.TimeDelta - timeLeft);
+                other.vel = Physics.coeffRestitution * new Vector2(0, -30);
             }
-            else
+            else if (base.getState() != State.Damage)
             {
                 other.loc += other.vel * (Engine.TimeDelta - timeLeft);
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
@@ -261,9 +293,11 @@ class Enemy : PhysicsSprite
 
 class Flower : Sprite
 {
-    public static readonly Vector2 defaultFlowerHitbox = new Vector2(13, 14);
+    public static readonly Vector2 defaultFlowerHitbox = new Vector2(13, 16);
     public static readonly Vector2 collisionFlowerHitbox = new Vector2(10, 10);
-    public static readonly Texture defaultFlower = Engine.LoadTexture("flower.png");
+    public static readonly Texture defaultFlower = Engine.LoadTexture("flower-3.png");
+    public Boolean collected = false;
+
     public Flower(Vector2 loc) : base(loc + defaultFlowerHitbox / 2, defaultFlower, defaultFlowerHitbox)
     {
 
@@ -271,17 +305,17 @@ class Flower : Sprite
 
     public override void collide(Sprite mainCharacter)
     {
-        Game.currentLevel.sb.addFlower();
-        if (mainCharacter is Sonic)
+        if (!collected)
         {
-            ((Sonic)mainCharacter).addFlower();
-
-        }        
-        base.collide(mainCharacter);
-    }
-
-    public override Bounds2 getPhysicsHitbox()
-    {
-        return (new Bounds2(loc - collisionFlowerHitbox / 2, collisionFlowerHitbox));
+            collected = true;
+            Game.currentLevel.sb.addFlower();
+            if (mainCharacter is Sonic)
+            {
+                ((Sonic)mainCharacter).addFlower();
+            }
+            mainCharacter.isSparkling = true;
+            Animator.sparkleFramesLeft = 5;
+            base.collide(mainCharacter);
+        }
     }
 }
