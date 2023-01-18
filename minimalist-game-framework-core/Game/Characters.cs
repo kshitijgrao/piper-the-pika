@@ -136,26 +136,26 @@ class Sonic : PhysicsSprite
         base.collideSpike(timeLeft);
 
         Animator.animatePiperTakingDamage(this);
-        Difficulty currDiff = Game.currentLevel.diff;
+        Difficulty currDiff = ((StageLevel) Game.currentLevel).diff;
 
         if (currDiff == Difficulty.easy)
         {
-            if (Game.currentLevel.sb.flowers > 0)
+            if (Game.currentLevel.getSb().flowers > 0)
             {
-                Game.currentLevel.sb.flowers = 0;
+                Game.currentLevel.getSb().flowers = 0;
             }
             else
             {
-                Game.currentLevel.sb.lives--;
+                Game.currentLevel.getSb().lives--;
             }
         }
         else if (currDiff == Difficulty.medium)
         {
-            Game.currentLevel.sb.lives--;
+            Game.currentLevel.getSb().lives--;
         }
         else if (currDiff == Difficulty.hard)
         {
-            Game.currentLevel.sb.lives = 0;
+            Game.currentLevel.getSb().lives = 0;
         }
 
     }
@@ -170,6 +170,11 @@ class Sonic : PhysicsSprite
     {
         return flowerCount;
     }
+}
+
+class Projectile : PhysicsSprite
+{
+
 }
 
 class Enemy : PhysicsSprite
@@ -219,7 +224,7 @@ class Enemy : PhysicsSprite
         if (other is PhysicsSprite) {
             if (other.isSpinning)
             {
-                Game.currentLevel.sb.enemyKilled(1);
+                Game.currentLevel.getSb().enemyKilled(1);
                 base.collide(other);
             }
             else
@@ -229,26 +234,26 @@ class Enemy : PhysicsSprite
                 other.setInvincible();
 
                 Animator.animatePiperTakingDamage(other);
-                Difficulty currDiff = Game.currentLevel.diff;
+                Difficulty currDiff = Game.currentLevel.getDiff();
 
                 if (currDiff == Difficulty.easy)
                 {
-                    if (Game.currentLevel.sb.flowers > 0)
+                    if (Game.currentLevel.getSb().flowers > 0)
                     {
-                        Game.currentLevel.sb.flowers = 0;
+                        Game.currentLevel.getSb().flowers = 0;
                     }
                     else
                     {
-                        Game.currentLevel.sb.lives--;
+                        Game.currentLevel.getSb().lives--;
                     }
                 }
                 else if (currDiff == Difficulty.medium)
                 {
-                    Game.currentLevel.sb.lives--;
+                    Game.currentLevel.getSb().lives--;
                 }
                 else if (currDiff == Difficulty.hard)
                 {
-                    Game.currentLevel.sb.lives = 0;
+                    Game.currentLevel.getSb().lives = 0;
                 }
 
                 base.collide(other, timeLeft);
@@ -271,7 +276,7 @@ class Flower : Sprite
 
     public override void collide(Sprite mainCharacter)
     {
-        Game.currentLevel.sb.addFlower();
+        Game.currentLevel.getSb().addFlower();
         if (mainCharacter is Sonic)
         {
             ((Sonic)mainCharacter).addFlower();

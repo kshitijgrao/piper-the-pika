@@ -4,7 +4,18 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 
-class Level
+interface Level
+{
+    void playLevel();
+    void reset();
+    Map getMap();
+    Difficulty getDiff();
+    void setDiff(Difficulty diff);
+    Scoreboard getSb();
+
+}
+
+class StageLevel : Level
 {
     //physics
     private Map map;
@@ -12,6 +23,9 @@ class Level
     private int finishingThresh;
     private string svg_path;
     public Difficulty diff;
+
+    public Difficulty getDiff() { return diff; }
+    public void setDiff(Difficulty diff) { this.diff = diff; }
 
 
     //drawing
@@ -29,11 +43,13 @@ class Level
     private int highScore;
     public int levelNum;
 
+    public Scoreboard getSb() { return sb; }
+
     private Sonic piper;
     public Enemy[] enemies;
     public Flower[] flowers;
 
-    public Level(string map_path, string svg_path, string front_pic_path, string back_pic_path, Vector2 startingCoord, Vector2 pos, Vector2 bgOff, Vector2 mapOff, int finalX, LevelPassed startLevel)
+    public StageLevel(string map_path, string svg_path, string front_pic_path, string back_pic_path, Vector2 startingCoord, Vector2 pos, Vector2 bgOff, Vector2 mapOff, int finalX, LevelPassed startLevel)
     {
         this.map = new Map(map_path);
         this.render = new Rendering(front_pic_path, back_pic_path, pos, bgOff, mapOff);
@@ -180,6 +196,28 @@ class Level
     public int returnHighScore()
     {
         return highScore;
+    }
+
+
+}
+
+class BossLevel : Level
+{
+    private Difficulty diff;
+    private Map map;
+    private Scoreboard sb;
+
+    private Sonic piper;
+    private 
+
+    public Difficulty getDiff() { return diff; }
+    public void setDiff(Difficulty diff) { this.diff = diff; }
+    public Scoreboard getSb() { return sb; }
+    public Map getMap() { return map; }
+
+    public BossLevel()
+    {
+
     }
 
 

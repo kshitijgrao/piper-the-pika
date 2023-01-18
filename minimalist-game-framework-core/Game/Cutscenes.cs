@@ -81,7 +81,7 @@ public class Scenes
                 Game.currentLevel = Game.level3;
             }
 
-            Game.currentLevel.diff = diffState;
+            Game.currentLevel.setDiff(diffState);
             enterCount = 0;
             diffState = 0;
             levelState = 1;
@@ -264,12 +264,12 @@ public class Scenes
         //score update animation
         else if (bonus >= steps)
         {
-            Game.currentLevel.sb.updateScore(steps);
+            Game.currentLevel.getSb().updateScore(steps);
             bonus -= steps;
         }
         else if (bonus > 0)
         {
-            Game.currentLevel.sb.updateScore(bonus);
+            Game.currentLevel.getSb().updateScore(bonus);
             bonus -= bonus;
         }
 
@@ -285,11 +285,11 @@ public class Scenes
         Engine.DrawString("PIPER  HAS", new Vector2(line1X, 50), Color.White, h2); //100, 50
         Engine.DrawString(message, new Vector2(line2X, 75), Color.White, h2); //15 , 75
         Engine.DrawString("Act", new Vector2(line3X + 5, 97), Color.Orange, h3); //170, 97
-        Engine.DrawString("" + (int) (Game.currentLevel.passed + 1) , new Vector2(line3X + 30, 72), Color.Yellow, h1); //200, 72
+        Engine.DrawString("" + (int) (((StageLevel) Game.currentLevel).passed + 1) , new Vector2(line3X + 30, 72), Color.Yellow, h1); //200, 72
 
         if (!scoreUpdate)
         {
-            bonus = Game.currentLevel.sb.timeBonus();
+            bonus = Game.currentLevel.getSb().timeBonus();
             scoreUpdate = true;
             steps = bonus / 200;
         }
@@ -298,7 +298,7 @@ public class Scenes
         if (message.Equals("PASSED"))
         {
             Engine.DrawString("SCORE", new Vector2(line4x + 5, 125), Color.Yellow, h3); //75, 125
-            Engine.DrawString(Game.currentLevel.sb.getScore() + "", new Vector2(line4x + 140, 125), Color.White, h3); //210, 125
+            Engine.DrawString(Game.currentLevel.getSb().getScore() + "", new Vector2(line4x + 140, 125), Color.White, h3); //210, 125
             Engine.DrawString("TIME BONUS", new Vector2(line4x + 5, 145), Color.Yellow, h3); //75, 145
             Engine.DrawString("" + bonus, new Vector2(line4x + 140, 145), Color.White, h3); //210, 145
         }
