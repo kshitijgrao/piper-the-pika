@@ -239,11 +239,12 @@ unsafe class Map
 
         if(!getSurfaceY(pos + slope / 2).HasValue || !getSurfaceY(pos - slope / 2).HasValue)
         {
+            
             return Vector2.UP;
         }
 
         float yRight = getSurfaceY(pos + slope / 2).Value - surfacePoint.Y;
-        float yLeft = surfacePoint.Y - getSurfaceY(pos + slope / 2).Value;
+        float yLeft = surfacePoint.Y - getSurfaceY(pos - slope / 2).Value;
 
         if (Math.Abs(yRight) > Math.Abs(yLeft) + 10)
         {
@@ -257,8 +258,6 @@ unsafe class Map
         {
             slope.Y = yLeft + yRight;
         }
-
-        
 
         return slope.Rotated(270).Normalized();
     }
@@ -379,6 +378,7 @@ unsafe class Map
 
     public int? getSurfaceAny(Vector2 pos, CoordinateAxis direc)
     {
+
         List<int> currTransitions = transitions[direc][(int)Math.Round(pos.getComp(direc.Flip()))];
         float criticalCoord = pos.getComp(direc);
         for (int i = 0; i < currTransitions.Count; i++)

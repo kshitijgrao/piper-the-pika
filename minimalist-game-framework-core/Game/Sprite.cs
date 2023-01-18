@@ -73,6 +73,11 @@ class Sprite {
         return invisible;
     }
 
+    public void setInvisible()
+    {
+        invisible = true;
+    }
+
     public Vector2 getHitboxNoCalc()
     {
         return hitbox;

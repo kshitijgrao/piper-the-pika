@@ -126,7 +126,7 @@ public class Scenes
             }
         }
 
-        if (Engine.GetKeyDown(Key.Return))
+        if (Engine.GetKeyDown(Key.Return) || Engine.GetKeyDown(Key.Space))
         {
             enterCount++;
             if (enterCount == 1)

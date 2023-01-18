@@ -16,8 +16,8 @@ class Level
 
     //drawing
     private Rendering render;
-    string front_pic_path;
-    string back_pic_path;
+    Chunking front_pic_chunk;
+    Chunking back_pic_chunk;
     Vector2 pos;
     Vector2 bgOff;
     Vector2 mapOff;
@@ -32,15 +32,16 @@ class Level
     private Sonic piper;
     public Enemy[] enemies;
     public Flower[] flowers;
+    public LaunchFlower[] launchFlowers;
 
-    public Level(string map_path, string svg_path, string front_pic_path, string back_pic_path, Vector2 startingCoord, Vector2 pos, Vector2 bgOff, Vector2 mapOff, int finalX, LevelPassed startLevel)
+    public Level(string map_path, string svg_path, Chunking front_pic_chunk, Chunking back_pic_chunk, Vector2 startingCoord, Vector2 pos, Vector2 bgOff, Vector2 mapOff, int finalX, LevelPassed startLevel)
     {
         this.map = new Map(map_path);
-        this.render = new Rendering(front_pic_path, back_pic_path, pos, bgOff, mapOff);
+        this.render = new Rendering(front_pic_chunk, back_pic_chunk, pos, bgOff, mapOff);
         this.svg_path = svg_path;
 
-        this.front_pic_path = front_pic_path;
-        this.back_pic_path = back_pic_path;
+        this.front_pic_chunk = front_pic_chunk;
+        this.back_pic_chunk = back_pic_chunk;
 
         this.pos = pos;
         this.bgOff = bgOff;
@@ -68,9 +69,19 @@ class Level
         //double reading, but whatever
         enemies = SVGReader.findEnemies(svg_path);
         flowers = SVGReader.findFlowers(svg_path);
+        launchFlowers = new LaunchFlower[0];
 
-        render = new Rendering(front_pic_path, back_pic_path, pos, bgOff, mapOff);
+        render = new Rendering(front_pic_chunk, back_pic_chunk, pos, bgOff, mapOff);
 
+    }
+
+    public void addLaunchFlowers()
+    {
+        launchFlowers = new LaunchFlower[piper.getFlowers()];
+        for(int i = 0; i < launchFlowers.Length; i++)
+        {
+            launchFlowers[i] = new LaunchFlower(piper.loc, piper.vel, i * 180 / launchFlowers.Length);
+        }
     }
 
 
@@ -88,6 +99,7 @@ class Level
         //other sprites
         Physics.detectCollisions(piper, flowers);
         Physics.detectCollisions(piper, enemies);
+        Physics.detectCollisions(piper, launchFlowers);
 
 
         //update acceleration
@@ -96,6 +108,7 @@ class Level
         //update overall physics
         Physics.updatePhysics(map, piper);
         Physics.updatePhysics(map, enemies);
+        Physics.updatePhysics(map, launchFlowers);
 
         // collect input and draw frame
 
@@ -117,6 +130,10 @@ class Level
         foreach (Flower flower in flowers)
         {
             flower.setFrameIndex(Animator.animateFlowers(flower, render.pos + flower.loc));
+        }
+        foreach(LaunchFlower flower in launchFlowers)
+        {
+            flower.draw(new Bounds2(Vector2.Zero, Flower.defaultFlowerHitbox), flower.loc + render.pos);
         }
 
         piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));

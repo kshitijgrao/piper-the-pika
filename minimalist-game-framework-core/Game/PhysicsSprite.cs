@@ -22,12 +22,13 @@ class PhysicsSprite : Sprite
     internal float accPath;
     private int invincibleFramesLeft;
 
-    public static readonly float invincibleTime = 1;
+    public static readonly float invincibleTime = 0.5f;
 
     internal bool isSpinning;
 
     public Vector2 collisionBox;
 
+    internal bool simpleObject;
 
     //TODO: clean up these constructors
     public PhysicsSprite(Vector2 loc, Texture sprites, Vector2 hitboxes, Vector2 collisionBox) : base(loc,sprites,hitboxes)
@@ -118,8 +119,14 @@ class PhysicsSprite : Sprite
 
     public void setInvincible()
     {
-        invincibleFramesLeft = (int)Math.Round(invincibleTime / Engine.TimeDelta);
+        setInvincible(invincibleTime);
     }
+
+    public void setInvincible(float timeSet)
+    {
+        invincibleFramesLeft = (int)Math.Round(timeSet / Engine.TimeDelta);
+    }
+
     public void setAccelerationDirect(Vector2 acc)
     {
         this.acc = acc;
@@ -139,9 +146,19 @@ class PhysicsSprite : Sprite
 
     public override void updateState(Map map)
     {
+
+        
+
         float time = collided ? timeLeft : Engine.TimeDelta;
         collided = false;
         Vector2 locOrig = loc;
+
+        if (simpleObject)
+        {
+            loc = loc + vel * time;
+            vel += acc * time;
+            return;
+        }
 
         //with this implementation one frame is kind of glitched
         if (onPath)
@@ -187,7 +204,7 @@ class PhysicsSprite : Sprite
 
 
         //checks if its leaving the ground in some way--maybe this might not work in some edge cases... will have to rethink
-        if (onGround && !onPath && map.inAir(loc - map.getNormalVector(locOrig)))
+        if (onGround && !onPath && map.inAir(loc - 3 * map.getNormalVector(locOrig)))
         {
             onGround = false;
             isSpinning = true;
