@@ -92,10 +92,8 @@ internal static class Animator
 
     public static float animateEnemy(Enemy enemy, Vector2 position)
     {
-        Vector2 minPosition = enemy.getPath().Size;
-        Vector2 maxPosition = enemy.getPath().Position;
-
-        Debug.WriteLine(minPosition.ToString() + " " + maxPosition.ToString());
+        Vector2 minPosition = enemy.getPath().Position;
+        Vector2 maxPosition = enemy.getPath().Size;
 
         if (enemy.getState() != State.Damage)
         {
@@ -112,7 +110,6 @@ internal static class Animator
         {
             if (enemy.isBlinking == true)
             {
-                System.Diagnostics.Debug.WriteLine(enemy.getFrameIndex() + " >= 3");
                 if (enemy.getFrameIndex() >= 3)
                 {
                     enemy.invisible = true;

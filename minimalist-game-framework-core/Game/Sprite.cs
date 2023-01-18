@@ -152,7 +152,6 @@ class Sprite {
         }
         if (isSparkling)
         {
-            System.Diagnostics.Debug.WriteLine(bounds);
             Bounds2 sparkleBounds = new Bounds2(new Vector2(bounds.Min.X, 0), new Vector2(24, 24));
             Engine.DrawTexture(sparkles, position - hitbox / 2, source: sparkleBounds);
         }
@@ -188,10 +187,6 @@ class Sprite {
 
     public void setFrameIndex(float frameIndex)
     {
-        if (frameIndex == 0)
-        {
-           // Debug.WriteLine("Resetting frame index");
-        }
         this.frameIndex = frameIndex;
     }
 

@@ -378,7 +378,10 @@ unsafe class Map
 
     public int? getSurfaceAny(Vector2 pos, CoordinateAxis direc)
     {
-
+        if ((int)Math.Round(pos.getComp(direc.Flip())) >= transitions[direc].Length || (int)Math.Round(pos.getComp(direc.Flip())) < 0)
+        {
+            Game.currentLevel.reset();
+        }
         List<int> currTransitions = transitions[direc][(int)Math.Round(pos.getComp(direc.Flip()))];
         float criticalCoord = pos.getComp(direc);
         for (int i = 0; i < currTransitions.Count; i++)
