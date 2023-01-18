@@ -116,7 +116,7 @@ class Level
         }
         foreach (Flower flower in flowers)
         {
-            flower.draw(new Bounds2(Vector2.Zero, Flower.defaultFlowerHitbox), flower.loc + render.pos);
+            flower.setFrameIndex(Animator.animateFlowers(flower, render.pos + flower.loc));
         }
 
         piper.setFrameIndex(Animator.animatePiper(piper, render.pos + piper.loc, currentKey));

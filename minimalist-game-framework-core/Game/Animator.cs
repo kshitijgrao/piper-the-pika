@@ -92,6 +92,9 @@ internal static class Animator
 
     public static float animateEnemy(Enemy enemy, Vector2 position)
     {
+        Vector2 minPosition = enemy.getPath().Size;
+        Vector2 maxPosition = enemy.getPath().Position;
+
         Debug.WriteLine(minPosition.ToString() + " " + maxPosition.ToString());
 
         if (enemy.getState() != State.Damage)
