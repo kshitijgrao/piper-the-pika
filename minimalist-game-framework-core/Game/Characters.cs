@@ -246,6 +246,8 @@ class Enemy : PhysicsSprite
         if (other is PhysicsSprite) {
             if (other.isSpinning && base.getState() != State.Damage)
             {
+                Engine.PlaySound(Game.enemyDamageSound);
+
                 Game.currentLevel.sb.enemyKilled(1);
                 base.collide(other);
                 base.setFrameIndex(0);
@@ -256,6 +258,8 @@ class Enemy : PhysicsSprite
             }
             else if (base.getState() != State.Damage)
             {
+                Engine.PlaySound(Game.piperDamageSound);
+
                 other.loc += other.vel * (Engine.TimeDelta - timeLeft);
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
                 other.setInvincible();
@@ -316,6 +320,7 @@ class Flower : Sprite
             mainCharacter.isSparkling = true;
             Animator.sparkleFramesLeft = 5;
             base.collide(mainCharacter);
+            Engine.PlaySound(Game.flowerCollectSound);
         }
     }
 }
