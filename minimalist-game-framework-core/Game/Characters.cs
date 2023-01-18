@@ -311,7 +311,7 @@ class LaunchFlower : PhysicsSprite
     public LaunchFlower(Vector2 loc, Vector2 piperVel, float angle) : base(loc, Flower.defaultFlower, Flower.defaultFlowerHitbox )
     {
         this.loc = loc + defaultOffset.Rotated(angle);
-        vel = piperVel + defaultVec.Rotated(angle);
+        vel = 0.25f * piperVel + defaultVec.Rotated(angle);
         timer = (int)(timeUp / Engine.TimeDelta);
         this.simpleObject = true;
     }

@@ -29,7 +29,5 @@ class Chunking
             Engine.DrawTexture(img3, topLeft + new Vector2(img1.Width + img2.Width, 0));
         }
     }
-
-    public 
 }
 
