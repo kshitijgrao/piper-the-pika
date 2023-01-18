@@ -141,7 +141,7 @@ internal static class Animator
             {
                 flower.invisible = true;
             }
-            return changeFrame(flower, position, 4, 8);
+            return changeFrame(flower, position, 4, 15);
         }
         return changeFrame(flower, position, 1, 8);
     }

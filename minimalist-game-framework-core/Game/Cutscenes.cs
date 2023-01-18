@@ -136,12 +136,14 @@ public class Scenes
         }
 
         Engine.DrawString("LEVEL SELECT", new Vector2(87, 10), Color.White, h2);
+        Engine.DrawString("HIGHSCORE:", new Vector2(84, 44), Color.Yellow, h3);
 
         if (levelState == 1)
         {
             Engine.DrawTexture(level1, new Vector2(6, 62), size: new Vector2(100, 100));
             Engine.DrawString("1", new Vector2(36, 69), Color.Black, h5);
             Engine.DrawString("1", new Vector2(34, 67), Color.Yellow, h5);
+            Engine.DrawString("" + Game.level1.returnHighScore(), new Vector2(164, 44), Color.Yellow, h3);
         }
         else
         {
@@ -155,6 +157,7 @@ public class Scenes
             Engine.DrawTexture(level2, new Vector2(110, 62), size: new Vector2(100, 100));
             Engine.DrawString("2", new Vector2(140, 67), Color.Black, h5);
             Engine.DrawString("2", new Vector2(138, 65), Color.Yellow, h5);
+            Engine.DrawString("" + Game.level2.returnHighScore(), new Vector2(164, 44), Color.Yellow, h3);
         }
         else if (Game.progress < LevelPassed.onePassed)
         {
@@ -174,6 +177,7 @@ public class Scenes
             Engine.DrawTexture(level3, new Vector2(213, 62), size: new Vector2(100, 100));
             Engine.DrawString("3", new Vector2(244, 69), Color.Black, h5);
             Engine.DrawString("3", new Vector2(242, 67), Color.Yellow, h5);
+            Engine.DrawString("" + Game.level3.returnHighScore(), new Vector2(164, 44), Color.Yellow, h3);
         }
         else if (Game.progress < LevelPassed.twoPassed)
         {
@@ -313,6 +317,7 @@ public class Scenes
             line4x = 320;
             textSlideSpeed = 10;
             Game.message = "PASSED";
+            Game.currentLevel.highScore = Math.Max(Game.currentLevel.highScore, Game.currentLevel.sb.score);
 
             Game.currentLevel.reset();
             Game.currentScene = Scene.levels;

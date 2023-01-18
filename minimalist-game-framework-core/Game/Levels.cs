@@ -26,7 +26,7 @@ class Level
     public Scoreboard sb;
     private float maxProgress;
     public LevelPassed passed;
-    private int highScore;
+    public int highScore;
     public int levelNum;
 
     private Sonic piper;
@@ -143,6 +143,7 @@ class Level
 
         if (sb.updateScoreboard() == Scene.end)
         {
+            //highScore = Math.Max(highScore, (sb.getScore() + sb.timeBonus()));
             Game.currentScene = Scene.end;
         }
 
@@ -176,7 +177,7 @@ class Level
         }
 
         maxProgress = Math.Max(maxProgress, (piper.loc.X - startingCoord.X) / (finishingThresh - startingCoord.X));
-        highScore = Math.Max(highScore, sb.getScore());
+        //highScore = Math.Max(highScore, (sb.getScore() + sb.timeBonus()));
     }
 
     public Map getMap()
