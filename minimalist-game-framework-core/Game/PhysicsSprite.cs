@@ -213,7 +213,7 @@ class PhysicsSprite : Sprite
         {
             invincibleFramesLeft -= 1;
         }
-        Animator.checkPiperTurn(this);
+        Animator.checkTurn(this);
         
         
         keepOnSurface(map);

@@ -130,8 +130,6 @@ internal static class Animator
             }
         }
 
-        enemy.turn();
-
         return changeFrame(enemy, position, enemy.totalFramesInCurrentState, generalFramerate);
     }
 
@@ -214,11 +212,21 @@ internal static class Animator
         }
     }
 
-    public static void checkPiperTurn(PhysicsSprite piper)
+    public static void checkTurn(PhysicsSprite sprite)
     {
-        if ((piper.isLeft() != piper.vel.X < 0) && Math.Abs(piper.vel.X) > 2)
+        if (sprite is Enemy)
         {
-            piper.turn();
+            if ((!sprite.isLeft() != sprite.vel.X < 0) && Math.Abs(sprite.vel.X) > 2)
+            {
+                sprite.turn();
+            }
+        }
+        else
+        {
+            if ((sprite.isLeft() != sprite.vel.X < 0) && Math.Abs(sprite.vel.X) > 2)
+            {
+                sprite.turn();
+            }
         }
     }
 
