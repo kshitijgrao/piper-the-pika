@@ -102,10 +102,12 @@ internal static class Animator
             if (enemy.loc.X >= maxPosition.X)
             {
                 enemy.setVelocity((minPosition - maxPosition).Normalized() * enemy.getSpeed());
+                enemy.loc = minPosition;
             }
             if (enemy.loc.X <= minPosition.X)
             {
                 enemy.setVelocity((maxPosition - minPosition).Normalized() * enemy.getSpeed());
+                enemy.loc = maxPosition;
             }
         }
         else if (enemy.getState() == State.Damage)

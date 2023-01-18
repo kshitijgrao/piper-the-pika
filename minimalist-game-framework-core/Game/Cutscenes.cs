@@ -305,6 +305,7 @@ public class Scenes
             Engine.DrawString(Game.currentLevel.sb.getScore() + "", new Vector2(line4x + 140, 125), Color.White, h3); //210, 125
             Engine.DrawString("TIME BONUS", new Vector2(line4x + 5, 145), Color.Yellow, h3); //75, 145
             Engine.DrawString("" + bonus, new Vector2(line4x + 140, 145), Color.White, h3); //210, 145
+            Game.currentLevel.highScore = Math.Max(Game.currentLevel.highScore, Game.currentLevel.sb.score);
         }
 
         //exit game
@@ -317,7 +318,7 @@ public class Scenes
             line4x = 320;
             textSlideSpeed = 10;
             Game.message = "PASSED";
-            Game.currentLevel.highScore = Math.Max(Game.currentLevel.highScore, Game.currentLevel.sb.score);
+            Game.playedMusic = false;
 
             Game.currentLevel.reset();
             Game.currentScene = Scene.levels;

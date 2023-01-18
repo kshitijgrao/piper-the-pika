@@ -23,7 +23,7 @@ class Game
     public static readonly string RIGHT = "right";
     public static readonly string LEFT = "left";
 
-    public Boolean playedMusic = false;
+    public static Boolean playedMusic = false;
     
     public static readonly Music basicMusic = Engine.LoadMusic("emre_turkoglu_piper_basic_music.mp3");
     // sounds from https://opengameart.org/content/beep-tone-sound-sfx
