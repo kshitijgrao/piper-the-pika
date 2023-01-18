@@ -8,9 +8,11 @@ public class Scenes
     static Font h3 = Engine.LoadFont("Arial.ttf", 12);
     static Font h4 = Engine.LoadFont("Arial.ttf", 70);
     static Font h5 = Engine.LoadFont("Arial.ttf", 80);
+    static Font h6 = Engine.LoadFont("Arial.ttf", 8);
 
     //startScene variables
     static Texture piper = Engine.LoadTexture("piper-spritemap.png");
+    static Texture happyPiper = Engine.LoadTexture("happy-piper.png");
     static Texture level1 = Engine.LoadTexture("level1thumbTest.png");
     static Texture level2 = Engine.LoadTexture("level2thumb.png");
     static Texture level2BW = Engine.LoadTexture("level2thumbBW.png");
@@ -320,9 +322,53 @@ public class Scenes
             Game.currentLevel.highScore = Math.Max(Game.currentLevel.highScore, Game.currentLevel.sb.score);
 
             Game.currentLevel.reset();
-            Game.currentScene = Scene.levels;
+
+            if (Game.progress == LevelPassed.allPassed)
+            {
+                Game.currentScene = Scene.credits;
+            }
+            else
+            {
+                Game.currentScene = Scene.levels;
+            }
         }
 
+    }
+
+    // Credits
+
+    public static Scene creditsScene()
+    {
+        Engine.DrawString("THANK YOU FOR PLAYING", new Vector2(160, 2), Color.White, h2, TextAlignment.Center);
+        Engine.DrawTexture(happyPiper, new Vector2(125, 18));
+
+        Engine.DrawString("CREDITS:", new Vector2(160, 102), Color.White, h3, TextAlignment.Center);
+        Engine.DrawString("PROGRAMMERS", new Vector2(5, 120), Color.White, h3, TextAlignment.Left);
+            Engine.DrawString("Edward Zhou, Evan Kim", new Vector2(310, 120), Color.White, h3, TextAlignment.Right);
+            Engine.DrawString("Kshitij Rao, Yasemin Turkoglu", new Vector2(310, 138), Color.White, h3, TextAlignment.Right);
+
+        Engine.DrawString("ART", new Vector2(5, 156), Color.White, h3, TextAlignment.Left);
+            Engine.DrawString("Yasemin Turkoglu", new Vector2(310, 156), Color.White, h3, TextAlignment.Right);
+
+        Engine.DrawString("MUSIC", new Vector2(5, 174), Color.White, h3, TextAlignment.Left);
+            Engine.DrawString("Emre Turkoglu", new Vector2(310, 174), Color.White, h3, TextAlignment.Right);
+
+        Engine.DrawString("SOUND EFFECTS FROM OPENGAMEART.ORG", new Vector2(160, 197), Color.White, h6, TextAlignment.Center);
+
+        if (frameCount % 90 <= 45)
+        {
+            Engine.DrawString("press SPACE to restart", new Vector2(160, 210), Color.Yellow, h3, TextAlignment.Center);
+        }
+
+        // restart game
+        if (Engine.GetMouseButtonDown(MouseButton.Left) || Engine.GetKeyDown(Key.Space) || Engine.GetKeyDown(Key.Return))
+        {
+            frameCount = 0;
+            return Scenes.levelSelect();
+        }
+
+        frameCount++;
+        return Scene.credits;
     }
 
 }
