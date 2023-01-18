@@ -20,7 +20,7 @@ class Sonic : PhysicsSprite
 
     public static readonly float sonicMass = 2;
 
-    private float flows;
+    public float flows;
     private int flowerCount;
 
 
@@ -138,11 +138,14 @@ class Sonic : PhysicsSprite
 
         Animator.animatePiperTakingDamage(this);
         Difficulty currDiff = Game.currentLevel.diff;
+        this.setInvincible();
 
         if (currDiff == Difficulty.easy)
         {
             if (Game.currentLevel.sb.flowers > 0)
             {
+                Game.currentLevel.addLaunchFlowers();
+                flowerCount = 0;
                 Game.currentLevel.sb.flowers = 0;
             }
             else
@@ -171,14 +174,19 @@ class Sonic : PhysicsSprite
     {
         return flowerCount;
     }
+
+    public void removeFlowers()
+    {
+        flowerCount = 0;
+    }
 }
 
 class Enemy : PhysicsSprite
 {
     Bounds2 path; // holds the max and minumum vector displacement (from loc) of an enemy
     float speed = 20;
-    public static readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap.png");
-    public static readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap.png");
+    public static readonly Texture wolfTexture = Engine.LoadTexture("wolf-enemy-spritemap-3.png");
+    public static readonly Texture hawkTexture = Engine.LoadTexture("hawk-enemy-spritemap-3.png");
     public static readonly Vector2 wolfHit = new Vector2(40, 34);
     public static readonly Vector2 hawkHit = new Vector2(54, 37);
 
@@ -186,6 +194,13 @@ class Enemy : PhysicsSprite
     public static readonly Vector2 hawkCollisionHit = new Vector2(40, 20);
 
     public static readonly float killSpeed = 150;
+    public int totalFramesInCurrentState = 5;
+
+    // animation variables
+    public Boolean isBlinking = false;
+    public float framesBlinked = 0; // time spent blinking (in frames)
+    public float additionUntilNextBlinkFrame = 0;
+    public float nextBlinkFrame = 0;
 
     public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false, flying ? hawkCollisionHit : wolfCollisionHit)
     {
@@ -215,15 +230,40 @@ class Enemy : PhysicsSprite
         return speed;
     }
 
+    public void setBlinking()
+    {
+        isBlinking = true;
+        framesBlinked = 0;
+        additionUntilNextBlinkFrame = 0.8f;
+        nextBlinkFrame += additionUntilNextBlinkFrame;
+    }
+
+    public void updateBlink()
+    {
+        framesBlinked += Engine.TimeDelta * Animator.generalFramerate;
+        System.Diagnostics.Debug.WriteLine(framesBlinked + " >= " + nextBlinkFrame);
+        if (framesBlinked >= nextBlinkFrame)
+        {
+            additionUntilNextBlinkFrame *= 0.8f ;
+            nextBlinkFrame += additionUntilNextBlinkFrame;
+            this.invisible = !this.invisible;
+        }
+    }
+
     public override void collide(PhysicsSprite other, float timeLeft)
     {
         if (other is PhysicsSprite) {
-            if (other.isSpinning)
+            if (other.isSpinning && base.getState() != State.Damage)
             {
                 Game.currentLevel.sb.enemyKilled(1);
                 base.collide(other);
+                base.setFrameIndex(0);
+
+                // bounce piper upwards
+                other.loc += other.vel * (Engine.TimeDelta - timeLeft);
+                other.vel = Physics.coeffRestitution * new Vector2(0, -30);
             }
-            else
+            else if (base.getState() != State.Damage)
             {
                 other.loc += other.vel * (Engine.TimeDelta - timeLeft);
                 other.vel = Physics.coeffRestitution * (-1) * (other.vel - this.vel) + this.vel;
@@ -236,7 +276,13 @@ class Enemy : PhysicsSprite
                 {
                     if (Game.currentLevel.sb.flowers > 0)
                     {
+                        Game.currentLevel.addLaunchFlowers();
+                        if (other is Sonic)
+                        {
+                            ((Sonic)other).removeFlowers();
+                        }
                         Game.currentLevel.sb.flowers = 0;
+                        
                     }
                     else
                     {
@@ -262,12 +308,47 @@ class Enemy : PhysicsSprite
 
 class Flower : Sprite
 {
-    public static readonly Vector2 defaultFlowerHitbox = new Vector2(13, 14);
+    public static readonly Vector2 defaultFlowerHitbox = new Vector2(13, 16);
     public static readonly Vector2 collisionFlowerHitbox = new Vector2(10, 10);
-    public static readonly Texture defaultFlower = Engine.LoadTexture("flower.png");
+    public static readonly Texture defaultFlower = Engine.LoadTexture("flower-3.png");
+    public Boolean collected = false;
+
     public Flower(Vector2 loc) : base(loc + defaultFlowerHitbox / 2, defaultFlower, defaultFlowerHitbox)
     {
 
+    }
+
+    public override void collide(Sprite mainCharacter)
+    {
+        if (!collected)
+        {
+            collected = true;
+            Game.currentLevel.sb.addFlower();
+            if (mainCharacter is Sonic)
+            {
+                ((Sonic)mainCharacter).addFlower();
+            }
+            mainCharacter.isSparkling = true;
+            Animator.sparkleFramesLeft = 5;
+            base.collide(mainCharacter);
+        }
+    }
+}
+
+class LaunchFlower : PhysicsSprite
+{
+
+    public static readonly float timeUp = 2;
+    public static readonly Vector2 defaultVec = new Vector2(-100, 0);
+    public static readonly Vector2 defaultOffset = new Vector2(-10, 0);
+
+    private int timer;
+    public LaunchFlower(Vector2 loc, Vector2 piperVel, float angle) : base(loc, Flower.defaultFlower, Flower.defaultFlowerHitbox )
+    {
+        this.loc = loc + defaultOffset.Rotated(angle);
+        vel = 0.25f * piperVel + defaultVec.Rotated(angle);
+        timer = (int)(timeUp / Engine.TimeDelta);
+        this.simpleObject = true;
     }
 
     public override void collide(Sprite mainCharacter)
@@ -277,12 +358,29 @@ class Flower : Sprite
         {
             ((Sonic)mainCharacter).addFlower();
 
-        }        
+        }
         base.collide(mainCharacter);
     }
 
     public override Bounds2 getPhysicsHitbox()
     {
-        return (new Bounds2(loc - collisionFlowerHitbox / 2, collisionFlowerHitbox));
+        return (new Bounds2(loc - Flower.collisionFlowerHitbox / 2, Flower.collisionFlowerHitbox));
     }
+
+    public override void updateState(Map map)
+    {
+        if(timer <= 0)
+        {
+            this.setInvisible();
+        }
+        else
+        {
+            timer -= 1;
+            onGround = false;
+            base.setAcceleration(Physics.getPhysicsAcceleration(this, this.loc, this.vel, map));
+            base.updateState(map);
+        }
+        
+    }
+
 }

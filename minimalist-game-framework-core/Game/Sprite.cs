@@ -15,10 +15,12 @@ class Sprite {
     private Boolean AnimationLocked; // a sprite is locked if stuck finishing an animation
     private protected Vector2 hitbox;
 
-    private bool invisible;
+    public bool invisible;
+    public bool isSparkling;
 
     internal float rotationAngle;
 
+    readonly Texture sparkles = Engine.LoadTexture("sparkles-effect.png");
     public static readonly State landState = State.Landing;
 
     public Sprite(Vector2 loc, Texture spritemap)
@@ -71,6 +73,11 @@ class Sprite {
         return invisible;
     }
 
+    public void setInvisible()
+    {
+        invisible = true;
+    }
+
     public Vector2 getHitboxNoCalc()
     {
         return hitbox;
@@ -78,7 +85,18 @@ class Sprite {
 
     public virtual void collide(Sprite other)
     {
-        invisible = true;
+        if (this is Enemy)
+        {
+            Animator.animateEnemyTakingDamage((Enemy)this);
+        }
+        else if (this is Flower)
+        {
+            this.setState(State.Walk); // flower is not actually walking, uhh its walking out of the screen :) **its an exit animation
+        }
+        else
+        {
+            invisible = true;
+        }
     }
 
     public virtual void collide(PhysicsSprite other, float timeLeft)
@@ -130,6 +148,12 @@ class Sprite {
             {
                 Engine.DrawRectEmpty(new Bounds2(position - getPhysicsHitbox().Size / 2, getPhysicsHitbox().Size), Color.Yellow);
             }
+        }
+        if (isSparkling)
+        {
+            System.Diagnostics.Debug.WriteLine(bounds);
+            Bounds2 sparkleBounds = new Bounds2(new Vector2(bounds.Min.X, 0), new Vector2(24, 24));
+            Engine.DrawTexture(sparkles, position - hitbox / 2, source: sparkleBounds);
         }
     }
 
@@ -221,6 +245,7 @@ enum State
     StartingJump,
     Spinning,
     Landing,
-    Damage
+    Damage,
+    Dead
 }
 
