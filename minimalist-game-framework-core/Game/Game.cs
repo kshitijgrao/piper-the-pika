@@ -8,7 +8,7 @@ using System.Net.Http.Headers;
 
 
 // Scene enumerator
-public enum Scene {game, start, instructions, end, levels};
+public enum Scene {game, start, instructions, end, levels, credits};
 public enum Difficulty {none, easy, medium, hard};
 public enum LevelPassed {none, onePassed, twoPassed, allPassed};
 
@@ -84,6 +84,7 @@ class Game
         }
         else if (currentScene == Scene.start) { currentScene = Scenes.titleScene(); }
         else if (currentScene == Scene.levels) { currentScene = Scenes.levelSelect(); }
+        else if (currentScene == Scene.credits) { currentScene = Scenes.creditsScene(); }
         else if (currentScene == Scene.end) 
         { 
             Engine.StopMusic(0);
