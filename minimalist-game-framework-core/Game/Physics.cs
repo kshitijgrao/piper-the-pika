@@ -129,9 +129,18 @@ class Physics
                 Vector2 norm = map.getNormalVector(finalPos);
 
                 
+                if(norm.Y > 0)
+                {
+                    obj.vel = obj.vel - 2 * norm * Vector2.Dot(norm, obj.vel);
+                }
+                else
+                {
+                    obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
+                }
 
 
-                obj.vel = obj.vel - norm * Vector2.Dot(norm, obj.vel);
+
+                
                 obj.loc = map.getNearestHoveringPoint(finalPos);
 
                 if (Math.Round(norm.Y, 2) == 0)
@@ -151,7 +160,7 @@ class Physics
             {
                 if(map.getNormalVector(finalPos).Y < 0)
                 {
-                    obj.vel.Y = (float)(-1 * Math.Sqrt(2 * g.Y * 50));
+                    obj.vel.Y = (float)(-1 * Math.Sqrt(2 * g.Y * 100));
                 }
                 else
                 {
@@ -182,6 +191,11 @@ class Physics
 
     public static Vector2 getPhysicsAcceleration(PhysicsSprite obj, Vector2 loc, Vector2 vel, Map map)
     {
+        if (obj.simpleObject)
+        {
+            return g;
+        }
+
         Vector2 norm = map.getNormalVector(loc);
         float radius = map.getSurfaceRadius(loc);
 

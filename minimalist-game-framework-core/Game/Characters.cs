@@ -137,11 +137,14 @@ class Sonic : PhysicsSprite
 
         Animator.animatePiperTakingDamage(this);
         Difficulty currDiff = Game.currentLevel.diff;
+        this.setInvincible();
 
         if (currDiff == Difficulty.easy)
         {
             if (Game.currentLevel.sb.flowers > 0)
             {
+                Game.currentLevel.addLaunchFlowers();
+                flowerCount = 0;
                 Game.currentLevel.sb.flowers = 0;
             }
             else
@@ -169,6 +172,11 @@ class Sonic : PhysicsSprite
     public int getFlowers()
     {
         return flowerCount;
+    }
+
+    public void removeFlowers()
+    {
+        flowerCount = 0;
     }
 }
 
@@ -235,7 +243,13 @@ class Enemy : PhysicsSprite
                 {
                     if (Game.currentLevel.sb.flowers > 0)
                     {
+                        Game.currentLevel.addLaunchFlowers();
+                        if (other is Sonic)
+                        {
+                            ((Sonic)other).removeFlowers();
+                        }
                         Game.currentLevel.sb.flowers = 0;
+                        
                     }
                     else
                     {
@@ -284,4 +298,54 @@ class Flower : Sprite
     {
         return (new Bounds2(loc - collisionFlowerHitbox / 2, collisionFlowerHitbox));
     }
+}
+
+class LaunchFlower : PhysicsSprite
+{
+
+    public static readonly float timeUp = 2;
+    public static readonly Vector2 defaultVec = new Vector2(-100, 0);
+    public static readonly Vector2 defaultOffset = new Vector2(-10, 0);
+
+    private int timer;
+    public LaunchFlower(Vector2 loc, Vector2 piperVel, float angle) : base(loc, Flower.defaultFlower, Flower.defaultFlowerHitbox )
+    {
+        this.loc = loc + defaultOffset.Rotated(angle);
+        vel = piperVel + defaultVec.Rotated(angle);
+        timer = (int)(timeUp / Engine.TimeDelta);
+        this.simpleObject = true;
+    }
+
+    public override void collide(Sprite mainCharacter)
+    {
+        Game.currentLevel.sb.addFlower();
+        if (mainCharacter is Sonic)
+        {
+            ((Sonic)mainCharacter).addFlower();
+
+        }
+        base.collide(mainCharacter);
+    }
+
+    public override Bounds2 getPhysicsHitbox()
+    {
+        return (new Bounds2(loc - Flower.collisionFlowerHitbox / 2, Flower.collisionFlowerHitbox));
+    }
+
+    public override void updateState(Map map)
+    {
+        if(timer <= 0)
+        {
+            this.setInvisible();
+        }
+        else
+        {
+            timer -= 1;
+            onGround = false;
+            base.setAcceleration(Physics.getPhysicsAcceleration(this, this.loc, this.vel, map));
+            base.updateState(map);
+        }
+        
+    }
+
 }

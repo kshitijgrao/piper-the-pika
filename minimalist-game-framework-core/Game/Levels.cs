@@ -32,6 +32,7 @@ class Level
     private Sonic piper;
     public Enemy[] enemies;
     public Flower[] flowers;
+    public LaunchFlower[] launchFlowers;
 
     public Level(string map_path, string svg_path, string front_pic_path, string back_pic_path, Vector2 startingCoord, Vector2 pos, Vector2 bgOff, Vector2 mapOff, int finalX, LevelPassed startLevel)
     {
@@ -68,9 +69,19 @@ class Level
         //double reading, but whatever
         enemies = SVGReader.findEnemies(svg_path);
         flowers = SVGReader.findFlowers(svg_path);
+        launchFlowers = new LaunchFlower[0];
 
         render = new Rendering(front_pic_path, back_pic_path, pos, bgOff, mapOff);
 
+    }
+
+    public void addLaunchFlowers()
+    {
+        launchFlowers = new LaunchFlower[piper.getFlowers()];
+        for(int i = 0; i < launchFlowers.Length; i++)
+        {
+            launchFlowers[i] = new LaunchFlower(piper.loc, piper.vel, i * 180 / launchFlowers.Length);
+        }
     }
 
 
@@ -88,6 +99,7 @@ class Level
         //other sprites
         Physics.detectCollisions(piper, flowers);
         Physics.detectCollisions(piper, enemies);
+        Physics.detectCollisions(piper, launchFlowers);
 
 
         //update acceleration
@@ -96,6 +108,7 @@ class Level
         //update overall physics
         Physics.updatePhysics(map, piper);
         Physics.updatePhysics(map, enemies);
+        Physics.updatePhysics(map, launchFlowers);
 
         // collect input and draw frame
 
@@ -115,6 +128,10 @@ class Level
             enemy.setFrameIndex(Animator.animateEnemy(enemy, render.pos + enemy.loc));
         }
         foreach (Flower flower in flowers)
+        {
+            flower.draw(new Bounds2(Vector2.Zero, Flower.defaultFlowerHitbox), flower.loc + render.pos);
+        }
+        foreach(LaunchFlower flower in launchFlowers)
         {
             flower.draw(new Bounds2(Vector2.Zero, Flower.defaultFlowerHitbox), flower.loc + render.pos);
         }

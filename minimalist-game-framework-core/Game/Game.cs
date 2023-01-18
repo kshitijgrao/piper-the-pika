@@ -56,9 +56,9 @@ class Game
 
     public Game()
     {
-        level3 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", "displayMap1_14_windows.png", "newBG_windows.png", new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 170, LevelPassed.twoPassed);
-        level2 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", "displayMap1_14_windows.png", "cityBG4.png", new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 170, LevelPassed.onePassed);
-        level1 = new Level("Level3_1_16_test.bmp", "Assets/level3_svg.txt", "level3withpaths.png", "caveBG.png", new Vector2(125, 800), new Vector2(0, -640), new Vector2(0, 0), new Vector2(0, 0), 10400, LevelPassed.none);
+        level3 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", "displayMap1_14_windows.png", "newBG_windows.png", new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 8000, LevelPassed.twoPassed);
+        level2 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", "displayMap1_14_windows.png", "cityBG4.png", new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 8000, LevelPassed.onePassed);
+        level1 = new Level("Level3_1_16.bmp", "Assets/level3_svg.txt", "level3withpaths.png", "caveBG.png", new Vector2(125, 800), new Vector2(0, -640), new Vector2(0, 0), new Vector2(0, 0), 10400, LevelPassed.none);
 
         //scene control
         progress = LevelPassed.none;

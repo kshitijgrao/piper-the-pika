@@ -12,7 +12,7 @@ class Rendering
     private Vector2 bgOff;
     private Vector2 mapOff;
 
-    public static readonly Bounds2 defaultWindow = new Bounds2(7 * Game.Resolution.X / 16, Game.Resolution.Y / 3, Game.Resolution.X / 8, Game.Resolution.Y / 3);
+    public static readonly Bounds2 defaultWindow = new Bounds2(15 * Game.Resolution.X / 32, Game.Resolution.Y / 3, Game.Resolution.X / 16, Game.Resolution.Y / 3);
 
     public Rendering(String texture, String bgText, Bounds2 window)
     {
