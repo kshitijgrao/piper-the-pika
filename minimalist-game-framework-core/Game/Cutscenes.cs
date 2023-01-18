@@ -90,7 +90,7 @@ public class Scenes
             return Scene.game;
         }
 
-        if (Engine.GetKeyDown(Key.Left))
+        if (Engine.GetKeyDown(Key.Left) || Engine.GetKeyDown(Key.A))
         {
             if (enterCount == 0)
             {
@@ -108,7 +108,7 @@ public class Scenes
             }
         }
 
-        if (Engine.GetKeyDown(Key.Right))
+        if (Engine.GetKeyDown(Key.Right) || Engine.GetKeyDown(Key.D))
         {
             if (enterCount == 0)
             {

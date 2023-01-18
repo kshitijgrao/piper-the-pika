@@ -9,12 +9,12 @@ class Sonic : PhysicsSprite
     public static readonly float jumpHeight = 100;
     public static readonly int boostFrameTime = (int) (2 / Engine.TimeDelta);
     public static readonly float maxHorVel = 250;
-    public static readonly float maxHorVelBoost = 100;
+    public static readonly float maxHorVelBoost = 150;
     public static readonly float jumpImpulseMag = (float) Math.Sqrt(2.0 * Physics.g.Length() * jumpHeight);
     public static readonly float accelerationMag = 300;
     public static readonly float brakeAccMag = 150;
     public static readonly float accelerationBoostFactor = (float) 1.3;
-    public static readonly float flowerAccBoost = (float) 1.5;
+    public static readonly float flowerAccBoost = (float) 2.5;
 
     public static readonly Vector2 sonicBox = new Vector2(20, 20);
 
@@ -243,7 +243,6 @@ class Enemy : PhysicsSprite
     public void updateBlink()
     {
         framesBlinked += Engine.TimeDelta * Animator.generalFramerate;
-        System.Diagnostics.Debug.WriteLine(framesBlinked + " >= " + nextBlinkFrame);
         if (framesBlinked >= nextBlinkFrame)
         {
             additionUntilNextBlinkFrame *= 0.8f ;

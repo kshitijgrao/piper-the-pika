@@ -173,7 +173,6 @@ class Level
             
             Engine.DrawString("FPS: " + Math.Round(1 / Engine.TimeDelta), new Vector2(Game.Resolution.X - 12, 72), Color.Black, Game.arial, TextAlignment.Right);
             Engine.DrawString("Flows: " + piper.flows, new Vector2(Game.Resolution.X - 12, 84), Color.Black, Game.arial, TextAlignment.Right);
-            Debug.WriteLine(map.getSurfaceRadius(piper.loc));
         }
 
         maxProgress = Math.Max(maxProgress, (piper.loc.X - startingCoord.X) / (finishingThresh - startingCoord.X));

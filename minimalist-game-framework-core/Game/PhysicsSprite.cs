@@ -146,9 +146,6 @@ class PhysicsSprite : Sprite
 
     public override void updateState(Map map)
     {
-
-        
-
         float time = collided ? timeLeft : Engine.TimeDelta;
         collided = false;
         Vector2 locOrig = loc;
@@ -157,6 +154,7 @@ class PhysicsSprite : Sprite
         {
             loc = loc + vel * time;
             vel += acc * time;
+            Animator.checkTurn(this);
             return;
         }
 

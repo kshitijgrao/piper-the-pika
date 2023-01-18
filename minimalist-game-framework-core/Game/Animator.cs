@@ -92,29 +92,24 @@ internal static class Animator
 
     public static float animateEnemy(Enemy enemy, Vector2 position)
     {
-        Vector2 minPosition = enemy.getPath().Size;
-        Vector2 maxPosition = enemy.getPath().Position;
-
-        Debug.WriteLine(minPosition.ToString() + " " + maxPosition.ToString());
+        Vector2 minPosition = enemy.getPath().Position;
+        Vector2 maxPosition = enemy.getPath().Size;
 
         if (enemy.getState() != State.Damage)
         {
             if (enemy.loc.X >= maxPosition.X)
             {
                 enemy.setVelocity((minPosition - maxPosition).Normalized() * enemy.getSpeed());
-                enemy.loc = minPosition;
             }
             if (enemy.loc.X <= minPosition.X)
             {
                 enemy.setVelocity((maxPosition - minPosition).Normalized() * enemy.getSpeed());
-                enemy.loc = maxPosition;
             }
         }
         else if (enemy.getState() == State.Damage)
         {
             if (enemy.isBlinking == true)
             {
-                System.Diagnostics.Debug.WriteLine(enemy.getFrameIndex() + " >= 3");
                 if (enemy.getFrameIndex() >= 3)
                 {
                     enemy.invisible = true;
