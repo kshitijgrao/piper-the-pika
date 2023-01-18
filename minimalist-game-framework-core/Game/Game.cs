@@ -56,7 +56,7 @@ class Game
 
     public Game()
     {
-        level1 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", "displayMap1_14_windows.png", "newBG_windows.png", new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 8000, LevelPassed.none);
+        level1 = new Level("testingbmp.bmp", "Assets/map_svg_form.txt", "displayMap1_14_windows.png", "newBG_windows.png", new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 8000, LevelPassed.none);
         level2 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", "displayMap1_14_windows.png", "cityBG4.png", new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 8000, LevelPassed.onePassed);
         level3 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", "displayMap1_14_windows.png", "caveBG.png", new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 8000, LevelPassed.twoPassed);
 

@@ -48,6 +48,7 @@ class Sonic : PhysicsSprite
         if (onGround)
         {
             this.vel = this.vel + jumpImpulseMag * Game.currentLevel.getMap().getNormalVector(loc);
+            onGround = false;
         }
         
     }
