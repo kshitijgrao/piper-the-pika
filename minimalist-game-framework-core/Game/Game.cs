@@ -54,11 +54,30 @@ class Game
     public static Level level2;
     public static Level level3;
 
+    public static Chunking level1Chunk;
+    public static Chunking level1BG;
+
+    public static Chunking level2Chunk;
+    public static Chunking level2BG;
+
+    public static Chunking level3Chunk;
+    public static Chunking level3BG;
+
     public Game()
     {
-        level3 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", "displayMap1_14_windows.png", "newBG_windows.png", new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 8000, LevelPassed.twoPassed);
-        level2 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", "displayMap1_14_windows.png", "cityBG4.png", new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 8000, LevelPassed.onePassed);
-        level1 = new Level("Level3_1_16.bmp", "Assets/level3_svg.txt", "level3withpaths.png", "caveBG.png", new Vector2(125, 800), new Vector2(0, -640), new Vector2(0, 0), new Vector2(0, 0), 10400, LevelPassed.none);
+        level1Chunk = new Chunking("displayMap1_14_windows.png");
+        level1BG = new Chunking("newBG_windows.png");
+
+        //level2 needs to be chunked: "displayMap1_14_windows.png"
+        //level2 bg needs to be chunked: "cityBG4.png"
+
+        //level3 needs to be chunked: "level3withpaths.png"
+        //level3 bg needs to be chunked: "caveBG.png"
+
+
+        level1 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", level1Chunk, level1BG, new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 8000, LevelPassed.twoPassed);
+        level2 = new Level("collision_map_1_11.bmp", "Assets/map_svg_form.txt", level2Chunk, level2BG, new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(893, 0), 8000, LevelPassed.onePassed);
+        level3 = new Level("Level3_1_16.bmp", "Assets/level3_svg.txt", level3Chunk, level3BG, new Vector2(125, 800), new Vector2(0, -640), new Vector2(0, 0), new Vector2(0, 0), 10400, LevelPassed.none);
 
         //scene control
         progress = LevelPassed.none;

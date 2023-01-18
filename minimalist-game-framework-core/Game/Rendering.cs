@@ -4,8 +4,8 @@ using System.Text;
 
 class Rendering
 {
-    public Texture map; //1944 x 1172
-    public Texture bg;
+    public Chunking map; //1944 x 1172
+    public Chunking bg;
     public Vector2 pos;
     private Vector2 center;
     private Bounds2 window;
@@ -14,15 +14,15 @@ class Rendering
 
     public static readonly Bounds2 defaultWindow = new Bounds2(15 * Game.Resolution.X / 32, Game.Resolution.Y / 3, Game.Resolution.X / 16, Game.Resolution.Y / 3);
 
-    public Rendering(String texture, String bgText, Bounds2 window)
+    public Rendering(Chunking mapSplit, Chunking bgSplit, Bounds2 window)
     {
-        map = Engine.LoadTexture(texture);
-        bg = Engine.LoadTexture(bgText);
+        map = mapSplit;
+        bg = bgSplit;
         center = new Vector2(Game.Resolution.X / 2, Game.Resolution.Y / 2);
         this.window = window;
     }
 
-    public Rendering(string texture, string bgText, Vector2 pos, Vector2 bgOff, Vector2 mapOff) : this(texture, bgText, defaultWindow)
+    public Rendering(Chunking mapSplit, Chunking bgSplit, Vector2 pos, Vector2 bgOff, Vector2 mapOff) : this(mapSplit, bgSplit, defaultWindow)
     {
         // pos = new Vector2(0, -838)
         this.pos = pos;
@@ -34,8 +34,8 @@ class Rendering
     {
         // bgOff = - new Vector2(2382, 420)
         // mapOff = - new Vector2(893, 0)
-        Engine.DrawTexture(bg, (pos / 2) - bgOff);
-        Engine.DrawTexture(map, pos - mapOff);
+        bg.draw((pos / 2) - bgOff);
+        map.draw(pos - mapOff);
 
  /*       for (int i = 0; i < Game.currentLevel.enemies.Length; i++)
         {

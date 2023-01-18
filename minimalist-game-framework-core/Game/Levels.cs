@@ -16,8 +16,8 @@ class Level
 
     //drawing
     private Rendering render;
-    string front_pic_path;
-    string back_pic_path;
+    Chunking front_pic_chunk;
+    Chunking back_pic_chunk;
     Vector2 pos;
     Vector2 bgOff;
     Vector2 mapOff;
@@ -34,14 +34,14 @@ class Level
     public Flower[] flowers;
     public LaunchFlower[] launchFlowers;
 
-    public Level(string map_path, string svg_path, string front_pic_path, string back_pic_path, Vector2 startingCoord, Vector2 pos, Vector2 bgOff, Vector2 mapOff, int finalX, LevelPassed startLevel)
+    public Level(string map_path, string svg_path, Chunking front_pic_chunk, Chunking back_pic_chunk, Vector2 startingCoord, Vector2 pos, Vector2 bgOff, Vector2 mapOff, int finalX, LevelPassed startLevel)
     {
         this.map = new Map(map_path);
-        this.render = new Rendering(front_pic_path, back_pic_path, pos, bgOff, mapOff);
+        this.render = new Rendering(front_pic_chunk, back_pic_chunk, pos, bgOff, mapOff);
         this.svg_path = svg_path;
 
-        this.front_pic_path = front_pic_path;
-        this.back_pic_path = back_pic_path;
+        this.front_pic_chunk = front_pic_chunk;
+        this.back_pic_chunk = back_pic_chunk;
 
         this.pos = pos;
         this.bgOff = bgOff;
@@ -71,7 +71,7 @@ class Level
         flowers = SVGReader.findFlowers(svg_path);
         launchFlowers = new LaunchFlower[0];
 
-        render = new Rendering(front_pic_path, back_pic_path, pos, bgOff, mapOff);
+        render = new Rendering(front_pic_chunk, back_pic_chunk, pos, bgOff, mapOff);
 
     }
 
