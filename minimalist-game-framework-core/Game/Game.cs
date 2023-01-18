@@ -81,8 +81,8 @@ class Game
         level3Chunk = new Chunking("level3chunk1.png", "level3chunk2.png", "level3chunk3.png");
         level3BG = new Chunking("level3bg1.png", "level3bg2.png", "level3bg3.png");
 
-        level1 = new Level("Level1Collision1_17.bmp", "Assets/level1_svg.txt", level1Chunk, level1BG, new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(0, 0), 170, LevelPassed.none);
-        level2 = new Level("Level2Collision1_17.bmp", "Assets/level2_svg.txt", level2Chunk, level2BG, new Vector2(150, 630), new Vector2(0, -1168), new Vector2(2382, 420), new Vector2(0, 0), 170, LevelPassed.onePassed);
+        level1 = new Level("Level1Collision1_17.bmp", "Assets/level1_svg.txt", level1Chunk, level1BG, new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(0, 0), 8000, LevelPassed.none);
+        level2 = new Level("Level2Collision1_17.bmp", "Assets/level2_svg.txt", level2Chunk, level2BG, new Vector2(150, 630), new Vector2(0, -1168), new Vector2(2382, 420), new Vector2(0, 0), 10400, LevelPassed.onePassed);
         level3 = new Level("Level3Collision1_17.bmp", "Assets/level3_svg.txt", level3Chunk, level3BG, new Vector2(125, 700), new Vector2(0, -640), new Vector2(0, 0), new Vector2(0, 10), 10400, LevelPassed.twoPassed);
 
         //scene control
