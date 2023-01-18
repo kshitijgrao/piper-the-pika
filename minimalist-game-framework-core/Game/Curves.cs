@@ -276,8 +276,20 @@ class BezierCurveNoStroke : Path2
     private Vector2 end;
     private Vector2 endHandle;
 
+    private Bounds2 bounds;
+
     public BezierCurveNoStroke(Vector2 start, Vector2 startHandle, Vector2 endHandle, Vector2 end)
     {
+        float minX, minY, maxX, maxY;
+        minX = Math.Min(start.X, end.X);
+        maxX = Math.Max(start.X, end.X);
+        minY = Math.Min(start.Y, end.Y);
+        maxY = Math.Max(start.Y, end.Y);
+
+        bounds = new Bounds2(minX, minY, maxX - minX, maxY - minY);
+        bounds.Size += new Vector2(24, 24);
+        bounds.Position -= new Vector2(12, 12);
+
         this.start = start;
         this.startHandle = startHandle;
         this.end = end;
@@ -330,7 +342,7 @@ class BezierCurveNoStroke : Path2
     //fake, but should work for all practical purposes
     public bool contains(Vector2 loc)
     {
-        return loc.X >= start.X - 1 && loc.X <= end.X + 1;
+        return bounds.Contains(loc);
     }
 
     public float nearestFraction(Vector2 loc)

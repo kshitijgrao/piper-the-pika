@@ -170,9 +170,9 @@ class Level
             Engine.DrawString("onPath? " + piper.onPath + " with fraction: " + Math.Round(piper.fractionOfPath, 3), new Vector2(Game.Resolution.X - 12, 36), Color.Black, Game.arial, TextAlignment.Right);
             Engine.DrawString("current normal: " + map.getNormalVector(piper.loc).Rounded(2).ToString() + " current radius: " + Math.Round(map.getSurfaceRadius(piper.loc), 7), new Vector2(Game.Resolution.X - 12, 48), Color.Black, Game.arial, TextAlignment.Right);
             Engine.DrawString("isSpinning? " + piper.isSpinning, new Vector2(Game.Resolution.X - 12, 60), Color.Black, Game.arial, TextAlignment.Right);
-
+            
             Engine.DrawString("FPS: " + Math.Round(1 / Engine.TimeDelta), new Vector2(Game.Resolution.X - 12, 72), Color.Black, Game.arial, TextAlignment.Right);
-
+            Engine.DrawString("Flows: " + piper.flows, new Vector2(Game.Resolution.X - 12, 84), Color.Black, Game.arial, TextAlignment.Right);
             Debug.WriteLine(map.getSurfaceRadius(piper.loc));
         }
 

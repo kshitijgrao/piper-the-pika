@@ -17,6 +17,7 @@ class Sprite {
 
     public bool invisible;
     public bool isSparkling;
+    public bool notCollable;
 
     internal float rotationAngle;
 
@@ -231,7 +232,7 @@ class Sprite {
 
     public virtual bool notCollidable()
     {
-        return invisible;
+        return invisible || notCollable;
     }
 
 }

@@ -22,11 +22,11 @@ class Chunking
         Engine.DrawTexture(img1, topLeft);
         if (img2 != null)
         {
-            Engine.DrawTexture(img2, topLeft + new Vector2(img1.Width, 0));
+            Engine.DrawTexture(img2, topLeft + new Vector2(img1.Width, 0), source: new Bounds2(-1 * topLeft, Game.Resolution));
         }
         if (img3 != null)
         {
-            Engine.DrawTexture(img3, topLeft + new Vector2(img1.Width + img2.Width, 0));
+            Engine.DrawTexture(img3, topLeft + new Vector2(img1.Width + img2.Width, 0), source: new Bounds2(-1 * topLeft, Game.Resolution));
         }
     }
 }

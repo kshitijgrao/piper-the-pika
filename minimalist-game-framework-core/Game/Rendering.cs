@@ -53,7 +53,13 @@ class Rendering
             }
         }*/
 
+
         Vector2 onScreenCoord = piper.loc + pos;
+
+        if(!(new Bounds2(Vector2.Zero, Game.Resolution)).Contains(onScreenCoord))
+        {
+            pos = Game.Resolution / 2 - piper.loc;
+        }
 
         if (onScreenCoord.X > window.Max.X && piper.vel.X > 0)
         {
