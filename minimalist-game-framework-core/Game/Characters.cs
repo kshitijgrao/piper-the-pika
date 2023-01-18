@@ -20,7 +20,7 @@ class Sonic : PhysicsSprite
 
     public static readonly float sonicMass = 2;
 
-    private float flows;
+    public float flows;
     private int flowerCount;
 
 

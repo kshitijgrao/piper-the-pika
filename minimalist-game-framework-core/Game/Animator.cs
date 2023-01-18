@@ -78,13 +78,13 @@ internal static class Animator
             piper.addAirTime(-piper.getAirTime());
         }
 
-        if (piper.isSparkling)
+        if (piper.flows > 0)
         {
-            sparkleFramesLeft -= Engine.TimeDelta * generalFramerate;
-            if (sparkleFramesLeft <= 0)
-            {
-                piper.isSparkling = false;
-            }
+            piper.isSparkling = true;
+        }
+        else
+        {
+            piper.isSparkling = false;
         }
 
         return changeFrame(piper, position, 4, piperFramerate);
