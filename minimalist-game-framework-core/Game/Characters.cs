@@ -7,7 +7,7 @@ using System.Text;
 class Sonic : PhysicsSprite
 {
     public static readonly float jumpHeight = 100;
-    public static readonly int boostFrameTime = 250;
+    public static readonly int boostFrameTime = (int) (2 / Engine.TimeDelta);
     public static readonly float maxHorVel = 250;
     public static readonly float maxHorVelBoost = 100;
     public static readonly float jumpImpulseMag = (float) Math.Sqrt(2.0 * Physics.g.Length() * jumpHeight);
@@ -49,6 +49,7 @@ class Sonic : PhysicsSprite
         {
             this.vel = this.vel + jumpImpulseMag * Game.currentLevel.getMap().getNormalVector(loc);
             onGround = false;
+            isSpinning = true;
         }
         
     }
@@ -129,7 +130,7 @@ class Sonic : PhysicsSprite
         base.updateState(map);
         
         if(flows > 0)
-           flows -= 1 / ((float) boostFrameTime);
+           flows -= 0.01f;
     }
 
     public override void collideSpike(float timeLeft)
@@ -166,7 +167,7 @@ class Sonic : PhysicsSprite
 
     public void addFlower()
     {
-        flows += 1;
+        flows = Math.Max(flows, 1);
         flowerCount += 1;
     }
 
@@ -204,6 +205,7 @@ class Enemy : PhysicsSprite
 
     public Enemy(Vector2 loc, Bounds2 path, bool flying) : base(loc, flying ? hawkTexture : wolfTexture, flying ? hawkHit : wolfHit, false, flying ? hawkCollisionHit : wolfCollisionHit)
     {
+        this.simpleObject = true;
         this.path = path;
         this.mass = 10;
     }
@@ -259,9 +261,13 @@ class Enemy : PhysicsSprite
                 base.collide(other);
                 base.setFrameIndex(0);
 
+                this.notCollable = true;
+
                 // bounce piper upwards
-                other.loc += other.vel * (Engine.TimeDelta - timeLeft);
-                other.vel = Physics.coeffRestitution * new Vector2(0, -30);
+                if(other.vel.Y > 0)
+                {
+                    other.vel.Y = -30 * Physics.coeffRestitution * 0.5f;
+                }
             }
             else if (base.getState() != State.Damage)
             {
