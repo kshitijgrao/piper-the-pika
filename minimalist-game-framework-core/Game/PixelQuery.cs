@@ -140,8 +140,8 @@ unsafe class Map
     //gets the pixel type at the given coordinate
     public int getPixelType(Vector2 coord)
     {
-        int x = (int)Math.Round(coord.X);
-        int y = (int)Math.Round(coord.Y);
+        int x = (int)Math.Ceiling(coord.X);
+        int y = (int)Math.Ceiling(coord.Y);
         if (x >= w || x < 0 || y >= h || y < 0)
         {
             return AIR_CODE;
