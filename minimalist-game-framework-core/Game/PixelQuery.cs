@@ -140,8 +140,8 @@ unsafe class Map
     //gets the pixel type at the given coordinate
     public int getPixelType(Vector2 coord)
     {
-        int x = (int)Math.Ceiling(coord.X);
-        int y = (int)Math.Ceiling(coord.Y);
+        int x = (int)Math.Round(coord.X);
+        int y = (int)Math.Round(coord.Y);
         if (x >= w || x < 0 || y >= h || y < 0)
         {
             return AIR_CODE;
@@ -206,9 +206,11 @@ unsafe class Map
             }
         }
 
-        if(inAir(initial) && onSpike(final))
+        if(onSpike(final))
         {
-            if (getNormalVector(final).Y == 0)
+            Console.WriteLine("pos:" + final);
+            Console.WriteLine("norm: " + getNormalVector(final));
+            if (Math.Round(getNormalVector(final).Y, 0) == 0)
             {
                 return true;
             }
@@ -224,15 +226,19 @@ unsafe class Map
     // TODO: possibly change to hashmap system to decrease time complexity
     public Vector2 getNormalVector(Vector2 pos)
     {
-        Vector2 surfacePoint = getNearestSurfacePoint(pos);
-
+        Vector2 surfacePoint = getNearestSurfacePoint(pos);        
         foreach (Curve c in curves)
         {
             if (c.contains(surfacePoint))
             {
                 Curve curr = c;
 
-                return c.getNearestNormal(surfacePoint);
+                if (onSpike(pos))
+                {
+                    Console.WriteLine("Surface: " + surfacePoint);
+                }
+
+               return c.getNearestNormal(surfacePoint);
             }
         }
         Vector2 slope = new Vector2(10, 0);

@@ -72,18 +72,19 @@ class Game
 
     public Game()
     {
-        level1Chunk = new Chunking("Level1Collision1_18Broken.bmp");
+        level1Chunk = new Chunking("Level1Display1_18Final.png");
         level1BG = new Chunking("newBG_windows.png");
 
+        //level2Chunk = new Chunking("Level2Collision1_18Final.bmp");
         level2Chunk = new Chunking("level2chunk1.png", "level2chunk2.png", "level2chunk3.png");
         level2BG = new Chunking("level2BGchunk1.png", "level2BGchunk2.png", "level2BGchunk3.png");
 
         level3Chunk = new Chunking("level3chunk1.png", "level3chunk2.png", "level3chunk3.png");
         level3BG = new Chunking("level3bg1.png", "level3bg2.png", "level3bg3.png");
 
-        level1 = new Level("Level1Collision1_18Broken.bmp", "Assets/level1_svgbroken.txt", level1Chunk, level1BG, new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(0, 0), 8000, LevelPassed.none);
-        level2 = new Level("Level2Collision1_17.bmp", "Assets/level2_svg.txt", level2Chunk, level2BG, new Vector2(150, 630), new Vector2(0, -1168), new Vector2(2382, 420), new Vector2(0, 0), 10400, LevelPassed.onePassed);
-        level3 = new Level("Level3Collision1_17.bmp", "Assets/level3_svg.txt", level3Chunk, level3BG, new Vector2(125, 700), new Vector2(0, -640), new Vector2(0, 0), new Vector2(0, 10), 10400, LevelPassed.twoPassed);
+        level1 = new Level("Level1Collision1_18Final.bmp", "Assets/level1_svgfinal.txt", level1Chunk, level1BG, new Vector2(160, 960), new Vector2(0, -838), new Vector2(2382, 420), new Vector2(0, 0), 8000, LevelPassed.none);
+        level2 = new Level("Level2Collision1_18Final.bmp", "Assets/level2_svgFinal.txt", level2Chunk, level2BG, new Vector2(150, 630), new Vector2(0, -1168), new Vector2(2382, 420), new Vector2(0, 0), 10400, LevelPassed.onePassed);
+        level3 = new Level("Level3Collision1_18Final.bmp", "Assets/level3_svgFinal.txt", level3Chunk, level3BG, new Vector2(125, 700), new Vector2(0, -640), new Vector2(0, 0), new Vector2(0, 10), 10400, LevelPassed.twoPassed);
 
         //scene control
         progress = LevelPassed.none;
