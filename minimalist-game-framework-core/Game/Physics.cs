@@ -126,7 +126,6 @@ class Physics
         {
             if (map.passingSolid(pos, finalPos))
             {
-                Console.WriteLine("test");
                 Vector2 norm = map.getNormalVector(finalPos);
 
                 

@@ -208,8 +208,6 @@ unsafe class Map
 
         if(onSpike(final))
         {
-            Console.WriteLine("pos:" + final);
-            Console.WriteLine("norm: " + getNormalVector(final));
             if (Math.Round(getNormalVector(final).Y, 0) == 0)
             {
                 return true;
@@ -231,12 +229,7 @@ unsafe class Map
         {
             if (c.contains(surfacePoint))
             {
-                Curve curr = c;
-
-                if (onSpike(pos))
-                {
-                    Console.WriteLine("Surface: " + surfacePoint);
-                }
+               Curve curr = c;
 
                return c.getNearestNormal(surfacePoint);
             }
