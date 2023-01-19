@@ -130,7 +130,20 @@ static class SVGReader
         else if (line.Contains("transform"))
         {
             string[] rectVals = line.Substring(13, line.Length - 19 - 13).Replace("transform=\"matrix(", "").Replace("height=", "").Replace("\"", "").Split(' ');
-            map.addCurve(new Rect(rectVals, line.Substring(line.Length - 9, 6)));
+            float[] mathVals = new float[rectVals.Length];
+
+            for (int i = 0; i < rectVals.Length; i++)
+            {
+                mathVals[i] = float.Parse(rectVals[i]);
+            }
+
+            if (line.Contains("(-1"))
+            {
+                map.addCurve(new Rect(new Bounds2(mathVals[6] - mathVals[0], mathVals[7], mathVals[0] - 1, mathVals[1] - 1), line.Substring(line.Length - 9, 6)));
+            } else
+            {
+                map.addCurve(new Rect(new Bounds2(mathVals[6], mathVals[7] - mathVals[1], mathVals[0] - 1, mathVals[1] - 1), line.Substring(line.Length - 9, 6)));
+            }
         }
     }
 
@@ -552,17 +565,16 @@ class Rect : Curve
         {
             rect.Position.X = (float)Math.Round(Double.Parse(s[6]));
             rect.Position.Y = (float)Math.Round(Double.Parse(s[7]));
-            rect.Size.X = (float)Math.Round(Double.Parse(s[0])) - 1;
-            rect.Size.Y = (float)Math.Round(Double.Parse(s[1])) - 1;
-
             rect.Position -= rect.Size;
+            rect.Size.X = (float)Math.Round(Double.Parse(s[0]) - 1);
+            rect.Size.Y = (float)Math.Round(Double.Parse(s[1]) - 1);
         }
         else if (s.Length >= 4)
         {
             rect.Position.X = (float)Math.Round(Double.Parse(s[0]));
             rect.Position.Y = (float)Math.Round(Double.Parse(s[1]));
-            rect.Size.X = (float)Math.Round(Double.Parse(s[2])) - 1;
-            rect.Size.Y = (float)Math.Round(Double.Parse(s[3])) - 1;
+            rect.Size.X = (float)Math.Round(Double.Parse(s[2]) - 1);
+            rect.Size.Y = (float)Math.Round(Double.Parse(s[3]) - 1);
 
             
         }

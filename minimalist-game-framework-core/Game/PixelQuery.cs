@@ -206,9 +206,9 @@ unsafe class Map
             }
         }
 
-        if(inAir(initial) && onSpike(final))
+        if(onSpike(final))
         {
-            if (getNormalVector(final).Y == 0)
+            if (Math.Round(getNormalVector(final).Y, 0) == 0)
             {
                 return true;
             }
@@ -224,15 +224,14 @@ unsafe class Map
     // TODO: possibly change to hashmap system to decrease time complexity
     public Vector2 getNormalVector(Vector2 pos)
     {
-        Vector2 surfacePoint = getNearestSurfacePoint(pos);
-
+        Vector2 surfacePoint = getNearestSurfacePoint(pos);        
         foreach (Curve c in curves)
         {
             if (c.contains(surfacePoint))
             {
-                Curve curr = c;
+               Curve curr = c;
 
-                return c.getNearestNormal(surfacePoint);
+               return c.getNearestNormal(surfacePoint);
             }
         }
         Vector2 slope = new Vector2(10, 0);
